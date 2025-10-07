@@ -3,9 +3,7 @@ template_source: cli-tool
 project:
   name: vertex-ai-search
   type: cli-tool
-  module_name: vertex_ai_search
-  created_at: '2025-10-07T19:56:35.185185+00:00'
-  created_with_genesis: 0.12.0
+  genesis_version: 1.6.23
 variables:
   project_name: vertex-ai-search
   module_name: vertex_ai_search
@@ -15,118 +13,442 @@ variables:
   github_user: ''
   app_port: '8000'
   subnet_octet: '172'
-files:
-- source: shared/Dockerfile.template
-  dest: Dockerfile
-  policy: always
-  description: Universal hardened development container
-- source: shared/CLAUDE.md.template
-  dest: CLAUDE.md
-  policy: never
-  description: AI assistant instructions (user customizable)
-- source: shared/scripts/setup/setup.sh.template
-  dest: scripts/setup/setup.sh
-  policy: always
-  description: Poetry-exclusive development setup script
-- source: shared/scripts/setup/install-genesis.sh.template
-  dest: scripts/setup/install-genesis.sh
-  policy: always
-  description: Genesis installation script
-- source: shared/scripts/utils/common-setup-functions.sh.template
-  dest: scripts/utils/common-setup-functions.sh
-  policy: always
-  description: Shared setup functions for all project types
-- source: shared/scripts/utils/common-check-functions.sh.template
-  dest: scripts/utils/common-check-functions.sh
-  policy: always
-  description: Shared check functions for maintenance scripts
-- source: shared/scripts/docker/docker-cleanup.sh.template
-  dest: scripts/docker/docker-cleanup.sh
-  policy: always
-  description: Docker cleanup utility
-- source: shared/scripts/docker/container-setup.sh.template
-  dest: scripts/docker/container-setup.sh
-  policy: always
-  description: Container setup script
-- source: shared/scripts/docker/container-rebuild.sh.template
-  dest: scripts/docker/container-rebuild.sh
-  policy: always
-  description: Container rebuild script
-- source: shared/.genesis/scripts/check-genesis-components.sh.template
-  dest: .genesis/scripts/check-genesis-components.sh
-  policy: always
-  description: Component usage validation script
-- source: shared/.genesis/scripts/check-variable-defaults.sh.template
-  dest: .genesis/scripts/check-variable-defaults.sh
-  policy: always
-  description: Variable defaults checking script
-- source: shared/.genesis/scripts/check-file-organization.sh.template
-  dest: .genesis/scripts/check-file-organization.sh
-  policy: always
-  description: File organization validation script
-- source: shared/.genesis/scripts/find-hardcoded-values.sh.template
-  dest: .genesis/scripts/find-hardcoded-values.sh
-  policy: always
-  description: Hardcoded values detection script
-- source: shared/.genesis/scripts/check-ai-signatures.sh.template
-  dest: .genesis/scripts/check-ai-signatures.sh
-  policy: always
-  description: AI signature detection script
-- source: shared/.genesis/scripts/validate-components.sh.template
-  dest: .genesis/scripts/validate-components.sh
-  policy: always
-  description: Component validation script
-- source: shared/.genesis/scripts/validate-bootstrap.sh.template
-  dest: .genesis/scripts/validate-bootstrap.sh
-  policy: always
-  description: Bootstrap validation script
-- source: shared/Makefile.template
-  dest: Makefile
-  policy: if_unchanged
-  description: Development automation with clean wheel file handling
-- source: shared/.envrc.template
-  dest: .envrc
-  policy: if_unchanged
-  description: Environment configuration
-- source: shared/.gitignore.template
-  dest: .gitignore
-  policy: if_unchanged
-  description: Git ignore patterns
-- source: shared/pyproject.toml.template
-  dest: pyproject.toml
-  policy: never
-  description: Python project configuration (user customizable)
-- source: shared/README.md.template
-  dest: README.md
-  policy: never
-  description: Project documentation (user customizable)
-- source: cli-tool/pyproject.toml.template
-  dest: pyproject.toml
-  policy: if_unchanged
-  description: Python project configuration
-- source: cli-tool/README.md.template
-  dest: README.md
-  policy: never
-  description: Project documentation
-- source: cli-tool/src/__module_name__/cli.py.template
-  dest: src/vertex_ai_search/cli.py
-  policy: never
-  description: CLI entry point
-- source: cli-tool/src/__module_name__/__init__.py.template
-  dest: src/vertex_ai_search/__init__.py
-  policy: never
-  description: CLI package initialization
-- source: cli-tool/src/__module_name__/main.py.template
-  dest: src/vertex_ai_search/main.py
-  policy: never
-  description: Main entry point
-- source: cli-tool/tests/test_cli.py.template
-  dest: tests/test_cli.py
-  policy: never
-  description: CLI tests
 sync_policies:
-  backup_changed_files: true
-  backup_suffix: .genesis-backup
-  create_directories: true
-  preserve_permissions: true
-  validate_templates: true
+- source: Dockerfile
+  dest: Dockerfile
+  sync: always
+  description: Development container configuration
+  executable: false
+  policy: always
+  user_override: true
+- source: scripts/setup/setup.sh
+  dest: scripts/setup/setup.sh
+  sync: always
+  description: 'File: scripts/setup/setup.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: scripts/setup/install-genesis.sh
+  dest: scripts/setup/install-genesis.sh
+  sync: always
+  description: 'File: scripts/setup/install-genesis.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: scripts/utils/common-setup-functions.sh
+  dest: scripts/utils/common-setup-functions.sh
+  sync: always
+  description: 'File: scripts/utils/common-setup-functions.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: scripts/utils/common-check-functions.sh
+  dest: scripts/utils/common-check-functions.sh
+  sync: always
+  description: 'File: scripts/utils/common-check-functions.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: scripts/docker/docker-cleanup.sh
+  dest: scripts/docker/docker-cleanup.sh
+  sync: always
+  description: 'File: scripts/docker/docker-cleanup.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: scripts/docker/container-setup.sh
+  dest: scripts/docker/container-setup.sh
+  sync: always
+  description: 'File: scripts/docker/container-setup.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: scripts/docker/container-rebuild.sh
+  dest: scripts/docker/container-rebuild.sh
+  sync: always
+  description: 'File: scripts/docker/container-rebuild.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .genesis/scripts/check-genesis-components.sh
+  dest: .genesis/scripts/check-genesis-components.sh
+  sync: always
+  description: 'File: .genesis/scripts/check-genesis-components.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .genesis/scripts/check-variable-defaults.sh
+  dest: .genesis/scripts/check-variable-defaults.sh
+  sync: always
+  description: 'File: .genesis/scripts/check-variable-defaults.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .genesis/scripts/check-file-organization.sh
+  dest: .genesis/scripts/check-file-organization.sh
+  sync: always
+  description: 'File: .genesis/scripts/check-file-organization.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .genesis/scripts/find-hardcoded-values.sh
+  dest: .genesis/scripts/find-hardcoded-values.sh
+  sync: always
+  description: 'File: .genesis/scripts/find-hardcoded-values.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .genesis/scripts/check-ai-signatures.sh
+  dest: .genesis/scripts/check-ai-signatures.sh
+  sync: always
+  description: 'File: .genesis/scripts/check-ai-signatures.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .genesis/scripts/validate-components.sh
+  dest: .genesis/scripts/validate-components.sh
+  sync: always
+  description: 'File: .genesis/scripts/validate-components.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .genesis/scripts/validate-bootstrap.sh
+  dest: .genesis/scripts/validate-bootstrap.sh
+  sync: always
+  description: 'File: .genesis/scripts/validate-bootstrap.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .claude/LEAN-TDD-WORKFLOW.md
+  dest: .claude/LEAN-TDD-WORKFLOW.md
+  sync: always
+  description: LEAN TDD workflow documentation
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/hooks/validate-bash-command.sh
+  dest: .claude/hooks/validate-bash-command.sh
+  sync: always
+  description: 'File: .claude/hooks/validate-bash-command.sh'
+  executable: true
+  policy: always
+  user_override: true
+- source: .claude/agents/bloat-detector.md
+  dest: .claude/agents/bloat-detector.md
+  sync: always
+  description: 'File: .claude/agents/bloat-detector.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/build-validator.md
+  dest: .claude/agents/build-validator.md
+  sync: always
+  description: 'File: .claude/agents/build-validator.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/complexity-auditor.md
+  dest: .claude/agents/complexity-auditor.md
+  sync: always
+  description: 'File: .claude/agents/complexity-auditor.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/dependency-tracker.md
+  dest: .claude/agents/dependency-tracker.md
+  sync: always
+  description: 'File: .claude/agents/dependency-tracker.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/documentation-minimalist.md
+  dest: .claude/agents/documentation-minimalist.md
+  sync: always
+  description: 'File: .claude/agents/documentation-minimalist.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/issue-analyst.md
+  dest: .claude/agents/issue-analyst.md
+  sync: always
+  description: 'File: .claude/agents/issue-analyst.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/lean-implementer.md
+  dest: .claude/agents/lean-implementer.md
+  sync: always
+  description: 'File: .claude/agents/lean-implementer.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/performance-monitor.md
+  dest: .claude/agents/performance-monitor.md
+  sync: always
+  description: 'File: .claude/agents/performance-monitor.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/refactoring-specialist.md
+  dest: .claude/agents/refactoring-specialist.md
+  sync: always
+  description: 'File: .claude/agents/refactoring-specialist.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/scope-guardian.md
+  dest: .claude/agents/scope-guardian.md
+  sync: always
+  description: 'File: .claude/agents/scope-guardian.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/agents/test-designer.md
+  dest: .claude/agents/test-designer.md
+  sync: always
+  description: 'File: .claude/agents/test-designer.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/audit.md
+  dest: .claude/commands/audit.md
+  sync: always
+  description: 'File: .claude/commands/audit.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/bug.md
+  dest: .claude/commands/bug.md
+  sync: always
+  description: 'File: .claude/commands/bug.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/cleanup.md
+  dest: .claude/commands/cleanup.md
+  sync: always
+  description: 'File: .claude/commands/cleanup.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/close.md
+  dest: .claude/commands/close.md
+  sync: always
+  description: 'File: .claude/commands/close.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/commit.md
+  dest: .claude/commands/commit.md
+  sync: always
+  description: 'File: .claude/commands/commit.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/deprecate.md
+  dest: .claude/commands/deprecate.md
+  sync: always
+  description: 'File: .claude/commands/deprecate.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/feature.md
+  dest: .claude/commands/feature.md
+  sync: always
+  description: 'File: .claude/commands/feature.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/fix-all-errors.md
+  dest: .claude/commands/fix-all-errors.md
+  sync: always
+  description: 'File: .claude/commands/fix-all-errors.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/issue.md
+  dest: .claude/commands/issue.md
+  sync: always
+  description: 'File: .claude/commands/issue.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/metrics.md
+  dest: .claude/commands/metrics.md
+  sync: always
+  description: 'File: .claude/commands/metrics.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/optimize.md
+  dest: .claude/commands/optimize.md
+  sync: always
+  description: 'File: .claude/commands/optimize.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/pr.md
+  dest: .claude/commands/pr.md
+  sync: always
+  description: 'File: .claude/commands/pr.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/refactor.md
+  dest: .claude/commands/refactor.md
+  sync: always
+  description: 'File: .claude/commands/refactor.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/research.md
+  dest: .claude/commands/research.md
+  sync: always
+  description: 'File: .claude/commands/research.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/tdd.md
+  dest: .claude/commands/tdd.md
+  sync: always
+  description: 'File: .claude/commands/tdd.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: .claude/commands/update-docs.md
+  dest: .claude/commands/update-docs.md
+  sync: always
+  description: 'File: .claude/commands/update-docs.md'
+  executable: false
+  policy: always
+  user_override: true
+- source: Makefile
+  dest: Makefile
+  sync: if_unchanged
+  description: Build and development tasks
+  executable: false
+  policy: if_unchanged
+  user_override: true
+- source: .envrc
+  dest: .envrc
+  sync: if_unchanged
+  description: 'File: .envrc'
+  executable: false
+  policy: never
+  user_override: true
+- source: .gitignore
+  dest: .gitignore
+  sync: if_unchanged
+  description: Git ignore patterns
+  executable: false
+  policy: if_unchanged
+  user_override: true
+- source: .pre-commit-config.yaml
+  dest: .pre-commit-config.yaml
+  sync: if_unchanged
+  description: Pre-commit hooks configuration
+  executable: false
+  policy: if_unchanged
+  user_override: true
+- source: .claude/settings.json
+  dest: .claude/settings.json
+  sync: if_unchanged
+  description: Claude Code settings
+  executable: false
+  policy: if_unchanged
+  user_override: true
+- source: .pre-commit-config.yaml
+  dest: .pre-commit-config.yaml
+  sync: if_unchanged
+  description: Pre-commit hooks configuration
+  executable: false
+  policy: if_unchanged
+  user_override: true
+- source: .gitignore
+  dest: .gitignore
+  sync: if_unchanged
+  description: Git ignore patterns
+  executable: false
+  policy: if_unchanged
+  user_override: true
+- source: Makefile
+  dest: Makefile
+  sync: if_unchanged
+  description: Build and development tasks
+  executable: false
+  policy: if_unchanged
+  user_override: true
+- source: CLAUDE.md
+  dest: CLAUDE.md
+  sync: never
+  description: 'File: CLAUDE.md'
+  executable: false
+  policy: never
+  user_override: true
+- source: pyproject.toml
+  dest: pyproject.toml
+  sync: never
+  description: 'File: pyproject.toml'
+  executable: false
+  policy: never
+  user_override: true
+- source: README.md
+  dest: README.md
+  sync: never
+  description: 'File: README.md'
+  executable: false
+  policy: never
+  user_override: true
+- source: pyproject.toml
+  dest: pyproject.toml
+  sync: never
+  description: 'File: pyproject.toml'
+  executable: false
+  policy: never
+  user_override: true
+- source: .envrc
+  dest: .envrc
+  sync: never
+  description: 'File: .envrc'
+  executable: false
+  policy: never
+  user_override: true
+- source: README.md
+  dest: README.md
+  sync: never
+  description: 'File: README.md'
+  executable: false
+  policy: never
+  user_override: true
+- source: CLAUDE.md
+  dest: CLAUDE.md
+  sync: never
+  description: 'File: CLAUDE.md'
+  executable: false
+  policy: never
+  user_override: true
+- source: docker-compose.yml
+  dest: docker-compose.yml
+  sync: local_override
+  description: Docker Compose configuration
+  executable: false
+  policy: local_override
+  user_override: true
+exclude:
+- '*.pyc'
+- __pycache__
+- .git
+- .venv
+- node_modules
+- dist
+- build
+- .terraform
+- '*.log'
+- '*.tmp'
+- .DS_Store
+sync_options:
+  create_backups: true
+  show_diff: true
+  auto_format: true
+  preserve_executable: true
+_comment: Refreshed from manifest on 2025-10-07T18:42:05.605945
