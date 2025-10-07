@@ -1,0 +1,20 @@
+# Test environment configuration
+# Settings for running automated tests
+
+# Test settings
+log_level: WARNING
+debug: false
+
+# Service configuration
+host: "localhost"
+port: 8002
+
+# Test-specific features
+mock_external_services: true
+use_test_database: true
+enable_test_fixtures: true
+
+# Test environment limits
+max_connections: 5
+request_timeout: 10
+rate_limit: 10000  # High limit for test suites

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Git post-commit hook: Run file organization check after commits
+
+set -euo pipefail
+
+echo "🔄 Running file organization check after commit..."
+
+# Run organization check in report mode
+# Use CLAUDE_PROJECT_DIR if available, otherwise find the repository root
+if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    repo_root="$CLAUDE_PROJECT_DIR"
+elif repo_root=$(git rev-parse --show-toplevel 2>/dev/null); then
+    : # repo_root already set
+else
+    echo "⚠️  Not in a git repository - skipping organization check"
+    exit 0
+fi
+
+script_path="$repo_root/.genesis/scripts/check-file-organization.sh"
+
+if [ -f "$script_path" ]; then
+    cd "$repo_root" && "$script_path"
+else
+    echo "⚠️  File organization script not found - skipping check"
+fi
+
+exit 0
