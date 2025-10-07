@@ -1,0 +1,26 @@
+# Default configuration for vertex-ai-search
+# These values are used across all environments unless overridden
+
+# Application metadata
+app_name: "vertex-ai-search"
+version: "1.0.0"
+description: "A vertex-ai-search project created with Genesis"
+
+# Core settings
+log_level: INFO
+debug: false
+timeout: 30
+
+# Service configuration
+host: "0.0.0.0"
+port: 8000
+
+# Feature flags (can be overridden per environment)
+enable_monitoring: false
+enable_profiling: false
+enable_metrics: false
+
+# Default limits
+max_connections: 100
+request_timeout: 30
+rate_limit: 100

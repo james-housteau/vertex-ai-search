@@ -1,0 +1,20 @@
+# Development environment configuration
+# Overrides for local development
+
+# Development settings
+debug: true
+log_level: DEBUG
+
+# Service configuration
+host: "localhost"
+port: 8001
+
+# Development features
+hot_reload: true
+enable_profiling: true
+mock_external_services: false
+
+# Relaxed limits for development
+max_connections: 10
+request_timeout: 60
+rate_limit: 1000

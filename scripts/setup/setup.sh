@@ -1,8 +1,8 @@
 #!/bin/bash
-# vertex-ai-search Development Setup Script
+# test Development Setup Script
 set -euo pipefail
 
-echo "🚀 Setting up vertex-ai-search development environment..."
+echo "🚀 Setting up test development environment..."
 
 # Change to project root directory (parent of scripts/)
 cd "$(dirname "$0")/.."
@@ -67,11 +67,11 @@ fi
 
 # Test that CLI is available (if applicable)
 if poetry run  --version >/dev/null 2>&1; then
-    echo "✅ vertex-ai-search CLI is available"
+    echo "✅ test CLI is available"
     CLI_VERSION=$(poetry run  --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
     echo "   Version: $CLI_VERSION"
 else
-    echo "⚠️  vertex-ai-search CLI not available yet - run 'poetry install' if needed"
+    echo "⚠️  test CLI not available yet - run 'poetry install' if needed"
 fi
 
 # Test that shared_core imports work (if applicable)

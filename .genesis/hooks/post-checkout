@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Git post-checkout hook: Run file organization check after branch switches
+
+set -euo pipefail
+
+# Get hook parameters
+prev_head="$1"
+new_head="$2"
+branch_checkout="$3"
+
+# Only run on branch checkouts (not file checkouts)
+if [ "$branch_checkout" = "1" ]; then
+    echo "🔄 Running file organization check after branch checkout..."
+
+    # Run organization check in report mode
+    # Use CLAUDE_PROJECT_DIR if available, otherwise find the repository root
+    if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+        repo_root="$CLAUDE_PROJECT_DIR"
+    else
+        repo_root=$(git rev-parse --show-toplevel)
+    fi
+    script_path="$repo_root/.genesis/scripts/check-file-organization.sh"
+
+    if [ -f "$script_path" ]; then
+        cd "$repo_root" && "$script_path"
+    else
+        echo "⚠️  File organization script not found - skipping check"
+    fi
+fi
+
+exit 0

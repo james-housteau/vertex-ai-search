@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Git pre-push hook: Final organization check before pushing
+
+set -euo pipefail
+
+# Get hook parameters
+remote="$1"
+url="$2"
+
+echo "🔍 Running final file organization check before push..."
+
+# Run organization check in report mode (don't block push on organization issues)
+# Use CLAUDE_PROJECT_DIR if available, otherwise find the repository root
+if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    repo_root="$CLAUDE_PROJECT_DIR"
+else
+    repo_root=$(git rev-parse --show-toplevel)
+fi
+script_path="$repo_root/.genesis/scripts/check-file-organization.sh"
+
+if [ -f "$script_path" ]; then
+    cd "$repo_root" && "$script_path"
+
+    # Note: We don't exit 1 here because organization issues shouldn't block pushes
+    # The script will provide suggestions for improvement
+    echo "💡 Organization check complete - push proceeding"
+else
+    echo "⚠️  File organization script not found - skipping check"
+fi
+
+exit 0

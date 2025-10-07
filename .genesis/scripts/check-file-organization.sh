@@ -59,7 +59,7 @@ detect_architecture() {
         fi
     done
 
-    if [[ ${% raw %}{#isolated_modules[@]}{% endraw %} -gt 0 ]]; then
+    if [[ ${#isolated_modules[@]} -gt 0 ]]; then
         echo "pure_module_isolation"
     else
         echo "traditional"
@@ -454,21 +454,21 @@ check_directory_structure() {
         fi
     done
 
-    if [ ${% raw %}{#missing_dirs[@]}{% endraw %} -gt 0 ]; then
+    if [ ${#missing_dirs[@]} -gt 0 ]; then
         log_issue "Missing important directories:"
         for dir in "${missing_dirs[@]}"; do
             echo "  📁 $dir - recommended for source code and tests"
         done
     fi
 
-    if [ ${% raw %}{#suggested_dirs[@]}{% endraw %} -gt 0 ]; then
+    if [ ${#suggested_dirs[@]} -gt 0 ]; then
         log_check "Suggested directories for better organization:"
         for dir in "${suggested_dirs[@]}"; do
             echo "  📁 $dir - helps organize project files"
         done
     fi
 
-    if [ ${% raw %}{#missing_dirs[@]}{% endraw %} -eq 0 ] && [ ${% raw %}{#suggested_dirs[@]}{% endraw %} -eq 0 ]; then
+    if [ ${#missing_dirs[@]} -eq 0 ] && [ ${#suggested_dirs[@]} -eq 0 ]; then
         log_success "Good directory structure"
     fi
     echo
