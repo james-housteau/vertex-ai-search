@@ -77,8 +77,8 @@ services:
       PROJECT_TYPE: python-api
       PROJECT_MODE: development
     ports:
-      - "8487:8487"   # Hash-generated unique port
-    command: ["bash", "-lc", "poetry run uvicorn vertex_ai_search.main:app --host 0.0.0.0 --port 8487 --reload"]
+      - "8829:8829"   # Hash-generated unique port
+    command: ["bash", "-lc", "poetry run uvicorn vertex_ai_search.main:app --host 0.0.0.0 --port 8829 --reload"]
 
   ts:
     <<: *common
@@ -239,4 +239,4 @@ networks:
   default:
     ipam:
       config:
-        - subnet: "10.118.0.0/24"
+        - subnet: "10.124.0.0/24"
