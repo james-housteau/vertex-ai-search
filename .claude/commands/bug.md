@@ -9,10 +9,49 @@ model: claude-sonnet-4-20250514
 
 Complete bug resolution implementation using TDD methodology, Genesis integration, and specialized agents.
 
+---
+
+# ⚠️ CRITICAL: EXECUTION vs DELEGATION ⚠️
+
+This workflow has THREE phases with DIFFERENT execution modes:
+
+**📍 SETUP PHASE (STEPS 1-7): YOU EXECUTE DIRECTLY**
+- ⚠️ DO NOT use Task tool for these steps
+- ⚠️ YOU must run bash commands yourself using the Bash tool
+- ⚠️ Verify each step completes before proceeding
+
+**🤖 DEBUG PHASE (STEP 8): DELEGATION ALLOWED**
+- ✅ NOW you can use Task tool with specialized agents
+- ✅ Agents work in the worktree YOU created above
+
+**📍 FINALIZATION PHASE (STEPS 9-11): YOU EXECUTE DIRECTLY**
+- ⚠️ DO NOT delegate commits/PRs to agents
+- ⚠️ YOU must run bash commands yourself using the Bash tool
+- ⚠️ Return to main repo yourself
+
+---
+
+## CONTEXT: Pure Module Isolation
+
+This workflow creates a Genesis worktree with all supporting files needed for pure module isolation.
+A functional module requires not just its own code, but the Genesis infrastructure (.genesis/),
+shared utilities (shared-python/), and Python environment files (pyproject.toml, poetry.lock, .venv).
+
 ## Debug Methodology
 This workflow follows the systematic debug approach: reproduce → isolate → test → fix → validate.
 
+---
+
+## ═══════════════════════════════════════════════════
+## SETUP PHASE - YOU MUST EXECUTE (NO DELEGATION)
+## ═══════════════════════════════════════════════════
+
+⚠️ **DO NOT use Task tool for STEPS 1-7**
+⚠️ **YOU must run these bash commands directly using the Bash tool**
+
 ## STEP 1: Environment and Health Validation
+
+**Tool to use:** `Bash`
 
 ```bash
 # Verify project health and environment
@@ -31,69 +70,75 @@ fi
 
 ## STEP 2: Clean Workspace (MANDATORY)
 
+**Tool to use:** `Bash`
+
 ```bash
 # Remove old worktrees and build artifacts
 genesis clean || echo "⚠️ WARNING: Genesis clean encountered issues"
 ```
 
-## STEP 3: Create Genesis Worktree with ALL Shared Components
+## STEP 3: Create Genesis Worktree with Pure Module Isolation
+
+**Tool to use:** `Bash`
 
 ```bash
-# Create AI-safe worktree with all required shared components
-# Note: Adjust --focus based on issue area
+# Create AI-safe worktree with Pure Module Isolation
+# Script auto-symlinks: shared-python/, .genesis/, .venv/
+# Script auto-includes: Makefile, pyproject.toml, pytest.ini, .envrc (from manifest)
+# Note: Adjust --focus based on bug location
 genesis worktree create fix-$1 \
-  --max-files 30 \
-  --include .genesis/ \
-  --include .claude/ \
-  --include scripts/ \
-  --include shared-python/ \
-  --include Makefile \
-  --include pyproject.toml \
-  --include pytest.ini \
-  --include .pre-commit-config.yaml \
-  --include .envrc
+  --focus genesis/ \
+  --max-files ${WORKTREE_MAX_FILES:-30}
 ```
 
 ## STEP 4: Navigate to Worktree (CRITICAL)
 
+**Tool to use:** `Bash`
+
 ```bash
 # MUST navigate to worktree for all subsequent operations
-cd ../worktrees/fix-$1/ || {
+cd worktrees/fix-$1/ || {
     echo "❌ FATAL: Failed to navigate to worktree"
     exit 1
 }
+
 pwd  # VERIFY: Must show .../genesis/worktrees/fix-$1
 ```
 
-## STEP 5: Verify ALL Shared Components Exist
+## STEP 5: Verify Pure Module Isolation Setup
+
+**Tool to use:** `Bash`
 
 ```bash
-# Check for required components
-missing_components=0
-for component in .genesis .claude scripts shared-python Makefile; do
-    if [[ ! -e "$component" ]]; then
-        echo "❌ CRITICAL ERROR: Missing $component"
-        missing_components=1
+# Verify symlinks created automatically by worktree script
+echo "Verifying Pure Module Isolation setup..."
+
+# Check symlinks exist (auto-created by script)
+for symlink in shared-python .genesis .venv docs; do
+    if [[ ! -L "$symlink" ]]; then
+        echo "⚠️ WARNING: Symlink missing: $symlink (should be auto-created)"
+    else
+        echo "✓ Symlink present: $symlink -> $(readlink $symlink)"
     fi
 done
 
-# Attempt to add missing components if needed
-if [[ $missing_components -eq 1 ]]; then
-    echo "🔧 Attempting to add missing components via sparse-checkout..."
-    git sparse-checkout add .genesis/ .claude/ scripts/ shared-python/ Makefile
+# Check shared files from manifest
+for file in Makefile pyproject.toml pytest.ini .envrc; do
+    if [[ ! -f "$file" ]]; then
+        echo "⚠️ WARNING: Shared file missing: $file (should be from manifest)"
+    else
+        echo "✓ Shared file present: $file"
+    fi
+done
 
-    # Re-verify after adding
-    for component in .genesis .claude scripts shared-python Makefile; do
-        if [[ ! -e "$component" ]]; then
-            echo "❌ FATAL: Failed to add $component - cannot proceed"
-            cd ../../
-            exit 1
-        fi
-    done
-fi
+# Count visible files (should be <30 for Pure Module Isolation)
+file_count=$(find . -type f -not -path "./.git/*" -not -path "./.*" | wc -l | xargs)
+echo "✓ File count: $file_count (target: <30 for AI safety)"
 ```
 
 ## STEP 6: Source Genesis Environment (REQUIRED)
+
+**Tool to use:** `Bash`
 
 ```bash
 # Load environment in worktree context
@@ -113,14 +158,102 @@ genesis version || {
 
 ## STEP 7: Genesis Project Health Check
 
+**Tool to use:** `Bash`
+
 ```bash
 # Verify project health in worktree
 genesis status || echo "⚠️ WARNING: Genesis project health issues detected"
 ```
 
+---
+
+## 🛑 CHECKPOINT: Verify Before Delegation
+
+**Before proceeding to STEP 8 (Debug Phase), verify YOU have completed:**
+
+**Environment Setup:**
+- [ ] Verified: `pwd` shows `.../genesis` (main repo)
+- [ ] Executed: `source .envrc` successfully
+- [ ] Executed: `genesis status` completed
+- [ ] Executed: `genesis clean` completed
+
+**Worktree Creation:**
+- [ ] Executed: `genesis worktree create fix-$1` successfully
+- [ ] Executed: `cd worktrees/fix-$1/` successfully
+- [ ] Verified: `pwd` shows `.../genesis/worktrees/fix-$1`
+- [ ] Verified: Pure Module Isolation setup complete
+- [ ] Executed: `source .envrc` in worktree successfully
+
+**Current State:**
+- [ ] You are currently in the worktree directory (not main repo)
+- [ ] Genesis CLI is available in worktree
+- [ ] Virtual environment is activated
+
+✅ **All checks passed?** → Proceed to STEP 8 and use Task tool
+❌ **Any checks failed?** → Fix the issue before delegation
+
+---
+
+## ═══════════════════════════════════════════════════
+## DEBUG PHASE - DELEGATION ALLOWED
+## ═══════════════════════════════════════════════════
+
+✅ **You may now use Task tool with specialized agents**
+✅ **Agents will work in the worktree you created above**
+
 ## STEP 8: Agent Workflow Implementation
 
-### Agent 1: Issue Analysis and Validation
+**IMPORTANT PREREQUISITES:**
+- You have completed STEPS 1-7 yourself (setup phase)
+- Worktree exists at `worktrees/fix-$1/`
+- You have verified the checkpoint criteria above
+- You are ready to delegate the debug work
+
+**How to delegate debugging:**
+
+You can either use a single agent for the complete debug workflow, or use specialized agents for each phase.
+
+### Option A: Single Agent for Complete Debug Workflow
+
+Use the lean-implementer agent for the entire debug workflow:
+
+```
+Use Task tool with lean-implementer agent:
+
+You are working in a Genesis worktree at: /Users/source_code/genesis/worktrees/fix-$1
+
+Debug and fix bug #$1 using systematic approach:
+
+**Context:**
+- Pure module isolation worktree already created
+- Environment already configured
+- Genesis CLI available
+
+**Debug Workflow:**
+1. Analyze bug report and identify root cause
+2. Create minimal regression test that demonstrates bug
+3. Implement simplest fix to make test pass
+4. Validate no scope creep or unrelated changes
+
+**Genesis Integration:**
+- Use shared_core.logger for logging
+- Use shared_core.errors for error handling
+- Follow existing code patterns
+
+**Success Criteria:**
+- Regression test created and passing
+- Minimal bug fix applied
+- All tests pass
+- No scope creep
+
+Run tests frequently to verify progress.
+```
+
+### Option B: Phased Agents for Detailed Debug Workflow
+
+Or use specialized agents for each phase:
+
+#### Agent 1: Issue Analysis and Validation
 
 Use the issue-analyst agent to validate bug report scope and atomicity:
 
@@ -153,7 +286,7 @@ Constraints:
 - Maintain lean development principles
 ```
 
-### Agent 2: Regression Test Creation (RED Phase)
+#### Agent 2: Regression Test Creation (RED Phase)
 
 Use the test-designer agent to create minimal regression test for bug:
 
@@ -188,7 +321,7 @@ Lean Principles:
 - Minimal test code to prove bug exists
 ```
 
-### Agent 3: Minimal Bug Fix Implementation (GREEN Phase)
+#### Agent 3: Minimal Bug Fix Implementation (GREEN Phase)
 
 Use the lean-implementer agent to implement absolute minimal fix for bug:
 
@@ -230,7 +363,7 @@ Success Criteria:
 - All existing tests continue to pass
 ```
 
-### Agent 4: Quality Validation and Gates
+#### Agent 4: Quality Validation and Gates
 
 Use the build-validator agent to validate bug fix quality and run Genesis quality gates:
 
@@ -272,7 +405,7 @@ Success Criteria:
 - Code meets Genesis quality standards
 ```
 
-### Agent 5: Scope Protection and Final Validation
+#### Agent 5: Scope Protection and Final Validation
 
 Use the scope-guardian agent to verify no scope creep and validate minimal change:
 
@@ -316,7 +449,18 @@ Success Criteria:
 - Lean development principles followed
 ```
 
+---
+
+## ═══════════════════════════════════════════════════
+## FINALIZATION PHASE - YOU MUST EXECUTE (NO DELEGATION)
+## ═══════════════════════════════════════════════════
+
+⚠️ **DO NOT delegate STEPS 9-11 to agents**
+⚠️ **YOU must run these commands directly using the Bash tool**
+
 ## STEP 9: Genesis Quality Gates (MANDATORY BEFORE COMMIT)
+
+**Tool to use:** `Bash`
 
 ```bash
 echo "🔍 Running Genesis quality gates..."
@@ -343,6 +487,8 @@ fi
 ```
 
 ## STEP 10: Genesis Commit and PR Creation
+
+**Tool to use:** `Bash`
 
 ```bash
 echo "📝 Creating Genesis commit..."
@@ -399,9 +545,11 @@ EOF
 
 ## STEP 11: Return to Main Repository (CRITICAL!)
 
+**Tool to use:** `Bash`
+
 ```bash
 # Navigate back to main repository
-cd ../../../ || {
+cd ../../ || {
     echo "❌ WARNING: Failed to return to main directory"
     echo "Current directory: $(pwd)"
 }
@@ -413,6 +561,42 @@ genesis status
 echo "✅ SUCCESS: Bug fix workflow completed for issue #$1"
 echo "📋 Next: Review PR, merge when ready, then run: /close $1"
 ```
+
+---
+
+## 🚫 COMMON MISTAKES TO AVOID
+
+**❌ WRONG - Delegating setup to agents:**
+```
+# This will NOT work - agents cannot create worktrees for you
+<invoke name="Task">
+  <parameter name="prompt">Run genesis clean and create worktree...</parameter>
+</invoke>
+```
+
+**✅ CORRECT - Executing setup yourself:**
+```
+# YOU run the setup commands with Bash tool
+<invoke name="Bash">
+  <parameter name="command">genesis clean</parameter>
+</invoke>
+<invoke name="Bash">
+  <parameter name="command">genesis worktree create fix-$1</parameter>
+</invoke>
+```
+
+**❌ WRONG - Using Task tool before worktree exists:**
+- Skipping STEPS 1-7 and jumping to STEP 8
+- Expecting agents to navigate to worktrees
+- Delegating environment setup
+
+**✅ CORRECT - Proper workflow:**
+1. Complete STEPS 1-7 yourself with Bash tool
+2. Verify checkpoint criteria
+3. THEN use Task tool in STEP 8
+4. Complete STEPS 9-11 yourself with Bash tool
+
+---
 
 ## Success Criteria
 - ✅ Bug reproduced with failing test

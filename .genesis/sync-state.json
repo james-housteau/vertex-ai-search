@@ -1,0 +1,112 @@
+{
+  "last_sync": "2025-09-13T12:42:04.740600+00:00",
+  "template_version": "v0.12.0",
+  "migrated_to_genesis_structure": true,
+  "files": {
+    "Dockerfile": {
+      "template_hash": "b871b3fe09587721479eb1902442eac7165078c91f8df99dd889f9400c03efbb",
+      "local_hash": "6184784215e1f8510fb2ea392ffb5d592692cae21d20786bf0bfa587ae0e00a2",
+      "modified": false
+    },
+    "docker-compose.yml": {
+      "template_hash": "26663664ee9d4fba367ebb732372e18b30b3bc89987d9744cd066d48a97bb076",
+      "local_hash": "983ede7d880796f3b431afc1913483317fb38625e915dfcccfdeea96eb7eaa1c",
+      "modified": false
+    },
+    ".claude/settings.json": {
+      "template_hash": "8870cd1df8ada22832d46c9c16c719752d97dc9c45ee8d3f94e57d8020e91e68",
+      "local_hash": "8870cd1df8ada22832d46c9c16c719752d97dc9c45ee8d3f94e57d8020e91e68",
+      "modified": false
+    },
+    "scripts/setup.sh": {
+      "template_hash": "111b0c4e9fa7ea5fecfa063c2ecdf95a02bb9343bffd751cb67856cfd0bf1e67",
+      "local_hash": "e8271543005e2e9e7fa840e02f23c26027e601a3c07cd516e5c65a14342e48e5",
+      "modified": false
+    },
+    ".claude/hooks/validate-bash-command.sh": {
+      "template_hash": "0598f4ef8b10427b7e08244e8ba5dab42434aa404d7252036607b5012b7c9943",
+      "local_hash": "0598f4ef8b10427b7e08244e8ba5dab42434aa404d7252036607b5012b7c9943",
+      "modified": false
+    },
+    ".claude/hooks/update-docs.py": {
+      "template_hash": "c0c90b508bffd70566342a0aa5836da4da8e78bbed737404ae573d3686ed66e9",
+      "local_hash": "c0c90b508bffd70566342a0aa5836da4da8e78bbed737404ae573d3686ed66e9",
+      "modified": false
+    },
+    ".claude/hooks/block-bypass-commands.md": {
+      "template_hash": "36f89ee5e33836b23db9efef9cc4603f6ea3f3f6a6eec655bd604e14f063d2ec",
+      "local_hash": "36f89ee5e33836b23db9efef9cc4603f6ea3f3f6a6eec655bd604e14f063d2ec",
+      "modified": false
+    },
+    ".claude/commands/update-docs.md": {
+      "template_hash": "0af1f8bc4bd91e3b7419d11ae30c74a59947c4ced040602ead0ced4ffdff9cfc",
+      "local_hash": "0af1f8bc4bd91e3b7419d11ae30c74a59947c4ced040602ead0ced4ffdff9cfc",
+      "modified": false
+    },
+    ".claude/commands/pr-merged.md": {
+      "template_hash": "fb982b295fdf7a953b9ae8265541250efd80c191a1327724132f35169c227d80",
+      "local_hash": "fb982b295fdf7a953b9ae8265541250efd80c191a1327724132f35169c227d80",
+      "modified": false
+    },
+    ".claude/commands/commit.md": {
+      "template_hash": "eda9a12b934751cab73448ccd99c5c9203572f7b4eeffe107a2cd201bb3966f7",
+      "local_hash": "eda9a12b934751cab73448ccd99c5c9203572f7b4eeffe107a2cd201bb3966f7",
+      "modified": false
+    },
+    ".claude/commands/execute-issue.md": {
+      "template_hash": "ad6e80b4adca721e56464d1f29a17e4d99ff3c332d5548ac8a0d98c4c8e09c9b",
+      "local_hash": "ad6e80b4adca721e56464d1f29a17e4d99ff3c332d5548ac8a0d98c4c8e09c9b",
+      "modified": false
+    },
+    ".claude/agents/python-expert-coder.md": {
+      "template_hash": "d96b2d20e2a9934983c03dab472a46d2dd57f5693f6ad35d42efdacfe487b754",
+      "local_hash": "d96b2d20e2a9934983c03dab472a46d2dd57f5693f6ad35d42efdacfe487b754",
+      "modified": false
+    },
+    ".claude/agents/ai-engineer-expert.md": {
+      "template_hash": "d3a40d570e4a8572a28f880796cf280ecb648a33a380fa5489ed5a88ccabd82d",
+      "local_hash": "d3a40d570e4a8572a28f880796cf280ecb648a33a380fa5489ed5a88ccabd82d",
+      "modified": false
+    },
+    ".claude/commands/audit-solution.md": {
+      "template_hash": "dc6283b9a43eaf7ae3ad6ae7384761ab0bfc34e02db48f0a9f3c702b4248f9cb",
+      "local_hash": "dc6283b9a43eaf7ae3ad6ae7384761ab0bfc34e02db48f0a9f3c702b4248f9cb",
+      "modified": false
+    },
+    ".gitignore": {
+      "template_hash": "805175b7bfc8ad3923934dab2dbd14205b6f323d9520549b767348fd0d24bd52",
+      "local_hash": "805175b7bfc8ad3923934dab2dbd14205b6f323d9520549b767348fd0d24bd52",
+      "modified": false
+    },
+    ".pre-commit-config.yaml": {
+      "template_hash": "24fc68e3209fb0447c8f0865aa1f28ca44e9976f634d78081c9bd6f02ca6a5f0",
+      "local_hash": "24fc68e3209fb0447c8f0865aa1f28ca44e9976f634d78081c9bd6f02ca6a5f0",
+      "modified": false
+    },
+    ".gitattributes": {
+      "template_hash": "1a1dbe176bc233b499d35a57db7513f2941c99ab9759f177830c9149be99005b",
+      "local_hash": "1a1dbe176bc233b499d35a57db7513f2941c99ab9759f177830c9149be99005b",
+      "modified": false
+    },
+    ".gitleaks.toml": {
+      "template_hash": "41cb2cea6d915d76f20a87a163038a07e5f0f2a4a22a66fcdd467f7b1eba8841",
+      "local_hash": "4473bca844b2d23c59ae6605a073309cb707786db25ee5ff6ff01b76082f18fa",
+      "modified": false
+    },
+    ".markdownlint.json": {
+      "template_hash": "dda20f139b99108f2d9449847cc748b8fb9b513fea9c554a67d9fcdc058ccbdd",
+      "local_hash": "dda20f139b99108f2d9449847cc748b8fb9b513fea9c554a67d9fcdc058ccbdd",
+      "modified": false
+    },
+    "scripts/container-setup.sh": {
+      "template_hash": "157611dd6d7f0f0a049ccbd87e00ee22dc39ed5933031d5d7366bec9d04c7008",
+      "local_hash": "88f305bdccde025f25ccc5e516648f778fd848c5baf143771154a0b552f83249",
+      "modified": false
+    },
+    "Makefile": {
+      "template_hash": "451ee806b8a4dd09277113fbe9f64ae09147fbcacc60a7ceedd2a71437e253b7",
+      "local_hash": "451ee806b8a4dd09277113fbe9f64ae09147fbcacc60a7ceedd2a71437e253b7",
+      "modified": false
+    }
+  }
+}

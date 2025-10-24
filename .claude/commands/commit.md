@@ -16,10 +16,13 @@ When the user asks you to commit changes, follow these steps:
 4. **Create a commit** using `genesis commit -m "<message>"`
 
 The Genesis smart commit system will automatically:
+- Run code formatting (black)
+- Run linting checks (ruff)
+- Run type checking (mypy)
 - Run pre-commit hooks
 - Validate file counts for AI safety
-- Run linting and formatting checks
 - Ensure tests pass
+- Detect secrets
 </instructions>
 
 <process>
