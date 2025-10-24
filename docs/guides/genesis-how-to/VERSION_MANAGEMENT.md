@@ -6,16 +6,16 @@ This  project uses Genesis's professional version management system for consiste
 
 ```bash
 # Show current version
-python .genesis/scripts/version.py show
+python .genesis/scripts/build/version.py show
 
 # Bump version types
-./.genesis/scripts/bump-version.sh patch  # 1.0.0 → 1.0.1
-./.genesis/scripts/bump-version.sh minor  # 1.0.0 → 1.1.0
-./.genesis/scripts/bump-version.sh major  # 1.0.0 → 2.0.0
+./.genesis/scripts/build/bump-version.sh patch  # 1.0.0 → 1.0.1
+./.genesis/scripts/build/bump-version.sh minor  # 1.0.0 → 1.1.0
+./.genesis/scripts/build/bump-version.sh major  # 1.0.0 → 2.0.0
 
 # Manual version operations
-python .genesis/scripts/version.py bump patch
-python .genesis/scripts/version.py sync
+python .genesis/scripts/build/version.py bump patch
+python .genesis/scripts/build/version.py sync
 ```
 
 ## System Overview
@@ -35,14 +35,14 @@ Genesis provides a **single source of truth** version management system that aut
 
 ### Automated Scripts
 
-**`.genesis/scripts/bump-version.sh`** - Intelligent version bumping
+**`.genesis/scripts/build/bump-version.sh`** - Intelligent version bumping
 - Detects project type (Python/Node.js)
 - Uses appropriate tooling (Poetry/NPM)
 - Validates git repository state
 - Syncs across all project files
 - Provides commit instructions
 
-**`.genesis/scripts/version.py`** - Python-based utilities
+**`.genesis/scripts/build/version.py`** - Python-based utilities
 - Cross-platform version operations
 - Semantic versioning support
 - File synchronization capabilities
@@ -57,7 +57,7 @@ Genesis provides a **single source of truth** version management system that aut
 git add -A && git commit -m "feat: add new feature"
 
 # Bump version automatically
-./.genesis/scripts/bump-version.sh minor
+./.genesis/scripts/build/bump-version.sh minor
 
 # Follow the provided instructions:
 git diff                                          # Review changes
@@ -70,14 +70,14 @@ git push && git push --tags                      # Push everything
 
 ```bash
 # Check current version
-python .genesis/scripts/version.py show
+python .genesis/scripts/build/version.py show
 
 # Bump specific version types
-python .genesis/scripts/version.py bump patch
-python .genesis/scripts/version.py bump minor --sync
+python .genesis/scripts/build/version.py bump patch
+python .genesis/scripts/build/version.py bump minor --sync
 
 # Sync version across files (without bumping)
-python .genesis/scripts/version.py sync
+python .genesis/scripts/build/version.py sync
 ```
 
 ### Project-Specific Commands
@@ -123,7 +123,7 @@ The system skips these directories to avoid modifying dependencies:
 
 ### Custom Sync Behavior
 
-You can customize which files get version updates by modifying the sync patterns in `.genesis/scripts/version.py`.
+You can customize which files get version updates by modifying the sync patterns in `.genesis/scripts/build/version.py`.
 
 ## Integration with Development Tools
 
@@ -137,7 +137,7 @@ repos:
     hooks:
       - id: version-consistency
         name: Version Consistency Check
-        entry: python .genesis/scripts/version.py show
+        entry: python .genesis/scripts/build/version.py show
         language: system
         pass_filenames: false
 ```
@@ -148,11 +148,11 @@ Use in continuous integration:
 ```yaml
 # Example GitHub Actions
 - name: Check Version Consistency
-  run: python .genesis/scripts/version.py show
+  run: python .genesis/scripts/build/version.py show
 
 - name: Validate Semantic Version
   run: |
-    VERSION=$(python .genesis/scripts/version.py show)
+    VERSION=$(python .genesis/scripts/build/version.py show)
     if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
       echo "Invalid semantic version: $VERSION"
       exit 1
@@ -182,13 +182,13 @@ Use in continuous integration:
 
 ```bash
 # Verbose version detection
-python .genesis/scripts/version.py show --help
+python .genesis/scripts/build/version.py show --help
 
 # Test version bumping without changes
-python .genesis/scripts/version.py bump patch --dry-run
+python .genesis/scripts/build/version.py bump patch --dry-run
 
 # Manual file sync with error details
-python .genesis/scripts/version.py sync --verbose
+python .genesis/scripts/build/version.py sync --verbose
 ```
 
 ### Recovery from Version Issues
@@ -199,10 +199,10 @@ python .genesis/scripts/version.py sync --verbose
 
 
 # Sync to all other files
-python .genesis/scripts/version.py sync --version 1.0.0
+python .genesis/scripts/build/version.py sync --version 1.0.0
 
 # Verify consistency
-python .genesis/scripts/version.py show
+python .genesis/scripts/build/version.py show
 ```
 
 ## Customization
@@ -211,8 +211,8 @@ python .genesis/scripts/version.py show
 
 The Genesis version management system is designed to be customizable:
 
-1. **Modify `.genesis/scripts/version.py`** for custom version file formats
-2. **Update `.genesis/scripts/bump-version.sh`** for project-specific workflows
+1. **Modify `.genesis/scripts/build/version.py`** for custom version file formats
+2. **Update `.genesis/scripts/build/bump-version.sh`** for project-specific workflows
 3. **Add version validation** in your project's pre-commit hooks
 
 ### Version File Patterns
@@ -220,7 +220,7 @@ The Genesis version management system is designed to be customizable:
 To add support for additional version files:
 
 ```python
-# In .genesis/scripts/version.py, modify sync_version_to_files()
+# In .genesis/scripts/build/version.py, modify sync_version_to_files()
 
 # Add custom version file patterns
 custom_version_files = project_path.glob("**/version.")
@@ -260,11 +260,11 @@ BUMP_TYPE=${1:-patch}
 make test
 
 # Bump version
-./.genesis/scripts/bump-version.sh $BUMP_TYPE
+./.genesis/scripts/build/bump-version.sh $BUMP_TYPE
 
 # Follow bump instructions automatically
 git add -A
-NEW_VERSION=$(python .genesis/scripts/version.py show)
+NEW_VERSION=$(python .genesis/scripts/build/version.py show)
 git commit -m "bump: version $NEW_VERSION"
 git tag "v$NEW_VERSION"
 git push && git push --tags

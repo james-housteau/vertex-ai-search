@@ -1,0 +1,152 @@
+# Genesis Universal Pre-commit Configuration
+# Ensures code quality and consistency before commits across all project types
+
+repos:
+  # Branch protection - prevents commits to main branch
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      # CRITICAL: Block direct commits to main branch
+      - id: no-commit-to-branch
+        args: ['--branch', 'main', '--branch', 'master']
+        name: 🔒 Main branch protection
+        description: |
+          Direct commits to main/master branches are blocked for safety.
+
+          To commit your changes:
+          1. Create a feature branch: git checkout -b feature/your-change
+          2. Make your commits on the feature branch
+          3. Use pull requests to merge to main
+
+          This protects the main branch from accidental commits.
+
+      # Essential file validation
+      - id: check-yaml
+        exclude: ^(docker-compose\.yml|\.github/workflows/|modules/.*\.yaml|monitoring/.*\.yaml|deploy/.*\.yml)
+      - id: check-json
+      - id: check-toml
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-ast
+        files: \.py$
+      - id: forbid-new-submodules
+      - id: check-executables-have-shebangs
+        files: \.(py|sh|bash)$
+      - id: fix-byte-order-marker
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: detect-private-key
+      - id: debug-statements
+      - id: check-merge-conflict
+
+  # TODO/FIXME/HACK/ignore detection - prevents placeholder code and ignored checks from reaching main
+  - repo: local
+    hooks:
+      - id: no-todos
+        name: Block TODO/FIXME/HACK/ignore items
+        description: Prevents TODO, FIXME, HACK comments and ignore directives from being committed
+        entry: 'bash -c ''for file in "$@"; do if grep -E "(TODO|FIXME|HACK|XXX|# noqa|# type: ignore|# pylint: disable|# flake8: noqa|# mypy: ignore|# ruff: noqa|# pragma: no cover)" "$file" > /dev/null 2>&1; then echo "❌ Found TODO/FIXME/HACK/ignore items in $file. Please resolve before committing."; grep -n -E "(TODO|FIXME|HACK|XXX|# noqa|# type: ignore|# pylint: disable|# flake8: noqa|# mypy: ignore|# ruff: noqa|# pragma: no cover)" "$file"; exit 1; fi; done'' --'
+        language: system
+        files: \.(py|ts|tsx|js|jsx|go|tf)$
+        exclude: "test.*|.*_test\\.(py|ts|tsx|js|jsx|go)$|\\.git/|node_modules/|\\.venv/|\\.next/|dist/|build/|__pycache__/"
+
+  # Essential security - secret detection
+  # Option 1: Gitleaks (simple, no baseline support)
+  - repo: https://github.com/zricethezav/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+
+  # Option 2: detect-secrets (developer-friendly with baseline support)
+  # Uncomment and comment out gitleaks if you prefer baseline-managed secret detection:
+  # - repo: https://github.com/Yelp/detect-secrets
+  #   rev: v1.4.0
+  #   hooks:
+  #     - id: detect-secrets
+  #       args: [--baseline, .secrets.baseline]
+
+  # Python specific hooks (when PROJECT_TYPE includes python)
+
+
+  # TypeScript/JavaScript specific hooks (when PROJECT_TYPE includes typescript/javascript)
+
+
+  # Go specific hooks (when PROJECT_TYPE includes go)
+
+
+  # Terraform specific hooks (when PROJECT_TYPE includes terraform)
+
+
+  # Genesis quality gates
+  - repo: local
+    hooks:
+      - id: no-hardcoded-values
+        name: Block hardcoded values
+        description: Prevents hardcoded configuration values from being committed
+        entry: .genesis/scripts/find-hardcoded-values.sh
+        language: script
+        files: \.(py|ts|tsx|js|jsx|go)$
+        pass_filenames: false
+
+      - id: no-dangerous-defaults
+        name: Block dangerous defaults
+        description: Prevents functions with dangerous default values
+        entry: .genesis/scripts/check-variable-defaults.sh
+        language: script
+        files: \.(py|ts|tsx|js|jsx|go)$
+        pass_filenames: false
+
+      - id: no-ai-signatures
+        name: Block AI attribution signatures
+        description: Prevents AI/Claude attribution signatures from being committed
+        entry: .genesis/scripts/check-ai-signatures.sh
+        language: script
+        files: \.(py|ts|tsx|js|jsx|go|md|txt|yml|yaml|json)$
+        pass_filenames: false
+
+
+
+      - id: validate-components
+        name: Validate AI-safe component structure
+        description: Ensures components stay within AI safety file limits
+        entry: .genesis/scripts/validate-components.sh
+        language: script
+        files: \..*$
+        pass_filenames: false
+
+      - id: genesis-file-organization
+        name: Genesis File Organization Check
+        entry: .genesis/scripts/check-file-organization.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+
+# Global settings
+default_language_version:
+  node: "20.19.5"
+
+# Exclude patterns
+exclude: |
+  (?x)^(
+    \.git/.*|
+    \.devcontainer/.*|
+    \.vscode/.*|
+    \.idea/.*|
+    build/.*|
+    tmp/.*|
+    \.venv/.*|
+    venv/.*|
+    __pycache__/.*|
+    \.pytest_cache/.*|
+    \.mypy_cache/.*|
+    htmlcov/.*|
+    node_modules/.*|
+    \.next/.*|
+    dist/.*|
+    .*\.bak|
+    .*\.backup|
+    .*-backup-.*
+  )$
+
+# Stop on first failure to avoid running unnecessary checks
+fail_fast: true

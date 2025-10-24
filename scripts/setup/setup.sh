@@ -4,8 +4,8 @@ set -euo pipefail
 
 echo "🚀 Setting up test development environment..."
 
-# Change to project root directory (parent of scripts/)
-cd "$(dirname "$0")/.."
+# Change to project root directory (parent of scripts/setup/)
+cd "$(dirname "$0")/../.."
 
 # Check if we're in the right directory
 if [[ ! -f "pyproject.toml" ]]; then

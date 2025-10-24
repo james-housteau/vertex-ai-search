@@ -1,0 +1,242 @@
+# compose.yaml — Universal Hardened Dev Container for Genesis Projects
+# Usage examples:
+#   docker compose --profile agent up -d
+#   docker compose --profile api up -d
+#   docker compose --profile ts  up -d
+#   docker compose logs -f agent
+#   docker compose exec agent bash
+
+name: vertex-ai-search-dev
+
+# Common service settings via anchors
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile
+    # Build args are non-sensitive; secrets handled below
+    args:
+      NODE_MAJOR: 20
+      POETRY_VERSION: 1.8.3
+    secrets:
+      # Provides GITHUB_TOKEN to the Dockerfile via BuildKit secret mount
+      - github_token
+  image: vertex-ai-search/dev:latest
+  user: "1000:1000"
+  working_dir: /workspace
+  # Named volume for isolated workspace
+  volumes:
+    - workspace:/workspace
+    # Persist caches to speed up installs
+    - pip-cache:/home/developer/.cache/pip
+    - poetry-cache:/home/developer/.cache/pypoetry
+    - node-cache:/home/developer/.cache/node
+    - direnv-config:/home/developer/.config/direnv
+  environment:
+    # Keep HOME sane; Poetry creates .venv in project by default
+    HOME: /home/developer
+    PYTHONUNBUFFERED: "1"
+    PYTHONPATH: /workspace
+    LOG_LEVEL: info
+    ENABLE_GIT: "true"
+  # Security hardening
+  read_only: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  ulimits:
+    nofile: 4096
+    nproc: 1024
+  tmpfs:
+    - /tmp:rw,nosuid,nodev,noexec,size=64m
+  # If you truly need a writable HOME, replace tmpfs with a named volume
+  # and remove read_only or add additional bind mounts as necessary.
+  healthcheck:
+    test: ["CMD", "bash", "-lc", "command -v python >/dev/null && command -v node >/dev/null && [ -d /workspace ]"]
+    interval: 30s
+    timeout: 5s
+    start_period: 10s
+    retries: 3
+  # Keep container running; override per-profile as needed
+  command: ["bash", "-lc", "tail -f /dev/null"]
+
+services:
+  # Multiple profiles available. Pick one profile at a time.
+  api:
+    <<: *common
+    container_name: vertex-ai-search-api
+    profiles: ["api"]
+    environment:
+      # Keep HOME sane; Poetry creates .venv in project by default
+      HOME: /home/developer
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: /workspace
+      LOG_LEVEL: info
+      ENABLE_GIT: "true"
+      PROJECT_NAME: vertex-ai-search
+      PROJECT_TYPE: python-api
+      PROJECT_MODE: development
+    ports:
+      - "8829:8829"   # Hash-generated unique port
+    command: ["bash", "-lc", "poetry run uvicorn vertex_ai_search.main:app --host 0.0.0.0 --port 8829 --reload"]
+
+  ts:
+    <<: *common
+    container_name: vertex-ai-search-ts
+    profiles: ["ts"]
+    environment:
+      # Keep HOME sane; Poetry creates .venv in project by default
+      HOME: /home/developer
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: /workspace
+      LOG_LEVEL: info
+      ENABLE_GIT: "true"
+      PROJECT_NAME: vertex-ai-search
+      PROJECT_TYPE: typescript-service
+      PROJECT_MODE: development
+    ports:
+      - ":"   # Hash-generated unique TypeScript dev port
+    command: ["bash", "-lc", "npm ci && npm run dev -- --host"]
+
+  # Optional: writable variant for heavy local workflows (disables read_only)
+  dev-write:
+    <<: *common
+    container_name: vertex-ai-search-dev-write
+    profiles: ["write"]
+    read_only: false
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=64m
+
+  # Professional Agent: Docker Native Isolation
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - github_token
+    image: vertex-ai-search/agent:latest
+    container_name: vertex-ai-search-agent
+    profiles: ["agent"]
+
+    # Non-root user
+    user: "1000:1000"
+
+    # CRITICAL: Read-only root filesystem
+    read_only: true
+
+    # ONLY workspace is writable
+    volumes:
+      - workspace:/workspace:rw
+
+    # Temporary filesystems for runtime needs
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=100m
+      - /run:rw,noexec,nosuid,nodev,size=10m
+      - /var/tmp:rw,noexec,nosuid,nodev,size=50m
+
+    environment:
+      # Force everything to workspace
+      HOME: /workspace
+      USER: developer
+      SHELL: /bin/bash
+
+      # Development paths
+      PATH: /workspace/.local/bin:/workspace/.npm-global/bin:/workspace/.venv/bin:/usr/local/bin:/usr/bin:/bin
+      PYTHONPATH: /workspace
+      PYTHONUSERBASE: /workspace/.local
+
+      # Package managers
+      npm_config_prefix: /workspace/.npm-global
+      npm_config_cache: /workspace/.cache/npm
+      POETRY_VIRTUALENVS_PATH: /workspace/.venv
+      POETRY_CACHE_DIR: /workspace/.cache/poetry
+      PIP_CACHE_DIR: /workspace/.cache/pip
+
+      # Indicators for scripts
+      AGENT_JAILED: "true"
+      WORKSPACE_LOCKED: "true"
+
+      # Development settings
+      PYTHONUNBUFFERED: "1"
+      NODE_ENV: development
+      PROJECT_NAME: vertex-ai-search
+      PROJECT_TYPE:
+      PROJECT_MODE: development
+      LOG_LEVEL: info
+      ENABLE_GIT: "true"
+
+    # Security hardening
+    security_opt:
+      - no-new-privileges:true
+      - apparmor:docker-default
+
+    # Drop ALL capabilities, add back only essentials
+    cap_drop:
+      - ALL
+    cap_add:
+      # File operations within workspace
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - FSETID
+      - SETGID
+      - SETUID
+
+    # Resource limits (adjust based on needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+          pids: 500
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # Process limits
+    ulimits:
+      nproc:
+        soft: 256
+        hard: 512
+      nofile:
+        soft: 1024
+        hard: 4096
+      core:
+        soft: 0
+        hard: 0
+      memlock:
+        soft: 67108864
+        hard: 67108864
+
+    # Keep container running for agent access
+    command: ["tail", "-f", "/dev/null"]
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Logging
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
+
+# Build/run secrets (DON'T commit the file with the token)
+secrets:
+  github_token:
+    file: .secrets/github_token  # create this file with your token (contents = token)
+
+volumes:
+  workspace:
+  pip-cache:
+  poetry-cache:
+  node-cache:
+  direnv-config:
+
+# Unique network per project to prevent conflicts
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: "10.124.0.0/24"

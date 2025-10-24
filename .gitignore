@@ -81,3 +81,7 @@ scratch/
 # Local environment
 .env.local
 .env.*.local
+.coverage
+.envrc
+*.bak
+/worktrees

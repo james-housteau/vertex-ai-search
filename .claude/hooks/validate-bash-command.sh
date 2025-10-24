@@ -4,15 +4,16 @@
 
 set -euo pipefail
 
-# Establish stable paths using CLAUDE_PROJECT_DIR if available
+# Establish stable paths using CLAUDE_PROJECT_DIR (required for hook execution)
+# Claude Code always sets CLAUDE_PROJECT_DIR when running hooks
 if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
-    # Use Claude's project directory for stable paths
     PROJECT_ROOT="$CLAUDE_PROJECT_DIR"
     HOOK_DIR="$CLAUDE_PROJECT_DIR/.claude/hooks"
 else
-    # Fallback to finding hook's directory if CLAUDE_PROJECT_DIR not set
-    HOOK_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-    PROJECT_ROOT="$( cd "$HOOK_DIR/../.." && pwd )"
+    # Simple fallback without subshells (avoid posix_spawn issues in sandboxed environments)
+    # This path should match your actual repo location
+    PROJECT_ROOT="${PROJECT_ROOT:-/Users/source_code/genesis}"
+    HOOK_DIR="$PROJECT_ROOT/.claude/hooks"
 fi
 
 # Debug output (can be commented out in production)
@@ -23,7 +24,8 @@ fi
 input=$(cat)
 
 # Extract command from JSON input
-command=$(echo "$input" | python3 -c "
+# Use full path to python3 to avoid PATH issues in sandboxed environment
+command=$(echo "$input" | /usr/bin/python3 -c "
 import json, sys
 try:
     data = json.load(sys.stdin)

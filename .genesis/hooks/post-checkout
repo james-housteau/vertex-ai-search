@@ -19,7 +19,7 @@ if [ "$branch_checkout" = "1" ]; then
     else
         repo_root=$(git rev-parse --show-toplevel)
     fi
-    script_path="$repo_root/.genesis/scripts/check-file-organization.sh"
+    script_path="$repo_root/.genesis/scripts/validation/check-file-organization.sh"
 
     if [ -f "$script_path" ]; then
         cd "$repo_root" && "$script_path"

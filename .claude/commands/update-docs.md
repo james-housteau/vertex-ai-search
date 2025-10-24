@@ -39,7 +39,7 @@ find . -name "*.md" -type f | grep -E "(README|DOCS?|docs?|GUIDE|ARCHITECTURE|AP
 find . -name "*.rst" -o -name "*.txt" | grep -iE "readme|install|guide"
 
 # Look for inline documentation
-grep -r "TODO.*doc" . --include="*.py" --include="*.js" --include="*.ts" 2>/dev/null | head -20
+grep -r "TODO.*doc" . --focus="*.py" --focus="*.js" --focus="*.ts" 2>/dev/null | head -20
 ```
 
 ## 3. Code-Documentation Alignment

@@ -1,0 +1,30 @@
+{
+  "project_type": "cli-tool",
+  "genesis_version": null,
+  "components": {
+    "claude_agents": 7,
+    "claude_commands": 6,
+    "claude_hooks": 1,
+    "genesis_scripts": 7
+  },
+  "sync_categories": {
+    "always_sync": [
+      ".genesis/scripts/",
+      "scripts/validate-bootstrap.sh",
+      ".claude/",
+      "scripts/check-file-organization.sh"
+    ],
+    "if_unchanged": [
+      "Makefile",
+      ".gitignore",
+      ".pre-commit-config.yaml"
+    ],
+    "never_sync": [
+      ".envrc",
+      "README.md",
+      "CLAUDE.md",
+      "pyproject.toml",
+      "package.json"
+    ]
+  }
+}
