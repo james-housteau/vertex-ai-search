@@ -18,29 +18,37 @@ The system processes 1600 HTML documents from the Natural Questions dataset to t
 3. **Each module must be <60 files** - AI-safe development constraint
 4. **Each module builds independently** - `cd module && make build` must work in isolation
 
-## Available Modules (12 Total)
+## Available Modules (19 Total)
 
 Each module has its own `Makefile`, `pyproject.toml`, tests, and dependencies:
 
 ### Stream 1: Data Pipeline
-- **`nq-downloader/`** - Download Natural Questions dataset (97.10% coverage)
-- **`html-extractor/`** - Extract content from HTML documents (93% coverage)
-- **`filename-sanitizer/`** - Cross-platform filename handling (94% coverage)
+- **`nq-downloader/`** - Download Natural Questions dataset (97% coverage)
+- **`html-extractor/`** - Extract content from HTML documents (92% coverage)
+- **`filename-sanitizer/`** - Cross-platform filename handling (95% coverage)
 
 ### Stream 2: Infrastructure
-- **`config-manager/`** - Configuration management (94.77% coverage)
-- **`cli-orchestrator/`** - CLI framework integration (86% coverage)
+- **`config-manager/`** - Configuration management (97% coverage)
+- **`cli-orchestrator/`** - CLI framework integration (80% coverage)
 
 ### Stream 3: Cloud Services
-- **`gcs-manager/`** - Google Cloud Storage operations (97.10% coverage)
-- **`document-uploader/`** - Parallel file upload with retry (94.15% coverage)
-- **`vertex-datastore/`** - Vertex AI data store integration (95.54% coverage)
+- **`gcs-manager/`** - Google Cloud Storage operations (97% coverage)
+- **`document-uploader/`** - Parallel file upload with retry (94% coverage)
+- **`vertex-datastore/`** - Vertex AI data store integration (88% coverage)
 
 ### Stream 4: Testing & Metrics
-- **`search-engine/`** - Vertex AI search functionality testing
-- **`answer-service/`** - Conversation and answer generation testing
-- **`metrics-collector/`** - Performance metrics collection
-- **`load-tester/`** - End-to-end load testing orchestration
+- **`search-engine/`** - Vertex AI search functionality testing (86% coverage)
+- **`answer-service/`** - Conversation and answer generation testing (98% coverage)
+- **`metrics-collector/`** - Performance metrics collection (98% coverage)
+- **`load-tester/`** - End-to-end load testing orchestration (97% coverage)
+
+### Stream 5: Vector Search Pipeline
+- **`shared-contracts/`** - Shared Pydantic models (TextChunk, Vector768, SearchMatch) (100% coverage)
+- **`html-chunker/`** - Chunk HTML into 450-token segments with 80-token overlap (100% coverage)
+- **`embedding-generator/`** - Generate text-embedding-004 vectors from chunks (94% coverage)
+- **`vector-index-prep/`** - Prepare JSONL for Vertex AI Vector Search index (100% coverage)
+- **`vector-search-index/`** - Manage Vertex AI Vector Search indexes (100% coverage)
+- **`vector-query-client/`** - Execute fast ANN queries (<120ms p95) (100% coverage)
 
 ## Development Workflow
 
@@ -137,6 +145,7 @@ Modules connect through well-defined APIs, not compilation dependencies:
 2. **Configuration**: `config-manager` provides settings to all services
 3. **Cloud Operations**: `gcs-manager` → `document-uploader` → `vertex-datastore`
 4. **Testing Pipeline**: `search-engine` + `answer-service` → `metrics-collector` → `load-tester`
+5. **Vector Search Pipeline**: `html-chunker` → `embedding-generator` → `vector-index-prep` → `vector-search-index` → `vector-query-client`
 
 ## Important Development Notes
 
@@ -199,15 +208,30 @@ make quality-all         # Quality check everything
 
 ## Module Selection Guide
 
+### Data & Processing
 - **Need to download Natural Questions dataset?** → `nq-downloader/`
 - **Need to process HTML content?** → `html-extractor/`
+- **Need to chunk HTML into tokens?** → `html-chunker/`
+- **Need to generate embeddings?** → `embedding-generator/`
+- **Need filename sanitization?** → `filename-sanitizer/`
+
+### Cloud & Storage
 - **Need to manage GCS buckets/objects?** → `gcs-manager/`
 - **Need to upload documents to GCS?** → `document-uploader/`
 - **Need to manage Vertex AI data stores?** → `vertex-datastore/`
+
+### Vector Search
+- **Need shared type contracts?** → `shared-contracts/`
+- **Need to prepare vector index data?** → `vector-index-prep/`
+- **Need to manage vector search indexes?** → `vector-search-index/`
+- **Need to query vector search?** → `vector-query-client/`
+
+### Testing & Metrics
 - **Need to test search functionality?** → `search-engine/`
 - **Need to test conversation/answers?** → `answer-service/`
 - **Need to collect performance metrics?** → `metrics-collector/`
 - **Need to run load tests?** → `load-tester/`
+
+### Infrastructure
 - **Need configuration management?** → `config-manager/`
 - **Need CLI orchestration?** → `cli-orchestrator/`
-- **Need filename sanitization?** → `filename-sanitizer/`
