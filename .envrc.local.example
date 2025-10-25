@@ -1,0 +1,31 @@
+# .envrc.local.example
+# Copy this to .envrc.local and customize with your settings
+# .envrc.local is gitignored for security
+
+# =============================================================================
+# GCP Project Configuration
+# =============================================================================
+export GOOGLE_CLOUD_PROJECT="your-actual-gcp-project-id"
+
+# =============================================================================
+# Authentication (choose one)
+# =============================================================================
+# Option 1: Service Account Key (recommended for production)
+# export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your-service-account-key.json"
+
+# Option 2: Application Default Credentials (recommended for development)
+# Run: gcloud auth application-default login
+# Then leave GOOGLE_APPLICATION_CREDENTIALS unset
+
+# =============================================================================
+# Vertex AI Configuration (optional)
+# =============================================================================
+# export VERTEX_AI_REGION="us-central1"
+# export VECTOR_INDEX_ENDPOINT_ID="1234567890123456789"
+
+# =============================================================================
+# Performance Tuning (optional)
+# =============================================================================
+# export EMBEDDING_BATCH_SIZE="100"
+# export CACHE_TTL="600"
+# export CACHE_MAXSIZE="2000"

@@ -83,7 +83,7 @@ scratch/
 .env.local
 .env.*.local
 .coverage
-.envrc
+# .envrc files are committed, but .envrc.local is ignored (see line 288)
 *.bak
 /worktrees
 
@@ -285,3 +285,4 @@ logs/
 package-lock.json
 yarn.lock
 Pipfile.lock
+.envrc.local
