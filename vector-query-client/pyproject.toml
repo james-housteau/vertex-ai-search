@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "vector-query-client"
+version = "0.1.0"
+description = "Execute vector similarity search queries against Vertex AI Vector Search"
+authors = ["Genesis <genesis@local>"]
+readme = "README.md"
+packages = [{include = "vector_query_client", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+google-cloud-aiplatform = "^1.38.0"
+pydantic = "^2.5.0"
+shared-contracts = {path = "../shared-contracts", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+black = "^23.11.0"
+isort = "^5.12.0"
+mypy = "^1.7.1"
+ruff = "^0.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["vector_query_client"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+pythonpath = ["src"]
+addopts = [
+    "--cov=vector_query_client",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-fail-under=80"
+]
