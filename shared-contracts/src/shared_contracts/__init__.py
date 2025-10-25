@@ -10,9 +10,9 @@ from shared_contracts.models import (
 
 __version__ = "0.1.0"
 __all__ = [
+    "DEFAULT_EMBEDDING_MODEL",
+    "EMBEDDING_DIMENSIONS",
+    "SearchMatch",
     "TextChunk",
     "Vector768",
-    "SearchMatch",
-    "EMBEDDING_DIMENSIONS",
-    "DEFAULT_EMBEDDING_MODEL",
 ]
