@@ -25,7 +25,7 @@ include = '\.pyi?$'
 [tool.ruff]
 target-version = "py312"
 line-length = 88
-extend-exclude = [".genesis"]
+extend-exclude = [".genesis", "experiments"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "B", "UP", "C90", "RUF"]

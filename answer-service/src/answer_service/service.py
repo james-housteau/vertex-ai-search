@@ -10,7 +10,9 @@ try:
     GOOGLE_CLOUD_AVAILABLE = True
 except ImportError:
     # Mock classes for testing when Google Cloud is not available
-    ConversationalSearchServiceClient = type("ConversationalSearchServiceClient", (), {})
+    ConversationalSearchServiceClient = type(
+        "ConversationalSearchServiceClient", (), {}
+    )
     GoogleCloudError = type("GoogleCloudError", (Exception,), {})
     GOOGLE_CLOUD_AVAILABLE = False
 
