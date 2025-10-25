@@ -546,6 +546,169 @@ print(f"P99 latency: {statistics.quantiles(latencies, n=100)[98]:.1f}ms")
 - Large indexes can take 60+ minutes to deploy
 - Check Vertex AI console for deployment status
 
+## Production API Usage (search-api)
+
+The **search-api** module provides a production-ready FastAPI service that wraps the vector search pipeline with caching and streaming capabilities.
+
+### Features
+
+- **GET /search**: Fast vector similarity search with in-memory caching
+- **POST /summarize**: Streaming Gemini Flash summaries via Server-Sent Events (SSE)
+- **GET /health**: Health check endpoint for load balancers
+
+### Setup
+
+```bash
+cd search-api
+make setup
+make test
+```
+
+### Running Locally
+
+```python
+# Start the API server
+poetry run uvicorn search_api.api:app --reload --port 8000
+
+# The API will be available at http://localhost:8000
+# Interactive docs at http://localhost:8000/docs
+```
+
+### Using the Search Endpoint
+
+```bash
+# Simple search query
+curl "http://localhost:8000/search?q=machine+learning&k=10"
+
+# Response (first call - cache miss):
+{
+  "results": [
+    {
+      "chunk_id": "doc_123_chunk_5",
+      "text": "Machine learning is a subset of artificial intelligence...",
+      "score": 0.92,
+      "metadata": {"source": "wikipedia", "category": "AI"}
+    },
+    ...
+  ],
+  "latency_ms": 85.3,
+  "cached": false,
+  "timestamp": "2025-10-25T12:34:56.789Z"
+}
+
+# Same query again (cache hit - <10ms):
+{
+  "results": [...],
+  "latency_ms": 2.1,
+  "cached": true,
+  "timestamp": "2025-10-25T12:35:01.234Z"
+}
+```
+
+### Using the Summarize Endpoint
+
+```bash
+# Stream a summary via Server-Sent Events
+curl -X POST "http://localhost:8000/summarize" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Your long document text here...",
+    "max_tokens": 150
+  }' \
+  -N
+
+# Response (SSE stream):
+data: {"text": "Machine", "done": false}
+data: {"text": " learning", "done": false}
+data: {"text": " is", "done": false}
+...
+data: {"text": "", "done": true}
+```
+
+### Python Client Example
+
+```python
+import httpx
+from typing import List
+from shared_contracts.models import SearchMatch
+
+# Search with caching
+def search_api(query: str, top_k: int = 10) -> List[SearchMatch]:
+    response = httpx.get(
+        "http://localhost:8000/search",
+        params={"q": query, "k": top_k},
+        timeout=30.0,
+    )
+    response.raise_for_status()
+    data = response.json()
+
+    print(f"Latency: {data['latency_ms']:.1f}ms (cached: {data['cached']})")
+    return [SearchMatch(**r) for r in data["results"]]
+
+# Streaming summarization
+def summarize_stream(content: str, max_tokens: int = 150):
+    with httpx.stream(
+        "POST",
+        "http://localhost:8000/summarize",
+        json={"content": content, "max_tokens": max_tokens},
+        timeout=60.0,
+    ) as response:
+        for line in response.iter_lines():
+            if line.startswith("data: "):
+                chunk = json.loads(line[6:])
+                if not chunk["done"]:
+                    print(chunk["text"], end="", flush=True)
+        print()  # newline
+
+# Example usage
+results = search_api("quantum computing", top_k=5)
+for match in results:
+    print(f"Score: {match.score:.2f} - {match.text[:100]}...")
+```
+
+### Deployment to Cloud Run
+
+```bash
+# Build and deploy
+cd search-api
+gcloud run deploy search-api \
+  --source . \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --memory 2Gi \
+  --cpu 2 \
+  --timeout 300 \
+  --set-env-vars GOOGLE_CLOUD_PROJECT=your-project-id
+
+# Get the service URL
+gcloud run services describe search-api \
+  --region us-central1 \
+  --format 'value(status.url)'
+```
+
+### Performance Characteristics
+
+- **Cache hits**: <10ms latency (in-memory TTLCache)
+- **Cache misses**: <120ms latency (p95 target via vector-query-client)
+- **Cache TTL**: 300 seconds (configurable)
+- **Cache size**: 1000 entries (configurable)
+- **Concurrent requests**: Async FastAPI handles 100+ concurrent requests
+
+### Monitoring
+
+```python
+# Health check
+response = httpx.get("http://localhost:8000/health")
+print(response.json())
+# {"status": "healthy", "service": "search-api", "timestamp": "..."}
+
+# Monitor cache effectiveness
+# Add to your application metrics:
+# - cache_hit_rate = cache_hits / total_requests
+# - avg_latency_cache_hit vs avg_latency_cache_miss
+```
+
 ## Next Steps
 
 1. **Integrate with existing search**: Combine vector search with keyword search for hybrid results
@@ -564,4 +727,4 @@ print(f"P99 latency: {statistics.quantiles(latencies, n=100)[98]:.1f}ms")
 ---
 
 **Last Updated**: 2025-10-25
-**Module Versions**: html-chunker v0.1.0, embedding-generator v0.1.0, vector-index-prep v0.1.0, vector-search-index v0.1.0, vector-query-client v0.1.0
+**Module Versions**: html-chunker v0.1.0, embedding-generator v0.1.0, vector-index-prep v0.1.0, vector-search-index v0.1.0, vector-query-client v0.1.0, search-api v0.1.0

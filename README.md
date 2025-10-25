@@ -30,6 +30,17 @@ Each module is self-contained with its own `pyproject.toml`, `Makefile`, tests, 
 - **`metrics-collector/`** - Performance metrics collection
 - **`load-tester/`** - End-to-end load testing orchestration
 
+#### Stream 5: Vector Search Pipeline
+- **`shared-contracts/`** - Shared Pydantic models (TextChunk, Vector768, SearchMatch) (100% coverage)
+- **`html-chunker/`** - Chunk HTML into 450-token segments with 80-token overlap (100% coverage)
+- **`embedding-generator/`** - Generate text-embedding-004 vectors (768D) (94% coverage)
+- **`vector-index-prep/`** - Prepare JSONL for Vertex AI Vector Search (100% coverage)
+- **`vector-search-index/`** - Manage Vertex AI Vector Search indexes (ScaNN) (100% coverage)
+- **`vector-query-client/`** - Execute fast ANN queries (<120ms p95 target) (100% coverage)
+
+#### Stream 6: Production API
+- **`search-api/`** - FastAPI service with /search, /summarize, /health endpoints (88% coverage)
+
 ## Module Development (Pure Module Isolation)
 
 ### Working with Individual Modules
@@ -82,6 +93,8 @@ Modules connect through well-defined APIs, not compilation:
 2. **Configuration**: `config-manager` provides settings
 3. **Cloud Operations**: `gcs-manager` → `document-uploader` → `vertex-datastore`
 4. **Testing**: `search-engine` + `answer-service` → `metrics-collector` → `load-tester`
+5. **Vector Search Pipeline**: `html-chunker` → `embedding-generator` → `vector-index-prep` → `vector-search-index`
+6. **Production API**: `search-api` (uses `vector-query-client` + `shared-contracts`)
 
 ## Convenience Commands (Optional)
 
@@ -150,11 +163,23 @@ The complete system provides:
 - **1600 HTML document processing** with Natural Questions dataset
 - **Google Cloud Storage integration** with lifecycle management
 - **Vertex AI Agent Builder** search and conversation testing
+- **Vector Search Pipeline** for sub-120ms p95 latency queries
+- **Production Search API** with in-memory caching and SSE streaming
 - **Performance metrics collection** with statistical analysis
 - **Load testing** with concurrent user simulation
 - **End-to-end testing framework** for production validation
 
 All modules maintain 80%+ test coverage and pass all quality gates independently.
+
+### Low-Latency Vector Search (Phase 3 Complete)
+
+The search-api module provides a production-ready FastAPI service:
+- **GET /search**: Vector similarity search with <120ms p95 latency
+- **POST /summarize**: Streaming Gemini Flash summaries via SSE
+- **In-memory caching**: Sub-10ms cache hits with TTLCache
+- **Cloud Run ready**: Dockerfile and deployment configuration included
+
+See `docs/guides/VECTOR_SEARCH_QUICKSTART.md` for detailed usage examples.
 
 ## Genesis Framework Integration
 

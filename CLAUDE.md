@@ -10,7 +10,7 @@ The system processes 1600 HTML documents from the Natural Questions dataset to t
 
 ## Critical Architecture Principle: Pure Module Isolation
 
-**Each module exists independently at the root level.** This is NOT a typical monorepo with shared dependencies - it's a constellation of 12 completely isolated modules that can build and test without any knowledge of each other.
+**Each module exists independently at the root level.** This is NOT a typical monorepo with shared dependencies - it's a constellation of 20 completely isolated modules that can build and test without any knowledge of each other.
 
 ### Core Rules
 1. **Never use `cd` at the root level for development** - Always work within a specific module directory
@@ -18,7 +18,7 @@ The system processes 1600 HTML documents from the Natural Questions dataset to t
 3. **Each module must be <60 files** - AI-safe development constraint
 4. **Each module builds independently** - `cd module && make build` must work in isolation
 
-## Available Modules (19 Total)
+## Available Modules (20 Total)
 
 Each module has its own `Makefile`, `pyproject.toml`, tests, and dependencies:
 
@@ -49,6 +49,9 @@ Each module has its own `Makefile`, `pyproject.toml`, tests, and dependencies:
 - **`vector-index-prep/`** - Prepare JSONL for Vertex AI Vector Search index (100% coverage)
 - **`vector-search-index/`** - Manage Vertex AI Vector Search indexes (100% coverage)
 - **`vector-query-client/`** - Execute fast ANN queries (<120ms p95) (100% coverage)
+
+### Stream 6: Production API
+- **`search-api/`** - FastAPI service with /search, /summarize, /health endpoints (88% coverage)
 
 ## Development Workflow
 
@@ -146,6 +149,7 @@ Modules connect through well-defined APIs, not compilation dependencies:
 3. **Cloud Operations**: `gcs-manager` → `document-uploader` → `vertex-datastore`
 4. **Testing Pipeline**: `search-engine` + `answer-service` → `metrics-collector` → `load-tester`
 5. **Vector Search Pipeline**: `html-chunker` → `embedding-generator` → `vector-index-prep` → `vector-search-index` → `vector-query-client`
+6. **Production API**: `search-api` (uses `vector-query-client` + `shared-contracts`)
 
 ## Important Development Notes
 
@@ -235,3 +239,8 @@ make quality-all         # Quality check everything
 ### Infrastructure
 - **Need configuration management?** → `config-manager/`
 - **Need CLI orchestration?** → `cli-orchestrator/`
+
+### Production API
+- **Need fast vector search API?** → `search-api/`
+- **Need streaming summarization?** → `search-api/`
+- **Need production health checks?** → `search-api/`
