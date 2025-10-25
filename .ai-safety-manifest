@@ -1,0 +1,17 @@
+# AI Safety Manifest - Genesis Sparse Worktree
+# This workspace has restricted visibility to prevent AI contamination
+
+Worktree: feature-8
+Focus: shared-contracts/
+Files:       19/60
+Branch: sparse-feature-8
+Created: 2025-10-25T17:07:40Z
+
+AI Safety Rules:
+1. Only modify files within focus paths: shared-contracts/
+2. File limit enforced: 60 maximum
+3. No deep directory nesting (max 3 levels)
+4. No imports from outside this worktree
+5. Use Genesis smart-commit for quality gates
+
+For other work areas, create separate sparse worktrees.
