@@ -249,7 +249,7 @@ class LoadTester:
                 try:
                     result = future.result(timeout=SEARCH_TIMEOUT_SECONDS)
                     results.append(result)
-                except (TimeoutError, RuntimeError) as e:
+                except Exception as e:  # noqa: BLE001
                     # Create failed result for error tracking
                     error_result = type(
                         "ErrorResult",
@@ -291,7 +291,7 @@ class LoadTester:
                 try:
                     result = future.result(timeout=CONVERSATION_TIMEOUT_SECONDS)
                     results.append(result)
-                except (TimeoutError, RuntimeError) as e:
+                except Exception as e:  # noqa: BLE001
                     # Create failed result for error tracking
                     error_result = type(
                         "ErrorResult",
