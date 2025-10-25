@@ -149,6 +149,7 @@ Modules connect through well-defined APIs, not compilation dependencies:
 3. **Cloud Operations**: `gcs-manager` → `document-uploader` → `vertex-datastore`
 4. **Testing Pipeline**: `search-engine` + `answer-service` → `metrics-collector` → `load-tester`
 5. **Vector Search Pipeline**: `html-chunker` → `embedding-generator` → `vector-index-prep` → `vector-search-index` → `vector-query-client`
+6. **Production API**: `search-api` (uses `vector-query-client` + `shared-contracts`)
 
 ## Important Development Notes
 
@@ -238,3 +239,8 @@ make quality-all         # Quality check everything
 ### Infrastructure
 - **Need configuration management?** → `config-manager/`
 - **Need CLI orchestration?** → `cli-orchestrator/`
+
+### Production API
+- **Need fast vector search API?** → `search-api/`
+- **Need streaming summarization?** → `search-api/`
+- **Need production health checks?** → `search-api/`
