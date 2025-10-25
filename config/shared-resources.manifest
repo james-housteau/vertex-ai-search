@@ -1,0 +1,34 @@
+# Shared Resources Manifest
+# Files/directories to include in all worktrees for proper CI/CD and tooling
+
+# Genesis framework (required for genesis CLI and tooling)
+.genesis/
+
+# Claude Code slash commands and agents (required for /commit, /pr, etc.)
+.claude/
+
+# Root configuration files
+.gitignore
+.gitattributes
+.pre-commit-config.yaml
+.gitleaks.toml
+.markdownlint.json
+.mcp.json
+
+# Build and deployment
+Dockerfile
+docker-compose.yml
+Makefile
+pyproject.toml
+mypy.ini
+
+# Scripts
+prepare_commit.sh
+run_all_tests.sh
+
+# Documentation
+README.md
+CLAUDE.md
+
+# Configuration
+config/
