@@ -1,11 +1,11 @@
 # AI Safety Manifest - Genesis Sparse Worktree
 # This workspace has restricted visibility to prevent AI contamination
 
-Worktree: feature-4
+Worktree: feature-3
 Focus: shared-contracts/
 Files:      121/30
-Branch: sparse-feature-4
-Created: 2025-10-25T18:17:42Z
+Branch: sparse-feature-3
+Created: 2025-10-25T18:09:11Z
 
 AI Safety Rules:
 1. Only modify files within focus paths: shared-contracts/
