@@ -2,7 +2,6 @@
 
 import subprocess
 import time
-from typing import List
 
 from .models import ExecutionResult
 
@@ -12,7 +11,7 @@ class CLIOrchestrator:
 
     def __init__(self) -> None:
         """Initialize orchestrator."""
-        self.execution_history: List[ExecutionResult] = []
+        self.execution_history: list[ExecutionResult] = []
 
     def execute_command(self, command: str, timeout: int = 300) -> ExecutionResult:
         """Execute a single command."""
@@ -48,7 +47,7 @@ class CLIOrchestrator:
             self.execution_history.append(execution_result)
             return execution_result
 
-    def get_history(self) -> List[ExecutionResult]:
+    def get_history(self) -> list[ExecutionResult]:
         """Get execution history."""
         return self.execution_history.copy()
 

@@ -4,4 +4,4 @@ from .models import ConversationResult
 from .service import AnswerService
 
 __version__ = "0.1.0"
-__all__ = ["ConversationResult", "AnswerService"]
+__all__ = ["AnswerService", "ConversationResult"]

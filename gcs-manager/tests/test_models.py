@@ -1,6 +1,6 @@
 """Unit tests for GCS Manager data models."""
 
-from gcs_manager.models import BucketResult, BucketConfig
+from gcs_manager.models import BucketConfig, BucketResult
 
 
 class TestBucketResult:

@@ -6,15 +6,15 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
-from google.auth.exceptions import DefaultCredentialsError
-from google.cloud.storage import Client as StorageClient, Blob  # type: ignore[import-untyped]
 from google.api_core import retry
+from google.auth.exceptions import DefaultCredentialsError
+from google.cloud.storage import Blob
+from google.cloud.storage import Client as StorageClient
 
 # Constants
 GCS_BUCKET_NAME = "natural_questions"
-GCS_DATASET_VERSION = "v1.0-simplified"
+GCS_DATASET_VERSION = "v1.0/train"
 CHECKSUM_CHUNK_SIZE = 4096
 
 
@@ -36,7 +36,7 @@ class DownloadResult:
     download_time_seconds: float
     checksum: str
     success: bool
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
 
 class NQDownloader:
@@ -82,7 +82,7 @@ class NQDownloader:
 
         except DefaultCredentialsError as e:
             return self._create_error_result(
-                local_path, start_time, f"Authentication error: {str(e)}"
+                local_path, start_time, f"Authentication error: {e!s}"
             )
         except Exception as e:
             return self._create_error_result(local_path, start_time, str(e))
@@ -92,8 +92,8 @@ class NQDownloader:
     ) -> DownloadResult:
         """Download with Rich progress bar."""
         from rich.progress import (
-            Progress,
             BarColumn,
+            Progress,
             TimeRemainingColumn,
             TransferSpeedColumn,
         )

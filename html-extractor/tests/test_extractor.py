@@ -4,6 +4,7 @@ import gzip
 import json
 import tempfile
 from pathlib import Path
+
 import pytest
 from html_extractor.extractor import NaturalQuestionsExtractor
 

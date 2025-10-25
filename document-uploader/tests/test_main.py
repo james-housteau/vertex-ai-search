@@ -5,9 +5,8 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from click.testing import CliRunner
-
-from document_uploader.main import main, upload_file, upload_directory
-from document_uploader.uploader import UploadResult, BatchUploadResult
+from document_uploader.main import main, upload_directory, upload_file
+from document_uploader.uploader import BatchUploadResult, UploadResult
 
 
 class TestCLIMain:

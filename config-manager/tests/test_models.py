@@ -1,10 +1,10 @@
 """Tests for config_manager.models module."""
 
-import pytest
 from pathlib import Path
-from pydantic import ValidationError
 
-from config_manager.models import AppConfig, EnvironmentConfig, ConfigManager
+import pytest
+from config_manager.models import AppConfig, ConfigManager, EnvironmentConfig
+from pydantic import ValidationError
 
 
 class TestAppConfig:

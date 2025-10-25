@@ -2,8 +2,8 @@
 
 import time
 from unittest.mock import Mock
-import pytest
 
+import pytest
 from document_uploader.retry import retry_with_backoff
 
 

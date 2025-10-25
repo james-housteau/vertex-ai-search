@@ -1,8 +1,8 @@
 """CLI interface for config-manager."""
 
-import click
 from pathlib import Path
-from typing import Optional
+
+import click
 
 from .loader import load_config
 from .models import ConfigManager
@@ -28,7 +28,7 @@ def cli() -> None:
     type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
     help="Configuration directory path",
 )
-def load(environment: str, config_dir: Optional[Path]) -> None:
+def load(environment: str, config_dir: Path | None) -> None:
     """Load and display configuration for an environment."""
     try:
         config = load_config(environment, config_dir)
@@ -46,10 +46,10 @@ def load(environment: str, config_dir: Optional[Path]) -> None:
 
     except FileNotFoundError as e:
         click.echo(f"Error: {e}", err=True)
-        raise click.Abort()
+        raise click.Abort() from e
     except ValueError as e:
         click.echo(f"Configuration validation error: {e}", err=True)
-        raise click.Abort()
+        raise click.Abort() from e
 
 
 @cli.command()
@@ -59,7 +59,7 @@ def load(environment: str, config_dir: Optional[Path]) -> None:
     type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
     help="Configuration directory path",
 )
-def list_environments(config_dir: Optional[Path]) -> None:
+def list_environments(config_dir: Path | None) -> None:
     """List available environment configurations."""
     config_manager = ConfigManager(config_dir)
     environments = config_manager.get_available_environments()
@@ -85,7 +85,7 @@ def list_environments(config_dir: Optional[Path]) -> None:
     type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
     help="Configuration directory path",
 )
-def validate(environment: str, config_dir: Optional[Path]) -> None:
+def validate(environment: str, config_dir: Path | None) -> None:
     """Validate configuration for an environment."""
     try:
         config = load_config(environment, config_dir)
@@ -94,10 +94,10 @@ def validate(environment: str, config_dir: Optional[Path]) -> None:
         click.echo(f"  Host: {config.host}:{config.port}")
     except FileNotFoundError as e:
         click.echo(f" Error: {e}", err=True)
-        raise click.Abort()
+        raise click.Abort() from e
     except ValueError as e:
         click.echo(f" Validation failed: {e}", err=True)
-        raise click.Abort()
+        raise click.Abort() from e
 
 
 def main() -> None:

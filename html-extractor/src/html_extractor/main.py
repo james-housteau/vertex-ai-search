@@ -1,10 +1,12 @@
 """Main entry point for html-extractor CLI."""
 
-import click
 import json
 from pathlib import Path
+
+import click
 from rich.console import Console
 from rich.table import Table
+
 from .extractor import NaturalQuestionsExtractor, Stats
 
 console = Console()
@@ -38,7 +40,8 @@ def process_nq_dataset(jsonl_gz_path: Path, output: Path, stats_only: bool) -> N
         console.print(f"[red]Error: {result.error_message}[/red]")
         return
 
-    _display_statistics(result.stats)  # type: ignore
+    if result.stats:
+        _display_statistics(result.stats)
 
     if not stats_only:
         if output:

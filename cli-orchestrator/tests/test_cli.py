@@ -1,7 +1,7 @@
 """Tests for CLI interface."""
 
-from click.testing import CliRunner
 from cli_orchestrator.cli import cli
+from click.testing import CliRunner
 
 
 class TestCLI:

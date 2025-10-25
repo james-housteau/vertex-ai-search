@@ -7,7 +7,6 @@ from rich.table import Table
 from .gcs_manager import GCSManager
 from .models import BucketConfig
 
-
 console = Console()
 
 
@@ -39,7 +38,9 @@ def create(bucket_name: str, project_id: str, region: str, lifecycle_days: int) 
         console.print(f"   Region: {result.region}")
         console.print(f"   Lifecycle: {lifecycle_days} days")
     else:
-        console.print(f"❌ Failed to create bucket: {result.error_message}", style="red")
+        console.print(
+            f"❌ Failed to create bucket: {result.error_message}", style="red"
+        )
 
 
 @main.command()

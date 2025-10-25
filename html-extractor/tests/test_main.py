@@ -4,8 +4,9 @@ import gzip
 import json
 import tempfile
 from pathlib import Path
-from click.testing import CliRunner
+
 import pytest
+from click.testing import CliRunner
 from html_extractor.main import main
 
 
@@ -69,7 +70,7 @@ class TestCLI:
             assert result.exit_code == 0
             assert output_path.exists()
 
-            with open(output_path, "r", encoding="utf-8") as f:
+            with open(output_path, encoding="utf-8") as f:
                 documents = json.load(f)
                 assert len(documents) == 2
                 assert documents[0]["title"] == "Test Doc 1"

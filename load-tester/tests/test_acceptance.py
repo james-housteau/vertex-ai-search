@@ -2,10 +2,7 @@
 
 import time
 
-from src.load_tester.load_tester import LoadTester, create_load_tester_with_mocks
-from src.load_tester.models import LoadTestConfig, LoadTestResult, PerformanceMetrics
-
-from .test_constants import (
+from test_constants import (
     DEFAULT_CONCURRENT_USERS,
     DEFAULT_RAMP_UP_USERS,
     DEFAULT_SEARCH_QUERIES,
@@ -20,6 +17,9 @@ from .test_constants import (
     SUCCESS_PERCENTAGE,
     TEST_USERS_COUNT,
 )
+
+from load_tester.load_tester import LoadTester, create_load_tester_with_mocks
+from load_tester.models import LoadTestConfig, LoadTestResult, PerformanceMetrics
 
 
 class TestLoadTesterAPIContract:

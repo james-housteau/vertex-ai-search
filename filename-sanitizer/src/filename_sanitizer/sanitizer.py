@@ -3,8 +3,6 @@
 import re
 import unicodedata
 from pathlib import Path
-from typing import Optional, Set
-
 
 # Reserved names on Windows
 WINDOWS_RESERVED_NAMES = {
@@ -42,7 +40,7 @@ MAX_FILENAME_LENGTH = 200
 def sanitize_filename(
     filename: str,
     replacement: str = "_",
-    max_length: Optional[int] = None,
+    max_length: int | None = None,
     normalize_unicode: bool = True,
 ) -> str:
     """
@@ -146,7 +144,7 @@ def is_valid_filename(filename: str, check_length: bool = True) -> bool:
     return True
 
 
-def get_safe_filename_variants(base_filename: str, existing_files: Set[str]) -> str:
+def get_safe_filename_variants(base_filename: str, existing_files: set[str]) -> str:
     """
     Generate a safe filename variant that doesn't conflict with existing files.
 

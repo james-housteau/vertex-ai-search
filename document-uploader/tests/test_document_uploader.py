@@ -3,7 +3,7 @@
 import tempfile
 from pathlib import Path
 
-from document_uploader import DocumentUploader, UploadResult, BatchUploadResult
+from document_uploader import BatchUploadResult, DocumentUploader, UploadResult
 
 
 # Skip tests that require actual GCS credentials in CI/test environments

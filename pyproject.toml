@@ -1,62 +1,71 @@
 [tool.poetry]
 name = "vertex-ai-search"
 version = "0.1.0"
-description = "A vertex-ai-search project created with Genesis"
-authors = ["Genesis <genesis@local>"]
+description = "Vertex AI Search integration and benchmarking framework"
+authors = ["Capgemini COE for Google"]
 readme = "README.md"
-packages = [{include = "vertex_ai_search", from = "src"}]
-
-[tool.poetry.scripts]
-vertex-ai-search = "vertex_ai_search.main:main"
+package-mode = false  # Integration layer, not a package
 
 [tool.poetry.dependencies]
 python = "^3.13"
-# Genesis shared utilities will be available once published to PyPI
-# shared-core = "^0.1.0"  # ConfigLoader, get_logger, retry, health checks, etc.
-click = "^8.1.7"
-pydantic = "^2.5.0"
-rich = "^13.7.0"
-python-dotenv = "^1.0.0"  # For environment variable loading
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
-pytest-cov = "^4.1.0"
-black = "^23.11.0"
-isort = "^5.12.0"
-mypy = "^1.7.1"
-pre-commit = "^3.6.0"
-# Note: Genesis CLI is automatically installed during bootstrap
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+pytest = "^8.3.3"
+pytest-cov = "^6.0.0"
+black = "^24.10.0"
+mypy = "^1.13.0"
+ruff = "^0.8.5"
+pre-commit = "^4.0.1"
 
 [tool.black]
 line-length = 88
-target-version = ['py311']
+target-version = ['py313']
 include = '\.pyi?$'
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 88
-known_first_party = ["vertex_ai_search"]
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+extend-exclude = [".genesis"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "B", "UP", "C90", "RUF"]
+ignore = ["E501", "B008", "RUF012"]
 
 [tool.mypy]
 python_version = "3.13"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
-check_untyped_defs = true
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_functions = ["test_*"]
-pythonpath = ["src"]
 addopts = [
-    "--cov=vertex_ai_search",
-    "--cov-report=term-missing",
-    "--cov-report=html",
-    "--cov-fail-under=80"
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--cov-fail-under=0",  # No coverage requirement for integration tests yet
 ]
+markers = [
+    "integration: Integration tests that cross module boundaries",
+    "slow: Tests that take > 1 second",
+    "requires_gcp: Tests that require GCP credentials",
+]
+
+[tool.coverage.run]
+source = ["tests"]  # Only cover integration tests at root
+parallel = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

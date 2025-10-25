@@ -3,16 +3,7 @@
 import time
 from unittest.mock import Mock
 
-from src.load_tester.load_tester import LoadTester, create_load_tester_with_mocks
-from src.load_tester.models import (
-    LoadTestConfig,
-    LoadTestResult,
-    MockAnswerService,
-    MockMetricsCollector,
-    MockSearchEngine,
-    PerformanceMetrics,
-)
-from tests.test_constants import (
+from test_constants import (
     CONCURRENT_USERS_5,
     ERROR_RATE_MAX,
     ERROR_RATE_MIN,
@@ -22,6 +13,16 @@ from tests.test_constants import (
     TOTAL_OPERATIONS_6,
     USER_COUNT_2,
     USER_COUNT_3,
+)
+
+from load_tester.load_tester import LoadTester, create_load_tester_with_mocks
+from load_tester.models import (
+    LoadTestConfig,
+    LoadTestResult,
+    MockAnswerService,
+    MockMetricsCollector,
+    MockSearchEngine,
+    PerformanceMetrics,
 )
 
 

@@ -6,7 +6,6 @@ from rich.table import Table
 
 from .task_manager import TaskManager
 
-
 console = Console()
 
 

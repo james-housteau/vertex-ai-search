@@ -1,1 +1,1 @@
-"""Test package for load-tester module."""
+"""Load tester test module."""

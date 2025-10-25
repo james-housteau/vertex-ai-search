@@ -1,11 +1,11 @@
 """Document uploader module for Vertex AI search functionality."""
 
-from .uploader import DocumentUploader, UploadResult, BatchUploadResult
 from .retry import retry_with_backoff
+from .uploader import BatchUploadResult, DocumentUploader, UploadResult
 
 __all__ = [
+    "BatchUploadResult",
     "DocumentUploader",
     "UploadResult",
-    "BatchUploadResult",
     "retry_with_backoff",
 ]

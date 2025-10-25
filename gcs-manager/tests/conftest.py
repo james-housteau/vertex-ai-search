@@ -1,15 +1,28 @@
 """Shared test fixtures for GCS Manager tests."""
 
-import pytest
 from unittest.mock import Mock, patch
 
+import pytest
 from gcs_manager.models import BucketConfig
+
+# Try to import Google Cloud dependencies, but handle gracefully if not available
+try:
+    import importlib.util
+
+    GOOGLE_STORAGE_AVAILABLE = importlib.util.find_spec("google.cloud.storage") is not None
+except ImportError:
+    GOOGLE_STORAGE_AVAILABLE = False
 
 
 @pytest.fixture
 def mock_gcs_client():
     """Mock GCS client for testing."""
-    with patch("google.cloud.storage.Client") as mock_client_class:
+    patch_target = (
+        "google.cloud.storage.Client"
+        if GOOGLE_STORAGE_AVAILABLE
+        else "gcs_manager.manager.storage.Client"
+    )
+    with patch(patch_target) as mock_client_class:
         mock_client = Mock()
         mock_client_class.return_value = mock_client
         yield mock_client

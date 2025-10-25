@@ -85,3 +85,202 @@ scratch/
 .envrc
 *.bak
 /worktrees
+
+# ============================================
+# PROJECT-SPECIFIC IGNORES
+# ============================================
+
+# Archive directory (old code)
+archive/
+
+# Temporary experiment results
+experiments/*/output/
+experiments/*/*.json
+experiments/*/*.csv
+experiments/*/tmp/
+experiments/baseline-snapshot/*.json.bak
+
+# Large files and datasets
+*.jsonl
+*.jsonl.gz
+*.ndjson
+*.ndjson.gz
+*.csv
+data/**/*.html
+data/**/*.json
+data/**/*.txt
+data/**/*.xml
+
+# Module-specific data directories (contain large files)
+nq-downloader/data/
+html-extractor/html_output/
+html-extractor/extracted_html/
+document-uploader/upload_cache/
+*/data/
+*/output/
+*/cache/
+
+# ML Model files
+*.ckpt
+*.pb
+*.pth
+*.pt
+*.h5
+*.hdf5
+*.keras
+*.model
+*.pkl
+*.pickle
+*.joblib
+*.safetensors
+*.bin
+*.onnx
+*.tflite
+
+# Vector embeddings and indexes
+*.npy
+*.npz
+*.faiss
+*.ann
+*.index
+embeddings/
+vector-index/
+*.embedding
+*.vectors
+
+# Large archives
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.zip
+*.rar
+*.7z
+*.gz
+*.bz2
+*.xz
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.parquet
+
+# Cache directories
+.cache/
+cache/
+*_cache/
+redis-data/
+
+# Cloud credentials (NEVER commit these)
+service-account*.json
+credentials.json
+key.json
+*.pem
+*.key
+*.cert
+
+# GCS download cache
+downloads/
+gcs-cache/
+local-data/
+
+# Benchmark outputs
+benchmark_results/
+metrics_output/
+*.benchmark.json
+*.metrics.csv
+
+# Large documentation
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+
+# Media files
+*.mp4
+*.avi
+*.mov
+*.mp3
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.svg
+
+# Size-based ignore (files > 100MB)
+# Note: Use git-lfs for large files that must be tracked
+
+# Specific large files from this project
+nq-train-*.jsonl.gz
+cox_hybrid_benchmark_results.json
+cox_real_benchmark_results.json
+
+# LLM/AI generated files that might be large
+generated/
+outputs/
+
+# Docker volumes
+docker-data/
+volumes/
+
+# Terraform state (contains sensitive data)
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Module-specific build artifacts
+*/dist/
+*/build/
+*/.coverage
+*/.pytest_cache/
+*/.mypy_cache/
+*/.ruff_cache/
+
+# Jupyter notebooks (can contain large outputs)
+*.ipynb_checkpoints
+*-checkpoint.ipynb
+
+# VS Code workspace
+*.code-workspace
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.directory
+.Trash-*
+
+# Logs
+logs/
+*.log
+*.err
+*.out
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+*~
+
+# Lock files (except poetry.lock at module level)
+package-lock.json
+yarn.lock
+Pipfile.lock

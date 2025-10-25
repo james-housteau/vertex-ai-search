@@ -1,17 +1,6 @@
 """Tests for load-tester data models."""
 
-
-from src.load_tester.models import (
-    ConversationResult,
-    LoadTestConfig,
-    LoadTestResult,
-    MockAnswerService,
-    MockMetricsCollector,
-    MockSearchEngine,
-    PerformanceMetrics,
-    SearchResult,
-)
-from tests.test_constants import (
+from test_constants import (
     CONFIDENCE_0_8,
     CONFIDENCE_0_9,
     DURATION_1,
@@ -64,6 +53,17 @@ from tests.test_constants import (
     USERS_5,
     USERS_10,
     USERS_75,
+)
+
+from load_tester.models import (
+    ConversationResult,
+    LoadTestConfig,
+    LoadTestResult,
+    MockAnswerService,
+    MockMetricsCollector,
+    MockSearchEngine,
+    PerformanceMetrics,
+    SearchResult,
 )
 
 

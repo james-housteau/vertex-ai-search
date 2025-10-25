@@ -1,14 +1,15 @@
 """Configuration loader with YAML support and environment variable overrides."""
 
 import os
-import yaml
-from typing import Dict, Any, Optional
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 from .models import AppConfig, ConfigManager
 
 
-def load_yaml_file(file_path: Path) -> Dict[str, Any]:
+def load_yaml_file(file_path: Path) -> dict[str, Any]:
     """Load YAML configuration file.
 
     Args:
@@ -25,7 +26,7 @@ def load_yaml_file(file_path: Path) -> Dict[str, Any]:
         raise FileNotFoundError(f"Configuration file not found: {file_path}")
 
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = yaml.safe_load(f)
             return content if content is not None else {}
     except yaml.YAMLError as e:
@@ -33,8 +34,8 @@ def load_yaml_file(file_path: Path) -> Dict[str, Any]:
 
 
 def merge_configs(
-    base_config: Dict[str, Any], override_config: Dict[str, Any]
-) -> Dict[str, Any]:
+    base_config: dict[str, Any], override_config: dict[str, Any]
+) -> dict[str, Any]:
     """Merge two configuration dictionaries.
 
     Args:
@@ -56,8 +57,8 @@ def merge_configs(
 
 
 def apply_env_overrides(
-    config: Dict[str, Any], prefix: str = "CONFIG_"
-) -> Dict[str, Any]:
+    config: dict[str, Any], prefix: str = "CONFIG_"
+) -> dict[str, Any]:
     """Apply environment variable overrides to configuration.
 
     Args:
@@ -87,7 +88,7 @@ def apply_env_overrides(
 
 def load_config(
     environment: str = "development",
-    config_dir: Optional[Path] = None,
+    config_dir: Path | None = None,
     apply_env_vars: bool = True,
 ) -> AppConfig:
     """Load configuration for the specified environment.

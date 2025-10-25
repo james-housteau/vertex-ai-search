@@ -1,8 +1,22 @@
 """Test configuration and fixtures for document uploader tests."""
 
 from unittest.mock import Mock, patch
+
 import pytest
-from google.auth.exceptions import DefaultCredentialsError
+
+# Try to import Google Cloud dependencies, but handle gracefully if not available
+try:
+    from google.auth.exceptions import DefaultCredentialsError
+
+    GOOGLE_AUTH_AVAILABLE = True
+except ImportError:
+    GOOGLE_AUTH_AVAILABLE = False
+
+    # Create a mock exception class when google.auth is not available
+    class DefaultCredentialsError(Exception):
+        """Mock DefaultCredentialsError for when google.auth is not installed."""
+
+        pass
 
 
 @pytest.fixture(autouse=True)

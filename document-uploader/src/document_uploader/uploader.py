@@ -4,11 +4,11 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 
-from google.cloud import storage  # type: ignore[attr-defined]
-from google.cloud.exceptions import GoogleCloudError
 from google.auth.exceptions import DefaultCredentialsError
+from google.cloud import storage
+from google.cloud.exceptions import GoogleCloudError
 
 from .retry import retry_with_backoff
 
@@ -22,7 +22,7 @@ class UploadResult:
     file_size: int
     upload_time_seconds: float
     success: bool
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
 
 @dataclass
@@ -32,8 +32,8 @@ class BatchUploadResult:
     total_files: int
     successful_uploads: int
     failed_uploads: int
-    uploaded_uris: List[str]
-    failed_files: List[str]
+    uploaded_uris: list[str]
+    failed_files: list[str]
     total_upload_time_seconds: float
     total_size_bytes: int
 
@@ -57,16 +57,14 @@ class DocumentUploader:
             self.bucket = None
 
         # Progress tracking
-        self._current_progress: Dict[str, Any] = {
+        self._current_progress: dict[str, Any] = {
             "total_files": 0,
             "completed_files": 0,
             "bytes_uploaded": 0,
             "upload_rate_bytes_per_sec": 0.0,
         }
 
-    def upload_file(
-        self, local_path: Path, gcs_key: Optional[str] = None
-    ) -> UploadResult:
+    def upload_file(self, local_path: Path, gcs_key: str | None = None) -> UploadResult:
         """Upload single file to GCS."""
         start_time = time.time()
 
@@ -135,8 +133,8 @@ class DocumentUploader:
 
         successful = 0
         failed = 0
-        uploaded_uris: List[str] = []
-        failed_files: List[str] = []
+        uploaded_uris: list[str] = []
+        failed_files: list[str] = []
         total_bytes = 0
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
@@ -144,9 +142,11 @@ class DocumentUploader:
                 executor.submit(
                     self.upload_file,
                     file_path,
-                    gcs_key=f"{gcs_prefix}{file_path.name}"
-                    if gcs_prefix
-                    else file_path.name,
+                    gcs_key=(
+                        f"{gcs_prefix}{file_path.name}"
+                        if gcs_prefix
+                        else file_path.name
+                    ),
                 ): file_path
                 for file_path in files
             }
@@ -202,7 +202,7 @@ class DocumentUploader:
         except Exception:
             return False
 
-    def get_upload_progress(self) -> Dict[str, Any]:
+    def get_upload_progress(self) -> dict[str, Any]:
         """Get current upload progress for active batch operations."""
         return dict(self._current_progress)
 

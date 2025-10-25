@@ -5,7 +5,6 @@ with the actual Google Cloud Discovery Engine API in production.
 """
 
 from datetime import UTC
-from unittest.mock import Mock, patch
 
 import pytest
 
@@ -15,8 +14,7 @@ from vertex_datastore import VertexDataStoreManager
 class TestDiscoveryEngineIntegration:
     """Integration tests with mocked Discovery Engine API calls."""
 
-    @patch("vertex_datastore.discovery_engine_client.discoveryengine")
-    def test_real_api_integration_pattern(self, mock_discoveryengine: Mock) -> None:
+    def test_real_api_integration_pattern(self) -> None:
         """Test the pattern for real Discovery Engine API integration."""
         # This test demonstrates how the actual Google Cloud API would be used
         # For now, it uses the mock implementation but shows the API pattern
