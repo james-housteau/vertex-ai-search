@@ -25,9 +25,12 @@ class TestEmbeddingGenerator:
         mock_response = Mock()
         mock_response.values = mock_embedding
 
-        with patch("vertexai.init"), patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_model,
+        ):
             mock_instance = MagicMock()
             mock_instance.get_embeddings.return_value = [mock_response]
             mock_model.return_value = mock_instance
@@ -64,9 +67,12 @@ class TestEmbeddingGenerator:
         mock_embeddings = [[0.1 * i] * 768 for i in range(3)]
         mock_responses = [Mock(values=emb) for emb in mock_embeddings]
 
-        with patch("vertexai.init"), patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_model,
+        ):
             mock_instance = MagicMock()
             mock_instance.get_embeddings.return_value = mock_responses
             mock_model.return_value = mock_instance
@@ -105,9 +111,12 @@ class TestEmbeddingGenerator:
             # Return one mock response per input text
             return [Mock(values=mock_embedding) for _ in texts]
 
-        with patch("vertexai.init"), patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_model,
+        ):
             mock_instance = MagicMock()
             mock_instance.get_embeddings.side_effect = mock_get_embeddings
             mock_model.return_value = mock_instance
@@ -139,9 +148,12 @@ class TestEmbeddingGenerator:
         mock_response = Mock()
         mock_response.values = mock_embedding
 
-        with patch("vertexai.init"), patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_model,
+        ):
             mock_instance = MagicMock()
             # Fail once, then succeed
             mock_instance.get_embeddings.side_effect = [
@@ -164,8 +176,9 @@ class TestEmbeddingGenerator:
     def test_generate_empty_list(self) -> None:
         """Test handling of empty input list."""
         # Given
-        with patch("vertexai.init"), patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+        with (
+            patch("vertexai.init"),
+            patch("vertexai.language_models.TextEmbeddingModel.from_pretrained"),
         ):
             generator = EmbeddingGenerator(
                 project_id="test-project", location="us-central1"
@@ -180,8 +193,9 @@ class TestEmbeddingGenerator:
     def test_initialization_defaults(self) -> None:
         """Test generator initialization with default parameters."""
         # Given/When
-        with patch("vertexai.init") as mock_init, patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+        with (
+            patch("vertexai.init") as mock_init,
+            patch("vertexai.language_models.TextEmbeddingModel.from_pretrained"),
         ):
             generator = EmbeddingGenerator(
                 project_id="test-project", location="us-central1"

@@ -36,11 +36,15 @@ class TestVectorQueryClient:
         mock_response = Mock()
         mock_response.nearest_neighbors = [[mock_neighbor]]
 
-        with patch("vertexai.init"), patch(
-            "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
-        ) as mock_endpoint_class, patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_embedding_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
+            ) as mock_endpoint_class,
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_embedding_model,
+        ):
             # Mock endpoint
             mock_endpoint = MagicMock()
             mock_endpoint.find_neighbors.return_value = [mock_response]
@@ -87,11 +91,15 @@ class TestVectorQueryClient:
         mock_response = Mock()
         mock_response.nearest_neighbors = [mock_neighbors]
 
-        with patch("vertexai.init"), patch(
-            "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
-        ) as mock_endpoint_class, patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_embedding_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
+            ) as mock_endpoint_class,
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_embedding_model,
+        ):
             # Mock endpoint
             mock_endpoint = MagicMock()
             mock_endpoint.find_neighbors.return_value = [mock_response]
@@ -135,11 +143,15 @@ class TestVectorQueryClient:
         mock_response = Mock()
         mock_response.nearest_neighbors = [[mock_neighbor]]
 
-        with patch("vertexai.init"), patch(
-            "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
-        ) as mock_endpoint_class, patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_embedding_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
+            ) as mock_endpoint_class,
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_embedding_model,
+        ):
             mock_endpoint = MagicMock()
             mock_endpoint.find_neighbors.return_value = [mock_response]
             mock_endpoint_class.return_value = mock_endpoint
@@ -175,11 +187,15 @@ class TestVectorQueryClient:
         mock_response = Mock()
         mock_response.nearest_neighbors = [[]]  # Empty results
 
-        with patch("vertexai.init"), patch(
-            "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
-        ) as mock_endpoint_class, patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_embedding_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
+            ) as mock_endpoint_class,
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_embedding_model,
+        ):
             mock_endpoint = MagicMock()
             mock_endpoint.find_neighbors.return_value = [mock_response]
             mock_endpoint_class.return_value = mock_endpoint
@@ -221,11 +237,15 @@ class TestVectorQueryClient:
         mock_response = Mock()
         mock_response.nearest_neighbors = [mock_neighbors]
 
-        with patch("vertexai.init"), patch(
-            "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
-        ) as mock_endpoint_class, patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_embedding_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
+            ) as mock_endpoint_class,
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_embedding_model,
+        ):
             mock_endpoint = MagicMock()
             mock_endpoint.find_neighbors.return_value = [mock_response]
             mock_endpoint_class.return_value = mock_endpoint
@@ -270,11 +290,15 @@ class TestVectorQueryClient:
         mock_response = Mock()
         mock_response.nearest_neighbors = [[mock_neighbor]]
 
-        with patch("vertexai.init"), patch(
-            "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
-        ) as mock_endpoint_class, patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_embedding_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
+            ) as mock_endpoint_class,
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_embedding_model,
+        ):
             mock_endpoint = MagicMock()
             mock_endpoint.find_neighbors.return_value = [mock_response]
             mock_endpoint_class.return_value = mock_endpoint
@@ -301,9 +325,11 @@ class TestVectorQueryClient:
     def test_query_initialization_parameters(self) -> None:
         """Test client initialization with required parameters."""
         # Given/When
-        with patch("vertexai.init"), patch(
-            "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
-        ), patch("vertexai.language_models.TextEmbeddingModel.from_pretrained"):
+        with (
+            patch("vertexai.init"),
+            patch("google.cloud.aiplatform.MatchingEngineIndexEndpoint"),
+            patch("vertexai.language_models.TextEmbeddingModel.from_pretrained"),
+        ):
             client = VectorQueryClient(
                 project_id="my-project",
                 location="us-west1",
@@ -329,11 +355,15 @@ class TestVectorQueryClient:
         mock_response = Mock()
         mock_response.nearest_neighbors = [[mock_neighbor]]
 
-        with patch("vertexai.init"), patch(
-            "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
-        ) as mock_endpoint_class, patch(
-            "vertexai.language_models.TextEmbeddingModel.from_pretrained"
-        ) as mock_embedding_model:
+        with (
+            patch("vertexai.init"),
+            patch(
+                "google.cloud.aiplatform.MatchingEngineIndexEndpoint"
+            ) as mock_endpoint_class,
+            patch(
+                "vertexai.language_models.TextEmbeddingModel.from_pretrained"
+            ) as mock_embedding_model,
+        ):
             mock_endpoint = MagicMock()
             mock_endpoint.find_neighbors.return_value = [mock_response]
             mock_endpoint_class.return_value = mock_endpoint

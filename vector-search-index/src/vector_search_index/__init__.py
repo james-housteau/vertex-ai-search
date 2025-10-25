@@ -6,8 +6,8 @@ from vector_search_index.manager import VectorSearchIndexManager
 __version__ = "0.1.0"
 
 __all__ = [
-    "VectorSearchIndexManager",
-    "IndexConfig",
     "DistanceMetric",
+    "IndexConfig",
     "ShardSize",
+    "VectorSearchIndexManager",
 ]

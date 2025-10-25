@@ -1,6 +1,5 @@
 """Tests for metadata to restricts conversion."""
 
-
 from vector_index_prep.jsonl_generator import _metadata_to_restricts
 
 

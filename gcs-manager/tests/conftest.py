@@ -9,7 +9,9 @@ from gcs_manager.models import BucketConfig
 try:
     import importlib.util
 
-    GOOGLE_STORAGE_AVAILABLE = importlib.util.find_spec("google.cloud.storage") is not None
+    GOOGLE_STORAGE_AVAILABLE = (
+        importlib.util.find_spec("google.cloud.storage") is not None
+    )
 except ImportError:
     GOOGLE_STORAGE_AVAILABLE = False
 
