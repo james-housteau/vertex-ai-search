@@ -2,4 +2,4 @@
 
 __version__ = "0.1.0"
 
-__all__ = ["CLIOrchestrator", "TaskManager", "ExecutionResult"]
+__all__ = ["CLIOrchestrator", "ExecutionResult", "TaskManager"]

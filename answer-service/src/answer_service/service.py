@@ -2,21 +2,16 @@
 
 import time
 import uuid
-from typing import List, Optional
 
 try:
-    from google.cloud.discoveryengine import ConversationalSearchServiceClient  # type: ignore[import-untyped]
+    from google.cloud.discoveryengine import ConversationalSearchServiceClient
     from google.cloud.exceptions import GoogleCloudError
 
     GOOGLE_CLOUD_AVAILABLE = True
 except ImportError:
     # Mock classes for testing when Google Cloud is not available
-    class ConversationalSearchServiceClient:  # type: ignore[no-redef]
-        pass
-
-    class GoogleCloudError(Exception):  # type: ignore[no-redef]
-        pass
-
+    ConversationalSearchServiceClient = type("ConversationalSearchServiceClient", (), {})
+    GoogleCloudError = type("GoogleCloudError", (Exception,), {})
     GOOGLE_CLOUD_AVAILABLE = False
 
 from .models import ConversationResult
@@ -29,7 +24,7 @@ class AnswerService:
         """Initialize Answer Service with project and conversation ID."""
         self.project_id = project_id
         self.conversation_id = conversation_id
-        self._conversation_history: List[ConversationResult] = []
+        self._conversation_history: list[ConversationResult] = []
 
         try:
             self.client = ConversationalSearchServiceClient()
@@ -38,7 +33,7 @@ class AnswerService:
             self._client_error = str(e)
 
     def ask_question(
-        self, question: str, context: Optional[str] = None
+        self, question: str, context: str | None = None
     ) -> ConversationResult:
         """Execute conversation query with context using Vertex AI."""
         start_time = time.time()
@@ -97,7 +92,7 @@ class AnswerService:
 
         except Exception as e:
             return self._create_error_result(
-                question, start_time, f"Vertex AI error: {str(e)}"
+                question, start_time, f"Vertex AI error: {e!s}"
             )
 
     def start_conversation(self) -> str:
@@ -115,13 +110,13 @@ class AnswerService:
 
     def get_conversation_history(
         self, conversation_id: str
-    ) -> List[ConversationResult]:
+    ) -> list[ConversationResult]:
         """Get conversation history for given conversation ID."""
         if conversation_id == self.conversation_id:
             return self._conversation_history.copy()
         return []
 
-    def _generate_answer(self, question: str, context: Optional[str] = None) -> str:
+    def _generate_answer(self, question: str, context: str | None = None) -> str:
         """Generate mock answer - separated for testing purposes."""
         return f"Mock response to: {question}"
 

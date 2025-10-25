@@ -234,7 +234,7 @@ class MockMetricsCollector:
             total_requests=total_requests,
             successful_requests=successful,
             failed_requests=failed,
-            error_rate=failed / total_requests
-            if total_requests > 0
-            else EMPTY_METRIC_VALUE,
+            error_rate=(
+                failed / total_requests if total_requests > 0 else EMPTY_METRIC_VALUE
+            ),
         )

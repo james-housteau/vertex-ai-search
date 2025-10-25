@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 # Import the implemented classes
-from nq_downloader.downloader import NQDownloader, DownloadResult
+from nq_downloader.downloader import DownloadResult, NQDownloader
 
 
 class TestNQDownloaderAcceptance:
@@ -154,7 +154,7 @@ class TestNQDownloaderAcceptance:
 
         # Verify correct bucket and blob path were used
         mock_client.bucket.assert_called_once_with("natural_questions")
-        mock_bucket.blob.assert_called_once_with("v1.0-simplified/nq-train-42.jsonl.gz")
+        mock_bucket.blob.assert_called_once_with("v1.0/train/nq-train-42.jsonl.gz")
 
     @patch("nq_downloader.downloader.StorageClient")
     @patch("nq_downloader.downloader._is_testing_environment", return_value=False)
@@ -226,7 +226,7 @@ class TestNQDownloaderAcceptance:
         # Test FileNotFoundError for non-existent file
         try:
             downloader._calculate_checksum(Path("/nonexistent/file.txt"))
-            assert False, "Expected FileNotFoundError"
+            raise AssertionError("Expected FileNotFoundError")
         except FileNotFoundError as e:
             assert "File not found" in str(e)
 

@@ -1,6 +1,5 @@
 """Command-line interface for vertex-datastore."""
 
-
 import click
 
 from .datastore_manager import VertexDataStoreManager

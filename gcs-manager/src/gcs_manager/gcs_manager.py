@@ -1,17 +1,17 @@
 """Google Cloud Storage Manager implementation."""
 
 import uuid
-from typing import Optional
-from google.cloud import storage  # type: ignore[attr-defined]
-from google.cloud.exceptions import GoogleCloudError, Forbidden
 
-from .models import BucketResult, BucketConfig
+from google.cloud import storage
+from google.cloud.exceptions import Forbidden, GoogleCloudError
+
+from .models import BucketConfig, BucketResult
 
 
 class GCSManager:
     """Manages GCS buckets for Vertex AI document hosting."""
 
-    def __init__(self, project_id: str, config: Optional[BucketConfig] = None):
+    def __init__(self, project_id: str, config: BucketConfig | None = None):
         """Initialize GCS manager with project and configuration."""
         self.project_id = project_id
         self.config = config or BucketConfig(name="default")
@@ -46,7 +46,7 @@ class GCSManager:
                 bucket_uri="",
                 region=region,
                 created=False,
-                error_message=f"Access denied: {str(e)}",
+                error_message=f"Access denied: {e!s}",
             )
         except GoogleCloudError as e:
             return BucketResult(
@@ -54,7 +54,7 @@ class GCSManager:
                 bucket_uri="",
                 region=region,
                 created=False,
-                error_message=f"GCS error: {str(e)}",
+                error_message=f"GCS error: {e!s}",
             )
 
     def bucket_exists(self, bucket_name: str) -> bool:
@@ -86,7 +86,7 @@ class GCSManager:
         except (GoogleCloudError, Exception):
             return False
 
-    def get_bucket_info(self, bucket_name: str) -> Optional[BucketResult]:
+    def get_bucket_info(self, bucket_name: str) -> BucketResult | None:
         """Get detailed information about existing bucket."""
         try:
             bucket = self.client.bucket(bucket_name)

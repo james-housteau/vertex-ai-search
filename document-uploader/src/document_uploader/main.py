@@ -1,7 +1,9 @@
 """Main entry point for document uploader CLI."""
 
-import click
 from pathlib import Path
+
+import click
+
 from .uploader import DocumentUploader
 
 

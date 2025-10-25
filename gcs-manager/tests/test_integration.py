@@ -1,9 +1,9 @@
 """Integration tests for GCS Manager."""
 
 from unittest.mock import Mock, patch
-from google.cloud.exceptions import Forbidden
 
-from gcs_manager import GCSManager, BucketConfig
+from gcs_manager import BucketConfig, GCSManager
+from google.cloud.exceptions import Forbidden
 
 
 class TestGCSManagerIntegration:

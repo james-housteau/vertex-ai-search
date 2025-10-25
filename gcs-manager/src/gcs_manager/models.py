@@ -1,7 +1,6 @@
 """Data models for GCS Manager."""
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -12,7 +11,7 @@ class BucketResult:
     bucket_uri: str
     region: str
     created: bool
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
 
 @dataclass

@@ -1,10 +1,139 @@
 repos:
+  # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
       - id: trailing-whitespace
+        exclude: '\.md$'  # Allow trailing spaces in markdown (for line breaks)
       - id: end-of-file-fixer
       - id: check-yaml
-      - id: check-added-large-files
+      - id: check-json
+      - id: check-toml
+      - id: check-xml
       - id: check-merge-conflict
       - id: detect-private-key
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+      # LARGE FILE PROTECTION
+      - id: check-added-large-files
+        args: ['--maxkb=1000']  # Block files larger than 1MB
+        exclude: |
+          (?x)^(
+            .*\.(png|jpg|jpeg|gif|bmp|tiff|svg)|  # Images (use Git LFS)
+            .*\.(pdf|doc|docx|ppt|pptx)|           # Docs (use Git LFS)
+            .*\.(jsonl|jsonl\.gz|ndjson|parquet)|  # Data files (use Git LFS)
+            .*\.(pkl|pickle|joblib|npy|npz)|       # ML files (use Git LFS)
+            .*\.(h5|hdf5|ckpt|pb|pth|pt|bin)|      # Model files (use Git LFS)
+            .*\.(db|sqlite|sqlite3)|               # Database files
+            .*\.(tar|tar\.gz|zip|7z|rar)           # Archives
+          )$
+
+      # Security checks
+      - id: detect-aws-credentials
+      - id: detect-private-key
+
+  # Python-specific checks
+  - repo: https://github.com/psf/black
+    rev: 23.11.0
+    hooks:
+      - id: black
+        language_version: python3.11
+        args: ['--line-length=88']
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ['--profile', 'black', '--line-length', '88']
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.1.7
+    hooks:
+      - id: ruff
+        args: ['--fix', '--exit-non-zero-on-fix']
+
+  # Security scanning
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            .*\.lock$|
+            poetry\.lock$|
+            .*\.json$|
+            .*test.*
+          )$
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.37.0
+    hooks:
+      - id: markdownlint
+        args: ['--fix']
+        exclude: |
+          (?x)^(
+            CHANGELOG\.md$|
+            experiments/.*\.md$
+          )$
+
+  # Check for common security issues
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        args: ['-ll', '--skip', 'B101,B601']  # Skip assert_used and shell injection
+        exclude: 'tests/.*'
+
+  # Prevent committing to main branch
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: no-commit-to-branch
+        args: ['--branch', 'main', '--branch', 'master']
+
+# Custom local hooks
+  - repo: local
+    hooks:
+      # Check for large JSON/JSONL files
+      - id: check-large-data-files
+        name: Check for large data files
+        entry: bash -c 'find . -name "*.jsonl" -o -name "*.jsonl.gz" -o -name "*.csv" | while read f; do if [ -f "$f" ] && [ $(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null) -gt 10485760 ]; then echo "ERROR - $f is larger than 10MB. Use Git LFS or add to .gitignore"; exit 1; fi; done'
+        language: system
+        pass_filenames: false
+
+      # Check for credentials in code
+      - id: check-credentials
+        name: Check for hardcoded credentials
+        entry: bash -c 'grep -r --include="*.py" --include="*.yaml" --include="*.yml" --include="*.json" -E "(api_key|secret|password|token)\s*=\s*[\"'"'"'][^\"'"'"']*[\"'"'"']" . 2>/dev/null | grep -v "example\|test\|fake\|placeholder\|TODO" && echo "ERROR - Possible credentials found" && exit 1 || exit 0'
+        language: system
+        pass_filenames: false
+        exclude: |
+          (?x)^(
+            tests/.*|
+            .*test.*|
+            \.env\.example$
+          )$
+
+      # Ensure no archive directory gets committed
+      - id: block-archive-directory
+        name: Block archive directory
+        entry: bash -c 'if [ -d "archive" ] && [ "$(ls -A archive 2>/dev/null)" ]; then echo "ERROR - archive/ directory should not be committed"; exit 1; fi'
+        language: system
+        pass_filenames: false
+
+      # Check module independence (no ../ imports)
+      - id: check-module-isolation
+        name: Check module isolation
+        entry: bash -c 'grep -r --include="*.py" "from \.\." . 2>/dev/null | grep -v "^#" && echo "ERROR - Found relative parent imports (../) which violate Pure Module Isolation" && exit 1 || exit 0'
+        language: system
+        pass_filenames: false
+        exclude: |
+          (?x)^(
+            experiments/.*|
+            archive/.*|
+            tests/.*
+          )$

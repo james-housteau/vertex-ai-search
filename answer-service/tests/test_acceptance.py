@@ -5,8 +5,9 @@ These tests define the expected behavior and will initially fail.
 They serve as the specification for the Answer Service implementation.
 """
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 # Import the API contract types that we need to implement
 try:
@@ -215,7 +216,7 @@ class TestAnswerServiceAcceptance:
 
             if result.success:
                 assert result.response_time_ms > 0
-                assert isinstance(result.response_time_ms, (int, float))
+                assert isinstance(result.response_time_ms, int | float)
 
     def test_sources_list_format(self):
         """Test that sources are returned as a proper list."""

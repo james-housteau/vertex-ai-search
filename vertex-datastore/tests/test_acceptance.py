@@ -4,7 +4,6 @@ These tests define the expected behavior following TDD RED phase.
 All tests should initially fail and then pass during GREEN phase implementation.
 """
 
-
 import pytest
 
 from vertex_datastore import DataStoreResult, ImportProgress, VertexDataStoreManager
@@ -90,6 +89,7 @@ class TestDocumentImport:
         assert progress.documents_processed >= 0
         assert progress.documents_total > 0
 
+    @pytest.mark.slow
     def test_import_progress_running_state(self) -> None:
         """Test import progress in RUNNING state shows meaningful progress."""
         # Given
@@ -113,6 +113,7 @@ class TestDocumentImport:
         assert progress.documents_processed <= progress.documents_total
         assert progress.estimated_completion_time is not None
 
+    @pytest.mark.slow
     def test_import_progress_completed_state(self) -> None:
         """Test import progress in SUCCEEDED state shows completion."""
         # Given
@@ -135,6 +136,7 @@ class TestDocumentImport:
         assert progress.documents_processed == progress.documents_total
         assert progress.documents_total == 1600  # Expected document count
 
+    @pytest.mark.slow
     def test_wait_for_import_completion_success(self) -> None:
         """Test waiting for import completion returns True on success."""
         # Given
@@ -163,6 +165,7 @@ class TestDocumentImport:
         # Then
         assert completed is False
 
+    @pytest.mark.slow
     def test_wait_for_import_completion_failure(self) -> None:
         """Test waiting for import completion returns False on operation failure."""
         # Given
@@ -318,6 +321,7 @@ class TestIntegrationScenarios:
         deleted = manager.delete_data_store(result.data_store_id, force=True)
         assert deleted is True
 
+    @pytest.mark.slow
     def test_large_document_import_scenario(self) -> None:
         """Test importing large document set (1600 HTML files)."""
         # Given

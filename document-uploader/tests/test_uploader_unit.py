@@ -4,7 +4,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from document_uploader.uploader import DocumentUploader, UploadResult, BatchUploadResult
+from document_uploader.uploader import BatchUploadResult, DocumentUploader, UploadResult
 
 
 class TestDocumentUploaderUnit:

@@ -1,10 +1,10 @@
 """Tests for Answer Service CLI main module."""
 
-from click.testing import CliRunner
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
-from answer_service.main import main, ask, status
+from answer_service.main import ask, main, status
 from answer_service.models import ConversationResult
+from click.testing import CliRunner
 
 
 class TestMainCLI:

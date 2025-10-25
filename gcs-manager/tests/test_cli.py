@@ -1,8 +1,8 @@
 """Tests for GCS Manager CLI."""
 
-from click.testing import CliRunner
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
+from click.testing import CliRunner
 from gcs_manager.main import main
 from gcs_manager.models import BucketResult
 

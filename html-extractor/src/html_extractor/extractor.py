@@ -4,7 +4,6 @@ import gzip
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Set
 
 
 @dataclass
@@ -21,8 +20,8 @@ class ExtractResult:
     """Result of Natural Questions dataset processing."""
 
     success: bool
-    documents: List[Dict] = field(default_factory=list)
-    stats: Optional[Stats] = None
+    documents: list[dict] = field(default_factory=list)
+    stats: Stats | None = None
     error_message: str = ""
 
 
@@ -61,9 +60,9 @@ class NaturalQuestionsExtractor:
                 success=False, error_message=f"Failed to process JSONL.gz file: {e}"
             )
 
-    def deduplicate_by_title(self, documents: List[Dict]) -> List[Dict]:
+    def deduplicate_by_title(self, documents: list[dict]) -> list[dict]:
         """Remove duplicates based on document title."""
-        seen_titles: Set[str] = set()
+        seen_titles: set[str] = set()
         unique_documents = []
 
         for doc in documents:
@@ -75,7 +74,7 @@ class NaturalQuestionsExtractor:
         return unique_documents
 
     def generate_statistics(
-        self, all_docs: List[Dict], unique_docs: List[Dict], total_entries: int
+        self, all_docs: list[dict], unique_docs: list[dict], total_entries: int
     ) -> Stats:
         """Generate extraction statistics report."""
         return Stats(

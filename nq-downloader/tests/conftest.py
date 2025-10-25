@@ -2,10 +2,11 @@
 Shared test configuration and fixtures for NQ Downloader tests.
 """
 
-import pytest
 import tempfile
 from pathlib import Path
 from unittest.mock import Mock
+
+import pytest
 
 
 @pytest.fixture
@@ -40,7 +41,7 @@ def sample_project_id():
 @pytest.fixture
 def mock_storage_client():
     """Provide a mock StorageClient for testing that prevents network calls."""
-    from unittest.mock import patch, Mock
+    from unittest.mock import Mock, patch
 
     with patch("nq_downloader.downloader.StorageClient") as mock_client_class:
         # Create mocks for the chain: client -> bucket -> blob

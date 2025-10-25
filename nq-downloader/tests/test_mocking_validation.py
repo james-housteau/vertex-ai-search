@@ -4,9 +4,9 @@ Test to validate that all network calls are properly mocked.
 
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
-from nq_downloader.downloader import NQDownloader, DownloadResult
+from nq_downloader.downloader import DownloadResult, NQDownloader
 
 
 class TestNetworkCallPrevention:
@@ -34,7 +34,7 @@ class TestNetworkCallPrevention:
             mocks["client_class"].assert_called_once_with(project="test-project")
             mocks["client"].bucket.assert_called_once_with("natural_questions")
             mocks["bucket"].blob.assert_called_once_with(
-                "v1.0-simplified/nq-train-00.jsonl.gz"
+                "v1.0/train/nq-train-00.jsonl.gz"
             )
             mocks["blob"].download_to_filename.assert_called_once()
 
@@ -73,9 +73,11 @@ class TestNetworkCallPrevention:
 
                 # No real authentication should have been attempted
                 assert not hasattr(
-                    mock_client_class.call_args[1]
-                    if mock_client_class.call_args
-                    else {},
+                    (
+                        mock_client_class.call_args[1]
+                        if mock_client_class.call_args
+                        else {}
+                    ),
                     "credentials",
                 )
 

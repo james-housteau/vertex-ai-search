@@ -26,11 +26,10 @@ class SearchEngine:
             )
 
         self._client = discoveryengine.SearchServiceClient()
-        self._serving_config = self._client.serving_config_path(
-            project=project_id,
-            location="global",
-            data_store=data_store_id,
-            serving_config="default_config",
+        # Construct serving config path manually to include collection
+        self._serving_config = (
+            f"projects/{project_id}/locations/global/collections/default_collection/"
+            f"dataStores/{data_store_id}/servingConfigs/default_search"
         )
 
     def search(self, query: str, max_results: int = 10) -> SearchResult:
@@ -53,8 +52,23 @@ class SearchEngine:
             relevance_scores = []
 
             for result in response.results:
-                doc_data = result.document.struct_data
-                results.append(dict(doc_data))
+                # For unstructured content, use derived_struct_data instead of struct_data
+                doc = result.document
+
+                # Try derived_struct_data first (for unstructured HTML content)
+                if hasattr(doc, "derived_struct_data") and doc.derived_struct_data:
+                    doc_data = dict(doc.derived_struct_data)
+                    # Add document ID
+                    doc_data["id"] = doc.id
+                    results.append(doc_data)
+                # Fallback to struct_data (for structured content)
+                elif doc.struct_data:
+                    doc_data = dict(doc.struct_data)
+                    doc_data["id"] = doc.id
+                    results.append(doc_data)
+                else:
+                    # No data available
+                    results.append({"id": doc.id})
 
                 # Extract relevance score (default to 0.5 if not available)
                 relevance_score = getattr(result, "relevance_score", 0.5)

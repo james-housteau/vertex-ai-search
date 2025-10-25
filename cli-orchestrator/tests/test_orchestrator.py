@@ -1,7 +1,7 @@
 """Tests for CLI orchestrator."""
 
-from cli_orchestrator.orchestrator import CLIOrchestrator
 from cli_orchestrator.models import ExecutionResult
+from cli_orchestrator.orchestrator import CLIOrchestrator
 
 
 class TestCLIOrchestrator:

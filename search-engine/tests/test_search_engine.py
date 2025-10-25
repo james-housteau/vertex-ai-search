@@ -33,12 +33,26 @@ class TestSearchEngine:
         assert engine.data_store_id == "test-datastore"
 
     @patch("search_engine.search_engine.discoveryengine")
-    def test_search_successful(self, mock_discoveryengine, mock_search_response):
+    def test_search_successful(self, mock_discoveryengine):
         """Test successful search execution."""
-        # Setup mock
+        # Setup mock client
         mock_client = Mock()
         mock_discoveryengine.SearchServiceClient.return_value = mock_client
         mock_client.serving_config_path.return_value = "mock-serving-config"
+
+        # Setup proper mock search response structure
+        mock_result = Mock()
+        mock_document = Mock()
+        mock_document.id = "doc123"
+        mock_document.derived_struct_data = {
+            "title": "Test Result",
+            "content": "Test content",
+        }
+        mock_result.document = mock_document
+        mock_result.relevance_score = 0.85
+
+        mock_search_response = Mock()
+        mock_search_response.results = [mock_result]
         mock_client.search.return_value = mock_search_response
 
         # Mock SearchRequest
@@ -62,13 +76,21 @@ class TestSearchEngine:
         assert call_args == mock_request
 
     @patch("search_engine.search_engine.discoveryengine")
-    def test_search_with_default_max_results(
-        self, mock_discoveryengine, mock_search_response
-    ):
+    def test_search_with_default_max_results(self, mock_discoveryengine):
         """Test search with default max_results parameter."""
         mock_client = Mock()
         mock_discoveryengine.SearchServiceClient.return_value = mock_client
-        mock_client.serving_config_path.return_value = "mock-serving-config"
+
+        # Setup proper mock search response
+        mock_result = Mock()
+        mock_document = Mock()
+        mock_document.id = "doc123"
+        mock_document.derived_struct_data = {"title": "Test Result"}
+        mock_result.document = mock_document
+        mock_result.relevance_score = 0.85
+
+        mock_search_response = Mock()
+        mock_search_response.results = [mock_result]
         mock_client.search.return_value = mock_search_response
 
         # Mock SearchRequest to capture parameters
@@ -78,9 +100,13 @@ class TestSearchEngine:
         engine = SearchEngine("test-project", "test-datastore")
         engine.search("test query")
 
-        # Verify SearchRequest was called with correct parameters
+        # Verify SearchRequest was called with correct serving config path
+        expected_serving_config = (
+            "projects/test-project/locations/global/collections/default_collection/"
+            "dataStores/test-datastore/servingConfigs/default_search"
+        )
         mock_discoveryengine.SearchRequest.assert_called_with(
-            serving_config="mock-serving-config",
+            serving_config=expected_serving_config,
             query="test query",
             page_size=10,
         )
@@ -183,23 +209,6 @@ class TestSearchEngine:
             assert is_valid is True
 
     @patch("search_engine.search_engine.discoveryengine")
-    def test_serving_config_path_construction(self, mock_discoveryengine):
-        """Test that serving config path is constructed correctly."""
-        mock_client = Mock()
-        mock_discoveryengine.SearchServiceClient.return_value = mock_client
-        mock_client.serving_config_path.return_value = "test-serving-config-path"
-
-        SearchEngine("my-project", "my-datastore")
-
-        # Verify serving_config_path was called with correct parameters
-        mock_client.serving_config_path.assert_called_once_with(
-            project="my-project",
-            location="global",
-            data_store="my-datastore",
-            serving_config="default_config",
-        )
-
-    @patch("search_engine.search_engine.discoveryengine")
     def test_relevance_scores_extraction(
         self, mock_discoveryengine, mock_search_response_no_scores
     ):
@@ -210,11 +219,19 @@ class TestSearchEngine:
 
         # Create mock response with mixed relevance score availability
         mock_result1 = Mock()
-        mock_result1.document.struct_data = {"title": "Doc 1"}
+        mock_document1 = Mock()
+        mock_document1.id = "doc1"
+        mock_document1.derived_struct_data = {"title": "Doc 1"}
+        mock_document1.struct_data = None
+        mock_result1.document = mock_document1
         mock_result1.relevance_score = 0.95
 
         mock_result2 = Mock(spec=["document"])  # No relevance_score attribute
-        mock_result2.document.struct_data = {"title": "Doc 2"}
+        mock_document2 = Mock()
+        mock_document2.id = "doc2"
+        mock_document2.derived_struct_data = {"title": "Doc 2"}
+        mock_document2.struct_data = None
+        mock_result2.document = mock_document2
 
         mock_response = Mock()
         mock_response.results = [mock_result1, mock_result2]

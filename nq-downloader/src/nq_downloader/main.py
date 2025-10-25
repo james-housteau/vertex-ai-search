@@ -9,7 +9,6 @@ from rich.table import Table
 
 from .downloader import NQDownloader
 
-
 console = Console()
 
 
@@ -70,13 +69,15 @@ def download(shard: str, project_id: str, output_dir: Path, no_progress: bool) -
             table.add_column("Value", style="green")
 
             table.add_row("File", str(result.local_path))
-            table.add_row("Size", f"{result.file_size:,} bytes")
-            table.add_row("Time", f"{result.download_time_seconds:.2f} seconds")
             table.add_row(
-                "Speed",
-                f"{result.file_size / result.download_time_seconds / 1024 / 1024:.2f} MB/s",
+                "Size", f"{result.file_size:,} bytes" if result.file_size else "Unknown"
             )
-            table.add_row("Checksum", result.checksum[:16] + "...")
+            table.add_row("Time", f"{result.download_time_seconds:.2f} seconds")
+            if result.file_size and result.download_time_seconds > 0:
+                speed = result.file_size / result.download_time_seconds / 1024 / 1024
+                table.add_row("Speed", f"{speed:.2f} MB/s")
+            if result.checksum:
+                table.add_row("Checksum", result.checksum[:16] + "...")
 
             console.print(table)
         else:
@@ -84,8 +85,8 @@ def download(shard: str, project_id: str, output_dir: Path, no_progress: bool) -
             raise click.ClickException(f"Download failed: {result.error_message}")
 
     except Exception as e:
-        console.print(f"[red]✗ Error: {str(e)}[/red]")
-        raise click.ClickException(str(e))
+        console.print(f"[red]✗ Error: {e!s}[/red]")
+        raise click.ClickException(str(e)) from e
 
 
 @cli.command()
@@ -116,8 +117,8 @@ def validate(file_path: Path) -> None:
         checksum = downloader._calculate_checksum(file_path)
         console.print(f"[green]✓ Checksum: {checksum}[/green]")
     except Exception as e:
-        console.print(f"[red]✗ Checksum calculation failed: {str(e)}[/red]")
-        raise click.ClickException("Checksum calculation failed")
+        console.print(f"[red]✗ Checksum calculation failed: {e!s}[/red]")
+        raise click.ClickException("Checksum calculation failed") from e
 
 
 @cli.command()

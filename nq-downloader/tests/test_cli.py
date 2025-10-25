@@ -5,9 +5,8 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from click.testing import CliRunner
-
-from nq_downloader.main import cli, main
 from nq_downloader.downloader import DownloadResult
+from nq_downloader.main import cli, main
 
 
 class TestCLI:

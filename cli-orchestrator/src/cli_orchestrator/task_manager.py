@@ -1,7 +1,6 @@
 """Task management for orchestrator."""
 
 import concurrent.futures
-from typing import List
 
 from .models import ExecutionResult
 from .orchestrator import CLIOrchestrator
@@ -15,8 +14,8 @@ class TaskManager:
         self.orchestrator = CLIOrchestrator()
 
     def run_sequential(
-        self, tasks: List[str], timeout: int = 300
-    ) -> List[ExecutionResult]:
+        self, tasks: list[str], timeout: int = 300
+    ) -> list[ExecutionResult]:
         """Run tasks sequentially."""
         results = []
 
@@ -31,8 +30,8 @@ class TaskManager:
         return results
 
     def run_parallel(
-        self, tasks: List[str], timeout: int = 300
-    ) -> List[ExecutionResult]:
+        self, tasks: list[str], timeout: int = 300
+    ) -> list[ExecutionResult]:
         """Run tasks in parallel."""
         results = []
 

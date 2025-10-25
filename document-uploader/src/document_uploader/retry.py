@@ -1,8 +1,9 @@
 """Simplified retry logic using standard approaches."""
 
 import time
+from collections.abc import Callable
 from functools import wraps
-from typing import Callable, Any, TypeVar, Type, Tuple, cast
+from typing import Any, TypeVar, cast
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -10,7 +11,7 @@ F = TypeVar("F", bound=Callable[..., Any])
 def retry_with_backoff(
     max_retries: int = 3,
     base_delay: float = 1.0,
-    exceptions: Tuple[Type[Exception], ...] = (Exception,),
+    exceptions: tuple[type[Exception], ...] = (Exception,),
 ) -> Callable[[F], F]:
     """Simplified decorator for retrying operations with exponential backoff."""
 

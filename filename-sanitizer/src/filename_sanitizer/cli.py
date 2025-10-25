@@ -3,14 +3,13 @@
 import glob
 import re
 from pathlib import Path
-from typing import List
 
 import click
 from rich.console import Console
 from rich.table import Table
 
 from . import __version__
-from .sanitizer import sanitize_filename, is_valid_filename, get_safe_filename_variants
+from .sanitizer import get_safe_filename_variants, is_valid_filename, sanitize_filename
 
 console = Console()
 
@@ -152,15 +151,15 @@ def validate(filename: str, no_check_length: bool) -> None:
         console.print("[red] Invalid filename[/red]")
 
         # Provide specific feedback
-        issues: List[str] = []
+        issues: list[str] = []
 
         if not filename:
             issues.append("Empty filename")
         else:
             from .sanitizer import (
                 INVALID_CHARS,
-                WINDOWS_RESERVED_NAMES,
                 MAX_FILENAME_LENGTH,
+                WINDOWS_RESERVED_NAMES,
             )
 
             if re.search(INVALID_CHARS, filename):

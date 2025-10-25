@@ -1,10 +1,10 @@
 """Tests for config_manager.main CLI module."""
 
 import tempfile
-import yaml
 from pathlib import Path
-from click.testing import CliRunner
 
+import yaml
+from click.testing import CliRunner
 from config_manager.main import cli
 
 

@@ -1,8 +1,9 @@
 """Unit tests for Answer Service implementation."""
 
 from unittest.mock import Mock, patch
-from answer_service.service import AnswerService
+
 from answer_service.models import ConversationResult
+from answer_service.service import AnswerService
 
 
 class TestAnswerService:
@@ -228,7 +229,7 @@ class TestAnswerService:
         result = service.ask_question("Test question")
 
         assert result.response_time_ms > 0
-        assert isinstance(result.response_time_ms, (int, float))
+        assert isinstance(result.response_time_ms, int | float)
 
     @patch("answer_service.service.ConversationalSearchServiceClient")
     def test_conversation_history_isolation(self, mock_client_class):

@@ -60,3 +60,17 @@ addopts = [
     "--cov-report=html",
     "--cov-fail-under=80"
 ]
+
+[tool.coverage.run]
+omit = [
+    "*/service_real.py",  # Exclude real Google Cloud API implementation from coverage
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]

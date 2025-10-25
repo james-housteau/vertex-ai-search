@@ -2,8 +2,9 @@
 Basic import test to verify module structure.
 """
 
-import pytest
 from dataclasses import fields
+
+import pytest
 
 
 def test_nq_downloader_module_can_be_imported():
@@ -20,7 +21,7 @@ def test_nq_downloader_module_can_be_imported():
 def test_nq_downloader_classes_exist():
     """Test that required classes exist in the module."""
     try:
-        from nq_downloader.downloader import NQDownloader, DownloadResult
+        from nq_downloader.downloader import DownloadResult, NQDownloader
 
         # Verify class can be instantiated
         downloader = NQDownloader(project_id="test")

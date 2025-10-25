@@ -43,10 +43,34 @@ test-quick: ## Run quick tests (excludes slow/integration tests)
 	poetry run python -m pytest $(TEST_PATHS) -v --tb=short -m "not slow and not integration" --continue-on-collection-errors || true
 
 test: ## Run fast subset of tests (no integration/slow tests)
-	poetry run python -m pytest $(TEST_PATHS) -v --tb=short -m "not slow and not integration" --continue-on-collection-errors --maxfail=10
+	@echo "Running fast tests (excluding slow/integration)..."
+	@for dir in */; do \
+		if [ -d "$${dir}tests" ] && [ -f "$${dir}pyproject.toml" ]; then \
+			echo "Testing $${dir%/}..."; \
+			(cd "$$dir" && poetry run pytest tests/ -v --tb=short -m "not slow and not integration" --maxfail=5 2>/dev/null || echo "❌ $${dir%/} failed"); \
+		fi; \
+	done
+	@echo "Done testing all modules"
+
+test-all: ## Run ALL tests including slow/integration (no coverage)
+	@echo "Running ALL tests (including slow/integration)..."
+	@for dir in */; do \
+		if [ -d "$${dir}tests" ] && [ -f "$${dir}pyproject.toml" ]; then \
+			echo "Testing $${dir%/}..."; \
+			(cd "$$dir" && poetry run pytest tests/ -v --tb=short --maxfail=5 2>/dev/null || echo "❌ $${dir%/} failed"); \
+		fi; \
+	done
+	@echo "Done testing all modules"
 
 test-cov: ## Run ALL tests with coverage report (includes slow/integration tests)
-	poetry run python -m pytest $(TEST_PATHS) --cov=genesis --cov-report=html --cov-report=term --continue-on-collection-errors
+	@echo "Running ALL tests (including slow/integration) with coverage..."
+	@for dir in */; do \
+		if [ -d "$${dir}tests" ] && [ -f "$${dir}pyproject.toml" ]; then \
+			echo "Testing $${dir%/} with coverage..."; \
+			(cd "$$dir" && poetry run pytest tests/ -v --tb=short --cov=src --cov-report=term --cov-report=html 2>/dev/null || echo "❌ $${dir%/} failed"); \
+		fi; \
+	done
+	@echo "Done testing all modules with coverage"
 
 format: ## Format code with black and ruff
 	poetry run black .

@@ -1,11 +1,11 @@
 """Tests for the sanitizer module."""
 
 from filename_sanitizer.sanitizer import (
-    sanitize_filename,
-    is_valid_filename,
-    get_safe_filename_variants,
-    WINDOWS_RESERVED_NAMES,
     MAX_FILENAME_LENGTH,
+    WINDOWS_RESERVED_NAMES,
+    get_safe_filename_variants,
+    is_valid_filename,
+    sanitize_filename,
 )
 
 

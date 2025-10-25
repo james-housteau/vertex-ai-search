@@ -1,7 +1,6 @@
 """Data models for Answer Service."""
 
 from dataclasses import dataclass
-from typing import List, Optional
 
 
 @dataclass
@@ -11,8 +10,8 @@ class ConversationResult:
     query: str
     answer: str
     confidence_score: float
-    sources: List[str]
+    sources: list[str]
     conversation_id: str
     response_time_ms: float
     success: bool
-    error_message: Optional[str] = None
+    error_message: str | None = None

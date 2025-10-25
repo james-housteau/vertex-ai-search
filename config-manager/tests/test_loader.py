@@ -1,17 +1,17 @@
 """Tests for config_manager.loader module."""
 
 import os
-import pytest
 import tempfile
-import yaml
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+import yaml
 from config_manager.loader import (
-    load_yaml_file,
-    merge_configs,
     apply_env_overrides,
     load_config,
+    load_yaml_file,
+    merge_configs,
 )
 from config_manager.models import AppConfig
 

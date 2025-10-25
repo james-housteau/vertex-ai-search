@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 from click.testing import CliRunner
 
-from src.load_tester.main import (
+from load_tester.main import (
     cli,
     conversation_load_test,
     run_load_test,
@@ -47,7 +47,7 @@ class TestRunLoadTestCommand:
         """Set up test environment."""
         self.runner = CliRunner()
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_run_load_test_basic(self, mock_create_load_tester: Mock) -> None:
         """Test basic run-load-test command."""
         # Setup mock
@@ -72,7 +72,7 @@ class TestRunLoadTestCommand:
         )
         mock_load_tester.run_load_test.assert_called_once()
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_run_load_test_with_custom_queries(
         self,
         mock_create_load_tester: Mock,
@@ -113,7 +113,7 @@ class TestRunLoadTestCommand:
         assert "ML concepts" in call_args.search_queries
         assert "Explain AI" in call_args.conversation_queries
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_run_load_test_failure(self, mock_create_load_tester: Mock) -> None:
         """Test run-load-test with failure result."""
         mock_load_tester = Mock()
@@ -130,7 +130,7 @@ class TestRunLoadTestCommand:
 
     def test_run_load_test_default_queries(self) -> None:
         """Test run-load-test uses default queries when none provided."""
-        with patch("src.load_tester.main.create_load_tester_with_mocks") as mock_create:
+        with patch("load_tester.main.create_load_tester_with_mocks") as mock_create:
             mock_load_tester = Mock()
             mock_result = Mock()
             mock_result.success = True
@@ -157,7 +157,7 @@ class TestSearchLoadTestCommand:
         """Set up test environment."""
         self.runner = CliRunner()
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_search_load_test_basic(self, mock_create_load_tester: Mock) -> None:
         """Test basic search-load-test command."""
         mock_load_tester = Mock()
@@ -177,7 +177,7 @@ class TestSearchLoadTestCommand:
         assert "✅ Search load test completed successfully!" in result.output
         mock_load_tester.run_search_load_test.assert_called_once()
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_search_load_test_with_queries(self, mock_create_load_tester: Mock) -> None:
         """Test search-load-test with custom queries."""
         mock_load_tester = Mock()
@@ -203,7 +203,7 @@ class TestSearchLoadTestCommand:
         assert "search2" in query_list
         assert "search3" in query_list
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_search_load_test_failure(self, mock_create_load_tester: Mock) -> None:
         """Test search-load-test with failure result."""
         mock_load_tester = Mock()
@@ -228,7 +228,7 @@ class TestConversationLoadTestCommand:
         """Set up test environment."""
         self.runner = CliRunner()
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_conversation_load_test_basic(self, mock_create_load_tester: Mock) -> None:
         """Test basic conversation-load-test command."""
         mock_load_tester = Mock()
@@ -250,7 +250,7 @@ class TestConversationLoadTestCommand:
         assert "✅ Conversation load test completed successfully!" in result.output
         mock_load_tester.run_conversation_load_test.assert_called_once()
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_conversation_load_test_with_queries(
         self,
         mock_create_load_tester: Mock,
@@ -278,7 +278,7 @@ class TestConversationLoadTestCommand:
         assert "conversation1" in query_list
         assert "conversation2" in query_list
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_conversation_load_test_failure(
         self,
         mock_create_load_tester: Mock,
@@ -306,7 +306,7 @@ class TestValidateCommand:
         """Set up test environment."""
         self.runner = CliRunner()
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_validate_success(self, mock_create_load_tester: Mock) -> None:
         """Test successful service validation."""
         mock_load_tester = Mock()
@@ -322,7 +322,7 @@ class TestValidateCommand:
         assert "Answer Service: ✅ Connected" in result.output
         assert "✅ All services validated successfully!" in result.output
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_validate_search_failure(self, mock_create_load_tester: Mock) -> None:
         """Test validation with search engine failure."""
         mock_load_tester = Mock()
@@ -337,7 +337,7 @@ class TestValidateCommand:
         assert "Answer Service: ✅ Connected" in result.output
         assert "❌ Service validation failed" in result.output
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_validate_answer_failure(self, mock_create_load_tester: Mock) -> None:
         """Test validation with answer service failure."""
         mock_load_tester = Mock()
@@ -352,7 +352,7 @@ class TestValidateCommand:
         assert "Answer Service: ❌ Failed" in result.output
         assert "❌ Service validation failed" in result.output
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_validate_both_failure(self, mock_create_load_tester: Mock) -> None:
         """Test validation with both services failing."""
         mock_load_tester = Mock()
@@ -367,7 +367,7 @@ class TestValidateCommand:
         assert "Answer Service: ❌ Failed" in result.output
         assert "❌ Service validation failed" in result.output
 
-    @patch("src.load_tester.main.create_load_tester_with_mocks")
+    @patch("load_tester.main.create_load_tester_with_mocks")
     def test_validate_with_custom_ids(self, mock_create_load_tester: Mock) -> None:
         """Test validation with custom project and datastore IDs."""
         mock_load_tester = Mock()
@@ -411,11 +411,11 @@ class TestCLIIntegration:
     def test_cli_parameter_validation(self) -> None:
         """Test CLI parameter validation."""
         # Test invalid concurrent users
-        with patch("src.load_tester.main.create_load_tester_with_mocks"):
+        with patch("load_tester.main.create_load_tester_with_mocks"):
             self.runner.invoke(run_load_test, ["--concurrent-users", "-1"])
             # Click should handle invalid values gracefully
 
         # Test invalid duration
-        with patch("src.load_tester.main.create_load_tester_with_mocks"):
+        with patch("load_tester.main.create_load_tester_with_mocks"):
             self.runner.invoke(search_load_test, ["--duration", "-5"])
             # Click should handle invalid values gracefully

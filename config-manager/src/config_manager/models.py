@@ -1,8 +1,9 @@
 """Pydantic models for configuration management."""
 
-from typing import Optional, Dict, Any, List
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class AppConfig(BaseModel):
@@ -31,20 +32,20 @@ class EnvironmentConfig(BaseModel):
     model_config = ConfigDict(frozen=True, extra="allow")
 
     environment: str = Field(default="development")
-    config_overrides: Dict[str, Any] = Field(default_factory=dict)
+    config_overrides: dict[str, Any] = Field(default_factory=dict)
 
 
 class ConfigManager:
     """Configuration manager for loading and merging configuration files."""
 
-    def __init__(self, config_dir: Optional[Path] = None) -> None:
+    def __init__(self, config_dir: Path | None = None) -> None:
         """Initialize the configuration manager.
 
         Args:
             config_dir: Directory containing configuration files
         """
         self.config_dir = config_dir or Path("config")
-        self._cache: Dict[str, AppConfig] = {}
+        self._cache: dict[str, AppConfig] = {}
 
     def load_config(self, environment: str = "development") -> AppConfig:
         """Load configuration for the specified environment.
@@ -73,7 +74,7 @@ class ConfigManager:
             # If loading fails, we'll let the exception bubble up
             raise
 
-    def get_available_environments(self) -> List[str]:
+    def get_available_environments(self) -> list[str]:
         """Get list of available environment configurations.
 
         Returns:
@@ -89,7 +90,7 @@ class ConfigManager:
 
         return sorted(env_files)
 
-    def validate_config(self, config_data: Dict[str, Any]) -> AppConfig:
+    def validate_config(self, config_data: dict[str, Any]) -> AppConfig:
         """Validate configuration data against the schema.
 
         Args:
