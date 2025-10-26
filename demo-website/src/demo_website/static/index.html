@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex AI Search Demo</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Vertex AI Search Demo</h1>
+            <p>Search and summarize content using Vertex AI</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-button active" data-tab="search">Search</button>
+            <button class="tab-button" data-tab="summarize">Summarize</button>
+        </nav>
+
+        <main>
+            <!-- Search Tab -->
+            <div id="search-tab" class="tab-content active">
+                <div class="search-box">
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Enter your search query..."
+                        autocomplete="off"
+                    >
+                    <button id="search-button">Search</button>
+                </div>
+                <div id="search-loading" class="loading hidden">Searching...</div>
+                <div id="search-error" class="error hidden"></div>
+                <div id="search-results"></div>
+            </div>
+
+            <!-- Summarize Tab -->
+            <div id="summarize-tab" class="tab-content">
+                <div class="summary-box">
+                    <textarea
+                        id="summary-input"
+                        placeholder="Paste content to summarize..."
+                        rows="8"
+                    ></textarea>
+                    <button id="summary-button">Summarize</button>
+                </div>
+                <div id="summary-loading" class="loading hidden">Generating summary...</div>
+                <div id="summary-error" class="error hidden"></div>
+                <div id="summary-results"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by Vertex AI Search API</p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

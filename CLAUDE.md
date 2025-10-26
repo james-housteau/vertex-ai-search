@@ -18,7 +18,7 @@ The system processes 1600 HTML documents from the Natural Questions dataset to t
 3. **Each module must be <60 files** - AI-safe development constraint
 4. **Each module builds independently** - `cd module && make build` must work in isolation
 
-## Available Modules (20 Total)
+## Available Modules (21 Total)
 
 Each module has its own `Makefile`, `pyproject.toml`, tests, and dependencies:
 
@@ -52,6 +52,7 @@ Each module has its own `Makefile`, `pyproject.toml`, tests, and dependencies:
 
 ### Stream 6: Production API
 - **`search-api/`** - FastAPI service with /search, /summarize, /health endpoints (88% coverage)
+- **`demo-website/`** - Web UI for search and streaming summarization (TBD coverage)
 
 ## Development Workflow
 
@@ -150,6 +151,7 @@ Modules connect through well-defined APIs, not compilation dependencies:
 4. **Testing Pipeline**: `search-engine` + `answer-service` → `metrics-collector` → `load-tester`
 5. **Vector Search Pipeline**: `html-chunker` → `embedding-generator` → `vector-index-prep` → `vector-search-index` → `vector-query-client`
 6. **Production API**: `search-api` (uses `vector-query-client` + `shared-contracts`)
+7. **Demo UI**: `demo-website` (uses `search-api` via HTTP)
 
 ## Important Development Notes
 
@@ -244,3 +246,8 @@ make quality-all         # Quality check everything
 - **Need fast vector search API?** → `search-api/`
 - **Need streaming summarization?** → `search-api/`
 - **Need production health checks?** → `search-api/`
+
+### Demo & UI
+- **Need web interface for search?** → `demo-website/`
+- **Need to test search-api visually?** → `demo-website/`
+- **Need streaming SSE demo?** → `demo-website/`
