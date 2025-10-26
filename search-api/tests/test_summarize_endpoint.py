@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 def test_client():
     """Create test client."""
     from search_api.api import app
+
     return TestClient(app)
 
 
@@ -28,14 +29,10 @@ class TestSummarizeEndpoint:
         )
         mock_model.generate_content.return_value = mock_response
 
-        mocker.patch(
-            "search_api.api.genai.GenerativeModel",
-            return_value=mock_model
-        )
+        mocker.patch("search_api.api.genai.GenerativeModel", return_value=mock_model)
 
         response = test_client.post(
-            "/summarize",
-            json={"content": "Test content to summarize"}
+            "/summarize", json={"content": "Test content to summarize"}
         )
         # Should return 200 for successful stream
         assert response.status_code == 200
@@ -51,22 +48,20 @@ class TestSummarizeEndpoint:
         mock_model = mocker.Mock()
         mock_response = mocker.Mock()
         mock_response.__iter__ = mocker.Mock(
-            return_value=iter([
-                mocker.Mock(text="This is "),
-                mocker.Mock(text="a test "),
-                mocker.Mock(text="summary."),
-            ])
+            return_value=iter(
+                [
+                    mocker.Mock(text="This is "),
+                    mocker.Mock(text="a test "),
+                    mocker.Mock(text="summary."),
+                ]
+            )
         )
         mock_model.generate_content.return_value = mock_response
 
-        mocker.patch(
-            "search_api.api.genai.GenerativeModel",
-            return_value=mock_model
-        )
+        mocker.patch("search_api.api.genai.GenerativeModel", return_value=mock_model)
 
         response = test_client.post(
-            "/summarize",
-            json={"content": "Long content to summarize"}
+            "/summarize", json={"content": "Long content to summarize"}
         )
 
         assert response.status_code == 200
@@ -79,22 +74,20 @@ class TestSummarizeEndpoint:
         mock_model = mocker.Mock()
         mock_response = mocker.Mock()
         mock_response.__iter__ = mocker.Mock(
-            return_value=iter([
-                mocker.Mock(text="Token1 "),
-                mocker.Mock(text="Token2 "),
-                mocker.Mock(text="Token3"),
-            ])
+            return_value=iter(
+                [
+                    mocker.Mock(text="Token1 "),
+                    mocker.Mock(text="Token2 "),
+                    mocker.Mock(text="Token3"),
+                ]
+            )
         )
         mock_model.generate_content.return_value = mock_response
 
-        mocker.patch(
-            "search_api.api.genai.GenerativeModel",
-            return_value=mock_model
-        )
+        mocker.patch("search_api.api.genai.GenerativeModel", return_value=mock_model)
 
         response = test_client.post(
-            "/summarize",
-            json={"content": "Content to summarize"}
+            "/summarize", json={"content": "Content to summarize"}
         )
 
         assert response.status_code == 200
@@ -108,17 +101,15 @@ class TestSummarizeEndpoint:
         """Test that summarize accepts optional max_tokens parameter."""
         mock_model = mocker.Mock()
         mock_response = mocker.Mock()
-        mock_response.__iter__ = mocker.Mock(return_value=iter([mocker.Mock(text="Summary")]))
+        mock_response.__iter__ = mocker.Mock(
+            return_value=iter([mocker.Mock(text="Summary")])
+        )
         mock_model.generate_content.return_value = mock_response
 
-        mocker.patch(
-            "search_api.api.genai.GenerativeModel",
-            return_value=mock_model
-        )
+        mocker.patch("search_api.api.genai.GenerativeModel", return_value=mock_model)
 
         response = test_client.post(
-            "/summarize",
-            json={"content": "Content", "max_tokens": 100}
+            "/summarize", json={"content": "Content", "max_tokens": 100}
         )
 
         assert response.status_code == 200
@@ -129,16 +120,12 @@ class TestSummarizeValidation:
 
     def test_summarize_validates_content_not_empty(self, test_client):
         """Test that summarize validates content is not empty."""
-        response = test_client.post(
-            "/summarize",
-            json={"content": ""}
-        )
+        response = test_client.post("/summarize", json={"content": ""})
         assert response.status_code == 422
 
     def test_summarize_validates_max_tokens_positive(self, test_client):
         """Test that summarize validates max_tokens is positive."""
         response = test_client.post(
-            "/summarize",
-            json={"content": "Test content", "max_tokens": -1}
+            "/summarize", json={"content": "Test content", "max_tokens": -1}
         )
         assert response.status_code == 422

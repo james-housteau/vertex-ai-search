@@ -20,12 +20,11 @@ def mock_vector_client(mocker):
 def test_client(mocker, mock_vector_client):
     """Create test client with mocked dependencies."""
     # Mock the get_vector_client function to return our mock
-    mocker.patch(
-        "search_api.api.get_vector_client", return_value=mock_vector_client
-    )
+    mocker.patch("search_api.api.get_vector_client", return_value=mock_vector_client)
 
     # Clear the cache between tests
     from search_api.api import app, search_cache
+
     search_cache.clear()
 
     return TestClient(app)
@@ -50,13 +49,13 @@ class TestSearchEndpoint:
                 chunk_id="chunk-1",
                 score=0.95,
                 content="Sample content 1",
-                metadata={"source": "doc1.html"}
+                metadata={"source": "doc1.html"},
             ),
             SearchMatch(
                 chunk_id="chunk-2",
                 score=0.87,
                 content="Sample content 2",
-                metadata={"source": "doc2.html"}
+                metadata={"source": "doc2.html"},
             ),
         ]
         mock_vector_client.query.return_value = mock_results
@@ -80,9 +79,7 @@ class TestSearchEndpoint:
         from shared_contracts import SearchMatch
 
         mock_vector_client.query.return_value = [
-            SearchMatch(
-                chunk_id="chunk-1", score=0.95, content="test", metadata={}
-            )
+            SearchMatch(chunk_id="chunk-1", score=0.95, content="test", metadata={})
         ]
 
         response = test_client.get("/search", params={"q": "test", "top_k": 5})
@@ -95,9 +92,7 @@ class TestSearchEndpoint:
         from shared_contracts import SearchMatch
 
         mock_vector_client.query.return_value = [
-            SearchMatch(
-                chunk_id="chunk-1", score=0.95, content="test", metadata={}
-            )
+            SearchMatch(chunk_id="chunk-1", score=0.95, content="test", metadata={})
         ]
         mock_vector_client.last_query_latency_ms = 42.5
 
@@ -127,6 +122,7 @@ class TestSearchCaching:
     def test_cache_hit_faster_than_miss(self, mocker):
         """Test that cached queries are faster than uncached."""
         from shared_contracts import SearchMatch
+
         from search_api.api import app, search_cache
 
         # Clear cache
@@ -135,9 +131,7 @@ class TestSearchCaching:
         # Mock vector client
         mock_vector_client = mocker.Mock()
         mock_result = [
-            SearchMatch(
-                chunk_id="chunk-1", score=0.95, content="test", metadata={}
-            )
+            SearchMatch(chunk_id="chunk-1", score=0.95, content="test", metadata={})
         ]
         mock_vector_client.query.return_value = mock_result
 
@@ -163,6 +157,7 @@ class TestSearchCaching:
     def test_cache_respects_top_k_parameter(self, mocker):
         """Test that cache keys include top_k parameter."""
         from shared_contracts import SearchMatch
+
         from search_api.api import app, search_cache
 
         # Clear cache
@@ -171,9 +166,7 @@ class TestSearchCaching:
         # Mock vector client
         mock_vector_client = mocker.Mock()
         mock_result = [
-            SearchMatch(
-                chunk_id="chunk-1", score=0.95, content="test", metadata={}
-            )
+            SearchMatch(chunk_id="chunk-1", score=0.95, content="test", metadata={})
         ]
         mock_vector_client.query.return_value = mock_result
 
@@ -192,6 +185,7 @@ class TestSearchCaching:
     def test_cache_stores_results(self, mocker):
         """Test that cache stores and retrieves results correctly."""
         from shared_contracts import SearchMatch
+
         from search_api.api import app, search_cache
 
         # Clear cache
@@ -200,9 +194,7 @@ class TestSearchCaching:
         # Mock vector client
         mock_vector_client = mocker.Mock()
         mock_result = [
-            SearchMatch(
-                chunk_id="chunk-1", score=0.95, content="test", metadata={}
-            )
+            SearchMatch(chunk_id="chunk-1", score=0.95, content="test", metadata={})
         ]
         mock_vector_client.query.return_value = mock_result
 

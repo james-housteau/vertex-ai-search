@@ -11,7 +11,7 @@ from load_tester.models import (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_config() -> LoadTestConfig:
     """Provide sample load test configuration."""
     return LoadTestConfig(
@@ -23,25 +23,25 @@ def sample_config() -> LoadTestConfig:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_search_engine() -> MockSearchEngine:
     """Provide mock search engine."""
     return MockSearchEngine("test-project", "test-datastore")
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_answer_service() -> MockAnswerService:
     """Provide mock answer service."""
     return MockAnswerService("test-project", "test-datastore")
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_metrics_collector() -> MockMetricsCollector:
     """Provide mock metrics collector."""
     return MockMetricsCollector()
 
 
-@pytest.fixture()
+@pytest.fixture
 def load_tester(
     mock_search_engine: MockSearchEngine,
     mock_answer_service: MockAnswerService,
@@ -55,7 +55,7 @@ def load_tester(
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_search_queries() -> list[str]:
     """Provide sample search queries."""
     return [
@@ -65,7 +65,7 @@ def sample_search_queries() -> list[str]:
     ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_conversation_queries() -> list[str]:
     """Provide sample conversation queries."""
     return [

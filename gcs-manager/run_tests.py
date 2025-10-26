@@ -28,7 +28,7 @@ def main():
 
     # First, try to run manual validation
     print("1. Running manual validation...")
-    success, stdout, stderr = run_command("python manual_test.py")
+    success, _stdout, stderr = run_command("python manual_test.py")
     if success:
         print("   ✅ Manual tests passed")
     else:
@@ -38,7 +38,7 @@ def main():
 
     # Try to run pytest if available
     print("\n2. Checking pytest availability...")
-    success, stdout, stderr = run_command("python -m pytest --version")
+    success, _stdout, _stderr = run_command("python -m pytest --version")
     if not success:
         print("   ⚠️  pytest not available (run 'poetry install' first)")
         print("   ✅ Manual validation completed successfully")
@@ -48,7 +48,7 @@ def main():
 
     # Run model tests
     print("\n3. Running model tests...")
-    success, stdout, stderr = run_command("python -m pytest tests/test_models.py -v")
+    success, _stdout, stderr = run_command("python -m pytest tests/test_models.py -v")
     if success:
         print("   ✅ Model tests passed")
     else:
@@ -57,7 +57,7 @@ def main():
 
     # Run unit tests
     print("\n4. Running unit tests...")
-    success, stdout, stderr = run_command(
+    success, _stdout, stderr = run_command(
         "python -m pytest tests/test_gcs_manager.py -v"
     )
     if success:
@@ -68,7 +68,7 @@ def main():
 
     # Run CLI tests
     print("\n5. Running CLI tests...")
-    success, stdout, stderr = run_command("python -m pytest tests/test_cli.py -v")
+    success, _stdout, stderr = run_command("python -m pytest tests/test_cli.py -v")
     if success:
         print("   ✅ CLI tests passed")
     else:
@@ -77,7 +77,7 @@ def main():
 
     # Run integration tests
     print("\n6. Running integration tests...")
-    success, stdout, stderr = run_command(
+    success, _stdout, stderr = run_command(
         "python -m pytest tests/test_integration.py -v"
     )
     if success:
@@ -88,7 +88,7 @@ def main():
 
     # Try to run acceptance tests
     print("\n7. Running acceptance tests...")
-    success, stdout, stderr = run_command(
+    success, _stdout, _stderr = run_command(
         "python -m pytest tests/test_gcs_manager_acceptance.py -v"
     )
     if success:

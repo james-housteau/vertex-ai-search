@@ -5,13 +5,15 @@ TDD GREEN Phase - Minimal implementation to make tests pass.
 
 import hashlib
 import os
+import re
 import time
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
-import google.generativeai as genai
 from cachetools import TTLCache
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse
+from google import generativeai as genai
 from pydantic import BaseModel, Field
 from shared_contracts import SearchMatch
 from vector_query_client import VectorQueryClient
@@ -78,8 +80,11 @@ async def search(
     """
     start_time = time.time()
 
-    # Generate cache key
-    cache_key = hashlib.md5(f"{q}:{top_k}".encode()).hexdigest()
+    # Normalize query for cache consistency (lowercase + strip + collapse whitespace)
+    normalized_q = re.sub(r"\s+", " ", q.lower().strip())
+
+    # Generate cache key from normalized query
+    cache_key = hashlib.md5(f"{normalized_q}:{top_k}".encode()).hexdigest()
 
     # Check cache
     if cache_key in search_cache:
@@ -91,9 +96,9 @@ async def search(
             "cache_hit": True,
         }
 
-    # Cache miss - query vector search
+    # Cache miss - query vector search with normalized query
     client = get_vector_client()
-    results = client.query(q, top_k=top_k)
+    results = client.query(normalized_q, top_k=top_k)
 
     # Store in cache
     search_cache[cache_key] = (results, time.time())
@@ -122,19 +127,21 @@ async def summarize(request: SummarizeRequest) -> StreamingResponse:
     async def generate_sse() -> AsyncIterator[str]:
         """Generate SSE stream from Gemini."""
         # Initialize Gemini
-        genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        configure_fn = getattr(genai, "configure")
+        configure_fn(api_key=os.environ.get("GEMINI_API_KEY", ""))
+        model_class = getattr(genai, "GenerativeModel")
+        model = model_class("gemini-1.5-flash")
 
         # Generate summary with streaming
         prompt = f"Summarize the following content concisely:\n\n{request.content}"
 
         # Configure generation
-        generation_config = {}
+        generation_config: Any = None
         if request.max_tokens:
-            generation_config["max_output_tokens"] = request.max_tokens
+            generation_config = {"max_output_tokens": request.max_tokens}
 
         response = model.generate_content(
-            prompt, stream=True, generation_config=generation_config or None
+            prompt, stream=True, generation_config=generation_config
         )
 
         # Stream tokens as SSE

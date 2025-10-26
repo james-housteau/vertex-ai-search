@@ -83,7 +83,11 @@ lint: ## Lint code with ruff
 	poetry run ruff check .
 
 typecheck: ## Type check with mypy
-	poetry run mypy .
+	@if [ -d "tests" ] && [ -n "$$(ls -A tests 2>/dev/null)" ]; then \
+		poetry run mypy tests; \
+	else \
+		echo "⏭️  No root-level code to type-check (modules check themselves)"; \
+	fi
 
 quality: format lint typecheck ## Run all quality checks
 

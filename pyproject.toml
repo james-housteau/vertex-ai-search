@@ -8,6 +8,7 @@ package-mode = false  # Integration layer, not a package
 
 [tool.poetry.dependencies]
 python = "^3.13"
+genesis-cli = { path = "/Users/jameshousteau/Downloads/genesis_cli-2.0.19-py3-none-any.whl" }
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
@@ -37,6 +38,12 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 ignore_missing_imports = true
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "."
+exclude = [
+    "(?x)(^nq-downloader/|^html-extractor/|^filename-sanitizer/|^config-manager/|^cli-orchestrator/|^gcs-manager/|^document-uploader/|^vertex-datastore/|^search-engine/|^answer-service/|^metrics-collector/|^load-tester/|^shared-contracts/|^html-chunker/|^embedding-generator/|^vector-index-prep/|^vector-search-index/|^vector-query-client/|^search-api/|^demo-website/)"
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

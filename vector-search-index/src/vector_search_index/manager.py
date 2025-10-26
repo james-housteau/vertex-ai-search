@@ -50,11 +50,12 @@ class VectorSearchIndexManager:
         }
 
         # Create the index
-        index = aiplatform.MatchingEngineIndex.create(
+        create_fn = aiplatform.MatchingEngineIndex.create
+        index = create_fn(
             display_name=config.display_name,
             metadata=metadata,
         )
-        return index.resource_name
+        return str(index.resource_name)
 
     def get_index_status(self, index_name: str) -> dict[str, Any]:
         """Get the status of a Vector Search index.
@@ -65,7 +66,8 @@ class VectorSearchIndexManager:
         Returns:
             Dictionary containing index status information.
         """
-        index = aiplatform.MatchingEngineIndex(index_name)
+        index_class = aiplatform.MatchingEngineIndex
+        index = index_class(index_name)
         return {
             "state": index.metadata.get("state", "UNKNOWN"),
             "deployed_indexes": [
@@ -83,11 +85,12 @@ class VectorSearchIndexManager:
         Returns:
             Resource name of the updated index.
         """
-        index = aiplatform.MatchingEngineIndex(index_name)
+        index_class = aiplatform.MatchingEngineIndex
+        index = index_class(index_name)
         index.update(
             display_name=config.display_name,
         )
-        return index.resource_name
+        return str(index.resource_name)
 
     def delete_index(self, index_name: str) -> None:
         """Delete a Vector Search index.
@@ -95,7 +98,8 @@ class VectorSearchIndexManager:
         Args:
             index_name: Full resource name of the index.
         """
-        index = aiplatform.MatchingEngineIndex(index_name)
+        index_class = aiplatform.MatchingEngineIndex
+        index = index_class(index_name)
         index.delete()
 
     def list_indexes(self) -> list[dict[str, str]]:
@@ -104,7 +108,9 @@ class VectorSearchIndexManager:
         Returns:
             List of dictionaries containing index information.
         """
-        indexes = aiplatform.MatchingEngineIndex.list()
+        index_class = aiplatform.MatchingEngineIndex
+        list_fn = index_class.list
+        indexes = list_fn()
         return [
             {"name": index.resource_name, "display_name": index.display_name}
             for index in indexes

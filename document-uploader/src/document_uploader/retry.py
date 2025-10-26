@@ -9,9 +9,9 @@ F = TypeVar("F", bound=Callable[..., Any])
 
 
 def retry_with_backoff(
-    max_retries: int = 3,
-    base_delay: float = 1.0,
-    exceptions: tuple[type[Exception], ...] = (Exception,),
+    max_retries: int,
+    base_delay: float,
+    exceptions: tuple[type[Exception], ...],
 ) -> Callable[[F], F]:
     """Simplified decorator for retrying operations with exponential backoff."""
 

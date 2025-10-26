@@ -132,7 +132,7 @@ class MetricsCollector:
 
             with Path(file_path).open("w") as f:
                 json.dump(export_data, f, indent=2)
-        except Exception:  # noqa: BLE001
+        except (OSError, ValueError):
             return False
         else:
             return True
@@ -189,7 +189,7 @@ class MetricsCollector:
                                 "context_used": conv_metric.context_used,
                             }
                         )
-        except Exception:  # noqa: BLE001
+        except (OSError, ValueError):
             return False
         else:
             return True

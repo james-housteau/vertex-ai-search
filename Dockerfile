@@ -136,7 +136,7 @@ set -euo pipefail
 # Colors for clean output
 GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'; NC='\033[0m'
 
-echo -e "${BLUE}🚀 vertex-ai-search Agent Development Container${NC}"
+echo -e "${BLUE}🚀 genesis-cli Agent Development Container${NC}"
 echo "🔧 User: $(whoami) | Workspace: ${HOME}"
 echo "🐍 $(python --version 2>&1) | 📦 $(node --version 2>&1)"
 echo -e "${GREEN}🔒 Agent isolation active${NC}"

@@ -47,4 +47,7 @@ def test_static_js_accessible(client: TestClient) -> None:
     """Test JavaScript file is accessible."""
     response = client.get("/static/app.js")
     assert response.status_code == 200
-    assert "javascript" in response.headers["content-type"] or "text/plain" in response.headers["content-type"]
+    assert (
+        "javascript" in response.headers["content-type"]
+        or "text/plain" in response.headers["content-type"]
+    )
