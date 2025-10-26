@@ -1,9 +1,11 @@
 # Project Development Environment
 # Automatically loads when entering the directory (requires direnv)
 
-# Git Author Configuration
-# Uses your system git config (no override for client projects)
-# Only the Genesis repository itself overrides to "Genesis <genesis@local>"
+# Git Author Configuration (Genesis Toolkit Bot)
+export GIT_AUTHOR_NAME="Genesis"
+export GIT_AUTHOR_EMAIL="genesis@local"
+export GIT_COMMITTER_NAME="Genesis"
+export GIT_COMMITTER_EMAIL="genesis@local"
 
 # Set project environment variables (generic for any project)
 export PROJECT_NAME="${PWD##*/}"  # Auto-detect from directory name
@@ -13,12 +15,11 @@ export SERVICE="${PWD##*/}"  # Use directory name as service name
 export AI_SAFETY_MODE="enforced"
 export LOG_LEVEL="info"
 export LOG_JSON="false"
-export LOG_TIMESTAMP="false"
+export LOG_TIMESTAMP="true"
 export LOG_CALLER="false"
 
-# Genesis Development Mode - disabled for client projects
-# This should only be "true" in the Genesis repository itself
-export GENESIS_DEV_MODE="false"
+# Genesis Development Mode - enables filesystem template access
+export GENESIS_DEV_MODE="true"
 
 # Circuit breaker configuration
 export CB_FAILURE_THRESHOLD="5"
@@ -51,7 +52,6 @@ export TEST_GITHUB_RATE_LIMIT="5000"
 # File limits
 export AI_MAX_FILES="550"  # Increased to accommodate project growth
 export MAX_PROJECT_FILES="1000"
-export WORKTREE_MAX_FILES="80"  # Max files for worktree commands (pure module isolation)
 
 # Development tool versions
 export PYTHON_VERSION="3.13"
@@ -141,9 +141,7 @@ export OTEL_LOG_LEVEL=error
 # Load GitHub token from secrets folder if it exists
 if [[ -f ".secrets/github_token" ]]; then
   export GITHUB_TOKEN="$(cat .secrets/github_token | tr -d '\n')"
-  # Also export as GH_TOKEN for gh CLI to use jhousteau in this project
-  export GH_TOKEN="$GITHUB_TOKEN"
-  echo "🔑 GitHub token loaded from .secrets/github_token (jhousteau)"
+  echo "🔑 GitHub token loaded from .secrets/github_token"
 else
   echo "⚠️  Warning: .secrets/github_token not found"
 fi
@@ -155,12 +153,6 @@ if [[ -d ".venv" ]]; then
     # Set PS1 to show we're in the virtual environment
     export VIRTUAL_ENV_PROMPT="(${PROJECT_NAME}) "
     echo "🐍 Python virtual environment activated: ${PROJECT_NAME}"
-fi
-
-# Add shared-core to Python path for development mode import resolution
-if [[ "$PROJECT_TYPE" == "genesis-toolkit" ]] && [[ -d "shared-python/src" ]]; then
-    export PYTHONPATH="${PROJECT_ROOT}/shared-python/src:${PYTHONPATH}"
-    echo "📦 Added shared-core to PYTHONPATH for development mode"
 fi
 
 # Load local overrides if they exist

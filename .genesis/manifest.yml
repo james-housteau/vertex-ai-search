@@ -1,170 +1,203 @@
-claude_commands:
-- dest: .claude/settings.json
-  source: .claude/settings.json
-  sync: if_unchanged
-claude_hooks:
-- dest: .claude/hooks/validate-bash-command.sh
-  executable: true
-  source: .claude/hooks/validate-bash-command.sh
-  sync: always
 shared_files:
-- path: .claude/settings.json
-  source_hash: sha256:1f283e14f9d6f36da7df5577727ae86eb32eaea6139f4c23e3c890e86d714f60
+- source: shared/.claude/settings.json
+  dest: .claude/settings.json
   sync: always
   description: 'Genesis source file: settings.json'
-- path: .claude/settings.local.json
-  source_hash: sha256:7e76ebc60b6de13c7be66e88f9c1d272f85ec08d0a80b600f821d6835ac78fc0
+- source: shared/.claude/settings.local.json
+  dest: .claude/settings.local.json
   sync: always
   description: 'Genesis source file: settings.local.json'
-- path: .claude/LEAN-TDD-WORKFLOW.md
-  source_hash: sha256:c5f4fd2d8f6622bda16467b9fceed94739c6accb6c96834b2b2b06b67f2afc70
+- source: shared/.claude/LEAN-TDD-WORKFLOW.md
+  dest: .claude/LEAN-TDD-WORKFLOW.md
   sync: always
   description: 'Genesis source file: LEAN-TDD-WORKFLOW.md'
-- path: .claude/agents/bloat-detector.md
-  source_hash: sha256:058f707ab37c2bbed005fa097a79b6868fbca6dc0084ad7f130f8258c1105ac2
+- source: shared/.claude/agents/bloat-detector.md
+  dest: .claude/agents/bloat-detector.md
   sync: always
   description: Bloat Detector agent configuration
-- path: .claude/agents/scope-guardian.md
-  source_hash: sha256:9909e200a750ba5a975d80f91c0a0c26be12647811fff08d2eddf1ab81a2b979
+- source: shared/.claude/agents/scope-guardian.md
+  dest: .claude/agents/scope-guardian.md
   sync: always
   description: Scope Guardian agent configuration
-- path: .claude/agents/build-validator.md
-  source_hash: sha256:0838118b7e235df052566bd96adc1878c69adcb8eec16d810ba488876a10d291
+- source: shared/.claude/agents/build-validator.md
+  dest: .claude/agents/build-validator.md
   sync: always
   description: Build Validator agent configuration
-- path: .claude/agents/refactoring-specialist.md
-  source_hash: sha256:b36a5d5dd7e60a0e0c6614ca10d1cbab8ab5209030cc454a168e466f3a2cda82
+- source: shared/.claude/agents/refactoring-specialist.md
+  dest: .claude/agents/refactoring-specialist.md
   sync: always
   description: Refactoring Specialist agent configuration
-- path: .claude/agents/test-designer.md
-  source_hash: sha256:cd36d2232e3663b8799296cb47e7579aa2d9aebf64de46f12d915ce700a48a4f
+- source: shared/.claude/agents/test-designer.md
+  dest: .claude/agents/test-designer.md
   sync: always
   description: Test Designer agent configuration
-- path: .claude/agents/complexity-auditor.md
-  source_hash: sha256:b5533aaa9e39b672fa779949c4c33d4efe0603fa9e2529de72fcbc7690c77c12
+- source: shared/.claude/agents/complexity-auditor.md
+  dest: .claude/agents/complexity-auditor.md
   sync: always
   description: Complexity Auditor agent configuration
-- path: .claude/agents/lean-implementer.md
-  source_hash: sha256:917cd31f3a612047380fc39a9635c46e0f1112de377436570d5c9d86c9ee2454
+- source: shared/.claude/agents/lean-implementer.md
+  dest: .claude/agents/lean-implementer.md
   sync: always
   description: Lean Implementer agent configuration
-- path: .claude/agents/documentation-minimalist.md
-  source_hash: sha256:25c75c0b5cd9a5bdf8cf829f38e7a352fbc40a2ed2ce042f0d61f71172dc2097
+- source: shared/.claude/agents/documentation-minimalist.md
+  dest: .claude/agents/documentation-minimalist.md
   sync: always
   description: Documentation Minimalist agent configuration
-- path: .claude/agents/dependency-tracker.md
-  source_hash: sha256:2c9acf1482fffa5ed6d333c0a692091a9c35770a9f7986e16c6af4e7f8cb26f1
+- source: shared/.claude/agents/dependency-tracker.md
+  dest: .claude/agents/dependency-tracker.md
   sync: always
   description: Dependency Tracker agent configuration
-- path: .claude/agents/issue-analyst.md
-  source_hash: sha256:ec11e7ab4e369443bfffc7fb2dda30739d00fc1631552415b28a2667219fdde5
+- source: shared/.claude/agents/issue-analyst.md
+  dest: .claude/agents/issue-analyst.md
   sync: always
   description: Issue Analyst agent configuration
-- path: .claude/agents/performance-monitor.md
-  source_hash: sha256:14120ac99181f3757a351afee4602f9982ae5e687a08e19edc927cef817ec6ec
+- source: shared/.claude/agents/performance-monitor.md
+  dest: .claude/agents/performance-monitor.md
   sync: always
   description: Performance Monitor agent configuration
-- path: .claude/hooks/validate-bash-command.sh
-  source_hash: sha256:f85cf5c511e4c2b8f0ce45508e292f1033a95bd2ba52605197c7b53d6a309b56
+- source: shared/.claude/hooks/validate-bash-command.sh
+  dest: .claude/hooks/validate-bash-command.sh
   sync: always
   description: 'Genesis source file: validate-bash-command.sh'
-- path: .claude/commands/pr.md
-  source_hash: sha256:f1b0d20c1f0c1545d207b764300578ee8c1e62158661ea16879b0f686e96c9a5
+  executable: true
+- source: shared/.claude/commands/pr.md
+  dest: .claude/commands/pr.md
   sync: always
   description: Pr command configuration
-- path: .claude/commands/update-docs.md
-  source_hash: sha256:2813077b2f48a29fba7f2d2e40b536299aeb37e44ae5f1dcb911e8afe2954217
+- source: shared/.claude/commands/update-docs.md
+  dest: .claude/commands/update-docs.md
   sync: always
   description: Update Docs command configuration
-- path: .claude/commands/issue.md
-  source_hash: sha256:83e48896e99b5cc2da54d01cd4826199e873b7e1fc36f662529f45cf0f8b5b06
+- source: shared/.claude/commands/issue.md
+  dest: .claude/commands/issue.md
   sync: always
   description: Issue command configuration
-- path: .claude/commands/close.md
-  source_hash: sha256:adbc4859b4b78452cc7dd15e40e1e3b1e596f83e0f48b77a945ed168cba78cf6
+- source: shared/.claude/commands/close.md
+  dest: .claude/commands/close.md
   sync: always
   description: Close command configuration
-- path: .claude/commands/audit.md
-  source_hash: sha256:f496549abb9eb29752543760c9305c339a81a5f3e5aca9f0986854eba49e3bad
+- source: shared/.claude/commands/audit.md
+  dest: .claude/commands/audit.md
   sync: always
   description: Audit command configuration
-- path: .claude/commands/STANDARDIZATION_TEMPLATE.md
-  source_hash: sha256:71965987451bce711d4e14f61a775af59a40c4dbec24c62fd0107d89e5eeb2d1
+- source: shared/.claude/commands/STANDARDIZATION_TEMPLATE.md
+  dest: .claude/commands/STANDARDIZATION_TEMPLATE.md
   sync: always
   description: Standardization_Template command configuration
-- path: .claude/commands/tdd.md
-  source_hash: sha256:c3ebb201b030d6b2c6caabdf0e71a4b91a6138167dfabf8aadc1bc7e27989788
+- source: shared/.claude/commands/tdd.md
+  dest: .claude/commands/tdd.md
   sync: always
   description: Tdd command configuration
-- path: .claude/commands/research.md
-  source_hash: sha256:354636e2a29d9eb43effc194eb02b7236c3ad5145f1acb7b6914b5b5be63c6fc
+- source: shared/.claude/commands/research.md
+  dest: .claude/commands/research.md
   sync: always
   description: Research command configuration
-- path: .claude/commands/refactor.md
-  source_hash: sha256:ff0811f82e4834688771c831ae4fc80b854bd862f4b9af73c616e513157995f1
+- source: shared/.claude/commands/refactor.md
+  dest: .claude/commands/refactor.md
   sync: always
   description: Refactor command configuration
-- path: .claude/commands/deprecate.md
-  source_hash: sha256:168a813e995a819113e3ee55ded0ba9a7708d7eb9876ff50325c7a4d8da4810e
+- source: shared/.claude/commands/deprecate.md
+  dest: .claude/commands/deprecate.md
   sync: always
   description: Deprecate command configuration
-- path: .claude/commands/optimize.md
-  source_hash: sha256:540fa1556457a55c417c57477294ccc3f7b48da18eff6a516e6f08e718e56a8c
+- source: shared/.claude/commands/optimize.md
+  dest: .claude/commands/optimize.md
   sync: always
   description: Optimize command configuration
-- path: .claude/commands/bug.md
-  source_hash: sha256:ffc263874ed1209c1db93fc274f86f3431e8448172758c5d99ea9dc6f6ebcecd
+- source: shared/.claude/commands/bug.md
+  dest: .claude/commands/bug.md
   sync: always
   description: Bug command configuration
-- path: .claude/commands/fix-all-errors.md
-  source_hash: sha256:f11801fcd010028dc8a80d5978bd821299f1c6e9cf59355da1284d6fc87099f1
+- source: shared/.claude/commands/fix-all-errors.md
+  dest: .claude/commands/fix-all-errors.md
   sync: always
   description: Fix All Errors command configuration
-- path: .claude/commands/metrics.md
-  source_hash: sha256:a39c258c99495bddb9d08e1f68653a9e97be3230d4db1de8858017e5b85d722e
+- source: shared/.claude/commands/metrics.md
+  dest: .claude/commands/metrics.md
   sync: always
   description: Metrics command configuration
-- path: .claude/commands/commit.md
-  source_hash: sha256:352ebbe06ba4f6b47b183832f8e6692c21d7719e4f5db09a89dc329d20c7ef89
+- source: shared/.claude/commands/commit.md
+  dest: .claude/commands/commit.md
   sync: always
   description: Commit command configuration
-- path: .claude/commands/cleanup.md
-  source_hash: sha256:cabb2a993e6a6aac47c59ac8c77eec2daef955823c135e9cdcd4b2942f4fa20f
+- source: shared/.claude/commands/cleanup.md
+  dest: .claude/commands/cleanup.md
   sync: always
   description: Cleanup command configuration
-- path: .claude/commands/feature.md
-  source_hash: sha256:f4c51d2f3fd3e217f305a7e82049ae482a1720e065f553b5a993109246689508
+- source: shared/.claude/commands/feature.md
+  dest: .claude/commands/feature.md
   sync: always
   description: Feature command configuration
-- path: .claude/commands/test-fix.md
-  source_hash: sha256:dbc2d545261018e0976d0c2822c32316c74f74b8a8949ec76850be9e1530092c
+- source: shared/.claude/commands/test-fix.md
+  dest: .claude/commands/test-fix.md
   sync: always
   description: Test Fix command configuration
-- path: .envrc
-  source_hash: sha256:10282b6f439af0d3a35d07dd4cde5a7b8c96a3a265213e8f637a4c21060e5baa
-  sync: if_unchanged
-  description: Environment configuration
-- path: CLAUDE.md
-  source_hash: sha256:5a598b061bdb1341f38a32cce517f145c9a4d6cb615469f17aca3b50d5b58412
-  sync: never
-  description: AI assistant instructions
-- path: README.md
-  source_hash: sha256:f6896caf12f320d35f806c047561fdcdc03419c40d009bde82a11b223dff4f0b
-  sync: never
-  description: Project documentation (user customizable)
-- path: Dockerfile
-  source_hash: sha256:e64c19ea3ecce9874cf33160a273def0fbc88efe7863b539a66ca3693026dedb
+- source: shared/Dockerfile
+  dest: Dockerfile
   sync: always
   description: Development container configuration
-- path: .gitignore
-  source_hash: sha256:361c25954bfa35ecef13e6dc1a62d2d01c4bb3ba32cd75ed32826a49325ff2be
+- source: shared/.claude/hooks/validate-bash-command.sh
+  dest: .claude/hooks/validate-bash-command.sh
+  sync: always
+  description: Claude Code hook
+  executable: true
+- source: shared/.envrc
+  dest: .envrc
+  sync: if_unchanged
+  description: Environment configuration
+- source: shared/.gitignore
+  dest: .gitignore
   sync: if_unchanged
   description: Git ignore patterns
-- path: pyproject.toml
-  source_hash: sha256:a8a9d44dcc54c1623c0c21652db8cfd417c115f7c465ba184ce5260c8399dd5f
-  sync: never
-  description: Python project configuration (user customizable)
-- path: .pre-commit-config.yaml
-  source_hash: sha256:f5fa7a8334fe61448821d91ea3d130277fbfed2c4bbe9c1b95fb9656b5919994
+- source: shared/.pre-commit-config.yaml
+  dest: .pre-commit-config.yaml
   sync: if_unchanged
   description: Pre-commit hooks configuration
+- source: shared/.claude/settings.json
+  dest: .claude/settings.json
+  sync: if_unchanged
+  description: Claude Code configuration
+- source: .pre-commit-config.yaml
+  dest: .pre-commit-config.yaml
+  sync: if_unchanged
+  description: Pre-commit hooks configuration
+- source: .gitignore
+  dest: .gitignore
+  sync: if_unchanged
+  description: Git ignore patterns
+- source: Makefile
+  dest: Makefile
+  sync: if_unchanged
+  description: Build and development tasks
+- source: shared/CLAUDE.md
+  dest: CLAUDE.md
+  sync: never
+  description: AI assistant instructions
+- source: shared/README.md
+  dest: README.md
+  sync: never
+  description: Project documentation (user customizable)
+- source: shared/pyproject.toml
+  dest: pyproject.toml
+  sync: never
+  description: Python project configuration (user customizable)
+- source: pyproject.toml
+  dest: pyproject.toml
+  sync: never
+  description: 'File: pyproject.toml'
+- source: .envrc
+  dest: .envrc
+  sync: never
+  description: 'File: .envrc'
+- source: README.md
+  dest: README.md
+  sync: never
+  description: 'File: README.md'
+- source: CLAUDE.md
+  dest: CLAUDE.md
+  sync: never
+  description: 'File: CLAUDE.md'
+- source: docker-compose.yml
+  dest: docker-compose.yml
+  sync: local_override
+  description: Docker Compose configuration

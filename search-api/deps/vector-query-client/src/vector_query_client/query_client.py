@@ -86,10 +86,7 @@ class VectorQueryClient:
                 # Convert distance to similarity score
                 # Distance of 0 = perfect match (score 1.0)
                 # Higher distance = lower similarity
-                if neighbor.distance is not None:
-                    score = self._distance_to_score(neighbor.distance)
-                else:
-                    score = 0.0
+                score = self._distance_to_score(neighbor.distance)
 
                 match = SearchMatch(
                     chunk_id=neighbor.id,

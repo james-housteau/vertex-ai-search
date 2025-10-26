@@ -27,10 +27,42 @@ if [[ "$IS_GENESIS_REPO" == "true" ]]; then
         exit 1
     fi
 else
-    # Client project setup - install latest Genesis release
-    echo "📦 Installing latest Genesis release..."
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    exec "$SCRIPT_DIR/install-genesis.sh"
+    # Client project setup
+
+    # Check if Genesis is already installed
+    if command -v genesis >/dev/null 2>&1; then
+        GENESIS_VERSION=$(genesis --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+        echo "✅ Genesis CLI already installed (version: $GENESIS_VERSION)"
+    else
+        echo "📦 Installing latest Genesis release..."
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        "$SCRIPT_DIR/install-genesis.sh" || {
+            echo "⚠️  Genesis installation failed, but continuing with project setup"
+            echo "   You can install Genesis manually later if needed"
+        }
+    fi
+
+    # Install project dependencies
+    echo "📦 Installing project dependencies..."
+    if command -v poetry >/dev/null 2>&1; then
+        poetry install
+    else
+        echo "⚠️  Poetry not found - skipping dependency installation"
+        echo "   Install Poetry: https://python-poetry.org/docs/#installation"
+    fi
+
+    # Install pre-commit hooks if available
+    if [[ -f ".pre-commit-config.yaml" ]] && [[ -d ".git" ]]; then
+        echo "🔧 Installing pre-commit hooks..."
+        if command -v pre-commit >/dev/null 2>&1; then
+            pre-commit install
+        elif command -v poetry >/dev/null 2>&1; then
+            poetry run pre-commit install 2>/dev/null || echo "⚠️  pre-commit not available"
+        fi
+    fi
+
+    echo "✅ Client project setup complete!"
+    exit 0
 fi
 
 # Rest of setup only for Genesis development

@@ -1,0 +1,224 @@
+# Genesis Universal .gitignore
+# Comprehensive ignore patterns for all project types (Python, TypeScript, Go, etc.)
+
+# Environment files (protect secrets)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Direnv
+.envrc.local
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+*~
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+*.sublime-project
+*.sublime-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.whl
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.env/
+pyvenv.cfg
+env.bak/
+venv.bak/
+
+# Python testing and coverage
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+htmlcov/
+.nox/
+
+# Python type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Python linting
+.ruff_cache/
+
+# Poetry
+poetry.lock
+
+# Node.js and TypeScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+.pnp.*
+.yarn/
+.next/
+.nuxt/
+dist/
+out/
+
+# TypeScript
+*.tsbuildinfo
+
+# Go
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# Coverage reports
+coverage/
+htmlcov/
+*.py,cover
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary directories and files
+tmp/
+temp/
+.tmp/
+.temp/
+*.tmp
+*.temp
+scratch/
+.sass-cache/
+.connect.lock
+.typings/
+
+# Build artifacts
+build/
+dist/
+out/
+target/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Security
+*.key
+*.pem
+*.p12
+*.pfx
+.secrets/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Genesis AI-safe development
+worktrees/
+.ai-safety-manifest
+.genesis-cache/
+*.genesis-tmp
+.container-rebuild.lock
+
+# Container and deployment
+.dockerignore
+docker-compose.override.yml
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage/
+
+# Documentation build
+docs/_build/
+site/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+terraform.tfvars.json
+
+# Pre-commit
+.pre-commit-cache/

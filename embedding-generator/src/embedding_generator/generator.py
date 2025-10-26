@@ -4,7 +4,7 @@ import time
 
 import vertexai
 from shared_contracts import TextChunk, Vector768
-from vertexai.language_models import TextEmbeddingModel
+from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 
 
 class EmbeddingGenerator:
@@ -14,8 +14,8 @@ class EmbeddingGenerator:
         self,
         project_id: str,
         location: str,
-        batch_size: int = 100,
-        max_retries: int = 3,
+        batch_size: int,
+        max_retries: int,
     ) -> None:
         """Initialize the embedding generator."""
         self.project_id = project_id
@@ -46,7 +46,7 @@ class EmbeddingGenerator:
 
     def _generate_batch(self, batch: list[TextChunk]) -> list[Vector768]:
         """Generate embeddings for a single batch with retry logic."""
-        texts = [chunk.content for chunk in batch]
+        texts: list[str | TextEmbeddingInput] = [chunk.content for chunk in batch]
 
         for attempt in range(self.max_retries):
             try:

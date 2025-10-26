@@ -1,9 +1,10 @@
 """Main FastAPI application for demo website."""
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from pathlib import Path
 
 from demo_website.config import get_settings
 

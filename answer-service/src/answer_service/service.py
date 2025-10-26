@@ -2,6 +2,7 @@
 
 import time
 import uuid
+from typing import Any
 
 try:
     from google.cloud.discoveryengine import ConversationalSearchServiceClient
@@ -9,11 +10,10 @@ try:
 
     GOOGLE_CLOUD_AVAILABLE = True
 except ImportError:
-    # Mock classes for testing when Google Cloud is not available
-    ConversationalSearchServiceClient = type(
+    ConversationalSearchServiceClient: Any = type(
         "ConversationalSearchServiceClient", (), {}
     )
-    GoogleCloudError = type("GoogleCloudError", (Exception,), {})
+    GoogleCloudError: Any = type("GoogleCloudError", (Exception,), {})
     GOOGLE_CLOUD_AVAILABLE = False
 
 from .models import ConversationResult
@@ -29,9 +29,9 @@ class AnswerService:
         self._conversation_history: list[ConversationResult] = []
 
         try:
-            self.client = ConversationalSearchServiceClient()
+            self.client: Any = ConversationalSearchServiceClient()
         except Exception as e:
-            self.client = None
+            self.client: Any = None
             self._client_error = str(e)
 
     def ask_question(

@@ -179,7 +179,7 @@ class TestDownloadCommand:
 
         assert result.exit_code == 0
         mock_downloader_class.assert_called_once()
-        args, kwargs = mock_downloader_class.call_args
+        _args, kwargs = mock_downloader_class.call_args
         assert kwargs["project_id"] == "env-project-id"  # project_id from env
 
     @patch("nq_downloader.main.NQDownloader")
@@ -211,7 +211,7 @@ class TestDownloadCommand:
 
         assert result.exit_code == 0
         mock_downloader_class.assert_called_once()
-        args, kwargs = mock_downloader_class.call_args
+        _args, kwargs = mock_downloader_class.call_args
         assert kwargs["output_dir"] == Path("./custom")  # output_dir
 
 

@@ -1,7 +1,5 @@
 """Tests for API module structure and imports."""
 
-import pytest
-
 
 class TestModuleStructure:
     """Tests for module structure and imports."""
