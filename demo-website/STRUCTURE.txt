@@ -1,0 +1,84 @@
+demo-website/                                    [22 files total - well under 60 limit]
+│
+├── 📦 Source Code (7 files)
+│   └── src/demo_website/
+│       ├── __init__.py                         [Package initialization]
+│       ├── config.py                           [Pydantic settings - 18 lines]
+│       ├── main.py                             [FastAPI app - 36 lines]
+│       └── static/
+│           ├── index.html                      [Single-page UI with tabs]
+│           ├── style.css                       [Responsive design - 330 lines]
+│           └── app.js                          [Search + SSE streaming - 200 lines]
+│
+├── 🧪 Tests (5 files)
+│   └── tests/
+│       ├── __init__.py                         [Test package init]
+│       ├── test_api.py                         [API endpoint tests]
+│       ├── test_config.py                      [Configuration tests]
+│       ├── test_integration.py                 [Integration tests]
+│       └── test_static_content.py              [Static file validation]
+│
+├── 🐳 Deployment (3 files)
+│   ├── Dockerfile                              [Cloud Run deployment]
+│   ├── .dockerignore                           [Build optimization]
+│   └── Makefile                                [Standard targets]
+│
+├── ⚙️ Configuration (3 files)
+│   ├── pyproject.toml                          [Dependencies & tools]
+│   ├── .env.example                            [Environment template]
+│   └── .gitignore                              [Git ignore rules]
+│
+├── 📚 Documentation (4 files)
+│   ├── README.md                               [Full documentation]
+│   ├── CLAUDE.md                               [Module-specific guidance]
+│   ├── QUICKSTART.md                           [5-minute setup guide]
+│   └── VALIDATION.md                           [TDD validation report]
+│
+└── 🔧 Scripts (1 file)
+    └── run_tests.sh                            [Test runner]
+
+═══════════════════════════════════════════════════════════════════════════
+
+Key Endpoints:
+  GET  /                                        → index.html
+  GET  /health                                  → {"status": "healthy"}
+  GET  /config                                  → {"api_url": "..."}
+  GET  /static/*                                → Static files
+
+API Integration:
+  Search:     GET  ${API_URL}/search?query=...
+  Summarize:  POST ${API_URL}/summarize (SSE streaming)
+
+Technology Stack:
+  Backend:   FastAPI + Uvicorn (Python 3.13)
+  Frontend:  Vanilla HTML/CSS/JavaScript
+  Testing:   pytest with TestClient
+  Deploy:    Docker + Cloud Run
+
+TDD Phases:
+  ✅ RED      → Tests written first (4 test files)
+  ✅ GREEN    → Minimal implementation (7 source files)
+  ✅ REFACTOR → Quality improvements (type safety, error handling)
+
+Module Isolation:
+  ✅ No ../ imports
+  ✅ Independent dependencies
+  ✅ <60 files (only 22)
+  ✅ Can build standalone: cd demo-website && make build
+
+Commands:
+  make setup      → Install dependencies
+  make test       → Run all tests
+  make test-cov   → Run with coverage
+  make quality    → Format + lint + typecheck
+  make build      → Build Docker image
+  make deploy     → Deploy to Cloud Run
+  make clean      → Remove artifacts
+
+Quick Start:
+  cd demo-website/
+  make setup
+  poetry run uvicorn demo_website.main:app --reload
+  # Open http://localhost:8080
+
+═══════════════════════════════════════════════════════════════════════════
