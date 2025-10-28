@@ -102,9 +102,13 @@ async function performQuery(query) {
                             metadata = json.metadata;
 
                             // Show metadata immediately
+                            const speedBadge = getSpeedBadge(metadata.search_time_ms);
+                            const cacheIndicator = getCacheIndicator(metadata.cache_hit);
+
                             summaryMetadata.innerHTML = `
                                 <span class="meta-item">Model: ${metadata.model}</span>
-                                <span class="meta-item">Search: ${metadata.search_time_ms}ms</span>
+                                <span class="meta-item">Search: ${metadata.search_time_ms}ms ${speedBadge}</span>
+                                ${cacheIndicator}
                                 <span class="meta-item">Results: ${metadata.results_found}</span>
                                 <span class="meta-item">First token: ${metadata.time_to_first_token_ms}ms</span>
                             `;
@@ -115,9 +119,13 @@ async function performQuery(query) {
                             summaryFull.classList.remove('summary-streaming');
 
                             // Update metadata with final stats
+                            const speedBadge = getSpeedBadge(metadata?.search_time_ms || 0);
+                            const cacheIndicator = getCacheIndicator(metadata?.cache_hit);
+
                             summaryMetadata.innerHTML = `
                                 <span class="meta-item">Model: ${metadata?.model || 'unknown'}</span>
-                                <span class="meta-item">Search: ${metadata?.search_time_ms || 0}ms</span>
+                                <span class="meta-item">Search: ${metadata?.search_time_ms || 0}ms ${speedBadge}</span>
+                                ${cacheIndicator}
                                 <span class="meta-item">Results: ${metadata?.results_found || 0}</span>
                                 <span class="meta-item">First token: ${metadata?.time_to_first_token_ms || 0}ms</span>
                                 <span class="meta-item">Total: ${json.total_time_ms}ms</span>
@@ -268,6 +276,28 @@ function initializeEventListeners() {
     summaryHeader.addEventListener('click', () => {
         toggleSummary();
     });
+}
+
+// Get speed badge based on search time
+function getSpeedBadge(searchTimeMs) {
+    if (searchTimeMs < 50) {
+        return '<span class="speed-badge badge-lightning">⚡ Lightning Fast</span>';
+    } else if (searchTimeMs < 100) {
+        return '<span class="speed-badge badge-super">🚀 Super Quick</span>';
+    } else if (searchTimeMs < 120) {
+        return '<span class="speed-badge badge-fast">✓ Fast</span>';
+    }
+    return '';
+}
+
+// Get cache indicator
+function getCacheIndicator(cacheHit) {
+    if (cacheHit === true) {
+        return '<span class="cache-indicator cache-hit">⚡ Cache Hit</span>';
+    } else if (cacheHit === false) {
+        return '<span class="cache-indicator cache-miss">🔍 Cache Miss</span>';
+    }
+    return '';
 }
 
 // Initialize on page load

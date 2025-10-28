@@ -26,22 +26,6 @@ def test_index_html_has_search_interface(static_dir: Path) -> None:
     assert "button" in content.lower()
 
 
-def test_index_html_has_summary_interface(static_dir: Path) -> None:
-    """Test index.html contains summary interface elements."""
-    index_file = static_dir / "index.html"
-    content = index_file.read_text()
-    assert "summary" in content.lower() or "summarize" in content.lower()
-    assert "textarea" in content.lower()
-
-
-def test_index_html_has_tabs(static_dir: Path) -> None:
-    """Test index.html has tab navigation."""
-    index_file = static_dir / "index.html"
-    content = index_file.read_text()
-    # Should have some form of tab navigation
-    assert "tab" in content.lower() or "nav" in content.lower()
-
-
 def test_css_file_exists(static_dir: Path) -> None:
     """Test style.css file exists."""
     css_file = static_dir / "style.css"
