@@ -21,7 +21,9 @@ class TestSummarizeEndpoint:
 
     def test_summarize_endpoint_exists(self, test_client, mocker):
         """Test that /summarize endpoint is accessible."""
-        # Mock Gemini to avoid actual API calls
+        # Mock Vertex AI to avoid actual API calls
+        mocker.patch("search_api.api.vertexai.init")
+
         mock_model = mocker.Mock()
         mock_response = mocker.Mock()
         mock_response.__iter__ = mocker.Mock(
@@ -29,7 +31,7 @@ class TestSummarizeEndpoint:
         )
         mock_model.generate_content.return_value = mock_response
 
-        mocker.patch("search_api.api.genai.GenerativeModel", return_value=mock_model)
+        mocker.patch("search_api.api.GenerativeModel", return_value=mock_model)
 
         response = test_client.post(
             "/summarize", json={"content": "Test content to summarize"}
@@ -44,7 +46,9 @@ class TestSummarizeEndpoint:
 
     def test_summarize_returns_sse_stream(self, test_client, mocker):
         """Test that summarize returns Server-Sent Events stream."""
-        # Mock Gemini client
+        # Mock Vertex AI
+        mocker.patch("search_api.api.vertexai.init")
+
         mock_model = mocker.Mock()
         mock_response = mocker.Mock()
         mock_response.__iter__ = mocker.Mock(
@@ -58,7 +62,7 @@ class TestSummarizeEndpoint:
         )
         mock_model.generate_content.return_value = mock_response
 
-        mocker.patch("search_api.api.genai.GenerativeModel", return_value=mock_model)
+        mocker.patch("search_api.api.GenerativeModel", return_value=mock_model)
 
         response = test_client.post(
             "/summarize", json={"content": "Long content to summarize"}
@@ -70,7 +74,9 @@ class TestSummarizeEndpoint:
 
     def test_summarize_streams_tokens(self, test_client, mocker):
         """Test that summarize streams tokens as SSE."""
-        # Mock Gemini streaming response
+        # Mock Vertex AI streaming response
+        mocker.patch("search_api.api.vertexai.init")
+
         mock_model = mocker.Mock()
         mock_response = mocker.Mock()
         mock_response.__iter__ = mocker.Mock(
@@ -84,7 +90,7 @@ class TestSummarizeEndpoint:
         )
         mock_model.generate_content.return_value = mock_response
 
-        mocker.patch("search_api.api.genai.GenerativeModel", return_value=mock_model)
+        mocker.patch("search_api.api.GenerativeModel", return_value=mock_model)
 
         response = test_client.post(
             "/summarize", json={"content": "Content to summarize"}
@@ -99,6 +105,9 @@ class TestSummarizeEndpoint:
 
     def test_summarize_accepts_max_tokens(self, test_client, mocker):
         """Test that summarize accepts optional max_tokens parameter."""
+        # Mock Vertex AI
+        mocker.patch("search_api.api.vertexai.init")
+
         mock_model = mocker.Mock()
         mock_response = mocker.Mock()
         mock_response.__iter__ = mocker.Mock(
@@ -106,7 +115,7 @@ class TestSummarizeEndpoint:
         )
         mock_model.generate_content.return_value = mock_response
 
-        mocker.patch("search_api.api.genai.GenerativeModel", return_value=mock_model)
+        mocker.patch("search_api.api.GenerativeModel", return_value=mock_model)
 
         response = test_client.post(
             "/summarize", json={"content": "Content", "max_tokens": 100}

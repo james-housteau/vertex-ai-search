@@ -15,12 +15,15 @@ RUN pip install --no-cache-dir poetry==1.8.3
 # Copy dependency files
 COPY pyproject.toml ./
 
-# Install dependencies
+# Install dependencies (no-dev means only main dependencies, not dev)
 RUN poetry config virtualenvs.create false && \
-    poetry install --no-dev --no-interaction --no-ansi
+    poetry install --only main --no-interaction --no-ansi
 
 # Copy application code
 COPY src/ ./src/
+
+# Set PYTHONPATH to include src directory
+ENV PYTHONPATH=/app/src
 
 # Expose port
 EXPOSE 8080

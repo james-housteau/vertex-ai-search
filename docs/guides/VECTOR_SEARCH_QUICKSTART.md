@@ -726,5 +726,5 @@ print(response.json())
 
 ---
 
-**Last Updated**: 2025-10-25
+**Last Updated**: 2025-10-26
 **Module Versions**: html-chunker v0.1.0, embedding-generator v0.1.0, vector-index-prep v0.1.0, vector-search-index v0.1.0, vector-query-client v0.1.0, search-api v0.1.0

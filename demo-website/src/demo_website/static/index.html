@@ -3,56 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vertex AI Search Demo</title>
+    <title>AI Knowledge Base Search</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Vertex AI Search Demo</h1>
-            <p>Search and summarize content using Vertex AI</p>
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="#4285f4" opacity="0.2"/>
+                    <path d="M20 10 L30 20 L20 30 L10 20 Z" fill="#4285f4"/>
+                </svg>
+            </div>
+            <h1>Welcome to your<br>AI knowledge base search</h1>
         </header>
 
-        <nav class="tabs">
-            <button class="tab-button active" data-tab="search">Search</button>
-            <button class="tab-button" data-tab="summarize">Summarize</button>
-        </nav>
-
         <main>
-            <!-- Search Tab -->
-            <div id="search-tab" class="tab-content active">
+            <div class="search-container">
                 <div class="search-box">
                     <input
                         type="text"
                         id="search-input"
-                        placeholder="Enter your search query..."
+                        placeholder="Ask a question about our Wikipedia corpus..."
                         autocomplete="off"
                     >
-                    <button id="search-button">Search</button>
+                    <button id="search-button" aria-label="Search">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
                 </div>
-                <div id="search-loading" class="loading hidden">Searching...</div>
-                <div id="search-error" class="error hidden"></div>
-                <div id="search-results"></div>
+                <div class="example-queries">
+                    <button class="example-chip">What was the Cuban Missile Crisis?</button>
+                    <button class="example-chip">Explain pulmonary edema</button>
+                    <button class="example-chip">Tell me about the 2018 Winter Olympics</button>
+                </div>
             </div>
 
-            <!-- Summarize Tab -->
-            <div id="summarize-tab" class="tab-content">
-                <div class="summary-box">
-                    <textarea
-                        id="summary-input"
-                        placeholder="Paste content to summarize..."
-                        rows="8"
-                    ></textarea>
-                    <button id="summary-button">Summarize</button>
+            <!-- Searching State -->
+            <div id="searching-state" class="searching-state hidden">
+                <h2>🔍 Searching...</h2>
+                <div class="progress-bars">
+                    <div class="progress-bar"></div>
+                    <div class="progress-bar"></div>
+                    <div class="progress-bar"></div>
                 </div>
-                <div id="summary-loading" class="loading hidden">Generating summary...</div>
-                <div id="summary-error" class="error hidden"></div>
-                <div id="summary-results"></div>
             </div>
+
+            <!-- Results Container -->
+            <div id="results-container" class="results-container hidden">
+                <!-- Gemini Summary -->
+                <div class="summary-section">
+                    <div class="summary-header" id="summary-header">
+                        <svg class="gemini-icon" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="#4285f4" d="M12 2l9 5v10l-9 5-9-5V7z"/>
+                        </svg>
+                        <h2>Gemini Summary</h2>
+                        <button class="expand-button" id="expand-button">
+                            <span class="expand-text">Expand Summary</span>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 11L3 6h10z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="summary-preview" id="summary-preview"></div>
+                    <div class="summary-full hidden" id="summary-full"></div>
+                    <div class="summary-metadata hidden" id="summary-metadata"></div>
+                </div>
+
+                <!-- Search Results -->
+                <div class="search-results-section hidden" id="search-results-section">
+                    <h3>Source Documents</h3>
+                    <div id="search-results"></div>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div id="error-display" class="error-display hidden"></div>
         </main>
 
         <footer>
-            <p>Powered by Vertex AI Search API</p>
+            <p>Built with Gemini and Google Cloud</p>
         </footer>
     </div>
 

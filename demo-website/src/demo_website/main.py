@@ -27,11 +27,11 @@ async def config() -> dict[str, str]:
     return {"api_url": settings.api_url}
 
 
-# Mount static files after routes
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
-
-
 @app.get("/")
 async def root() -> FileResponse:
     """Serve the main index.html page."""
     return FileResponse(static_dir / "index.html")
+
+
+# Mount static files after all routes
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
