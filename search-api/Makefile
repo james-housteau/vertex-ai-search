@@ -1,4 +1,4 @@
-.PHONY: setup test test-quick test-cov format lint typecheck quality build clean
+.PHONY: setup test test-quick test-cov format lint typecheck quality build clean deploy
 
 setup:
 	poetry install
@@ -25,9 +25,17 @@ typecheck:
 quality: format lint typecheck
 
 build:
-	poetry build
+	docker build -t search-api:latest .
 
 clean:
 	rm -rf dist/ .pytest_cache/ htmlcov/ .coverage .mypy_cache/ .ruff_cache/
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
+
+deploy:
+	@echo "Deploying search-api to Cloud Run..."
+	gcloud run deploy search-api \
+		--source . \
+		--platform managed \
+		--region us-central1 \
+		--allow-unauthenticated

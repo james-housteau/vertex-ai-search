@@ -18,9 +18,10 @@ The system processes 1600 HTML documents from the Natural Questions dataset to t
 3. **Each module must be <60 files** - AI-safe development constraint
 4. **Each module builds independently** - `cd module && make build` must work in isolation
 
-## Available Modules (21 Total)
+## Available Modules (20 Production Modules)
 
-Each module has its own `Makefile`, `pyproject.toml`, tests, and dependencies:
+Each module has its own `Makefile`, `pyproject.toml`, tests, and dependencies.
+Note: The `archive/` directory contains deprecated code and is not counted as an active module.
 
 ### Stream 1: Data Pipeline
 - **`nq-downloader/`** - Download Natural Questions dataset (97% coverage)
@@ -66,6 +67,7 @@ cd nq-downloader/
 make setup               # Install dependencies for THIS module only
 make test                # Test THIS module only
 make test-quick          # Fast subset for rapid feedback
+make test-all            # All tests including slow/integration
 make test-cov            # Coverage report (80% minimum required)
 make format              # Format code with black and ruff
 make lint                # Lint with ruff
@@ -86,9 +88,13 @@ poetry run pytest -k "test_pattern" -v
 # These are convenience wrappers - they just cd into each module
 make list-modules        # List all available modules
 make setup-all          # Setup all modules (runs setup in each)
-make test-all           # Test all modules independently
+make test                # Fast tests across all modules (excludes slow/integration markers)
+make test-all            # All tests including slow/integration (no coverage)
+make test-cov            # All tests with coverage reports (includes slow/integration)
 make build-all          # Build all modules independently
 make quality-all        # Quality checks on all modules
+make format              # Format all code with black and ruff
+make clean               # Clean all build artifacts
 ```
 
 ### Module Independence Validation
@@ -175,6 +181,86 @@ Modules connect through well-defined APIs, not compilation dependencies:
 - **Type Safety**: mypy strict mode, all functions must have type annotations
 - **Testing**: pytest framework, HTML coverage reports generated
 
+### Known Type Issues (Non-Blocking)
+Some modules have type warnings from third-party libraries without stubs:
+- `html-chunker`: shared-contracts missing stubs
+- `nq-downloader`: google.cloud.storage missing stubs
+- `search-api`: shared-contracts, vector-query-client, google.generativeai type issues
+- `vector-index-prep`: google.cloud, shared-contracts missing stubs
+- `vector-query-client`: distance calculation type narrowing
+- `vector-search-index`: MatchingEngineIndex dynamic attributes
+
+These are non-blocking since they come from external dependencies. Focus on ensuring your module code has proper type annotations.
+
+## Local Development for Production APIs
+
+### Running the Search API Locally
+
+```bash
+cd search-api/
+
+# Setup environment
+make setup
+
+# Run with uvicorn (development mode with auto-reload)
+poetry run uvicorn search_api.api:app --reload --host 0.0.0.0 --port 8080
+
+# Access API at http://localhost:8080
+# API docs at http://localhost:8080/docs
+```
+
+### Running the Demo Website Locally
+
+```bash
+cd demo-website/
+
+# Setup environment
+make setup
+
+# Configure API URL (point to local or deployed search-api)
+export API_URL="http://localhost:8080"  # or production URL
+
+# Run with uvicorn (development mode with auto-reload)
+poetry run uvicorn demo_website.main:app --reload --host 0.0.0.0 --port 8000
+
+# Access demo at http://localhost:8000
+```
+
+### Docker Development
+
+```bash
+# Build search-api Docker image
+cd search-api/
+docker build -t search-api:latest .
+docker run -p 8080:8080 search-api:latest
+
+# Build demo-website Docker image
+cd demo-website/
+docker build -t demo-website:latest .
+docker run -p 8000:8080 -e API_URL="http://localhost:8080" demo-website:latest
+```
+
+## Secret Management
+
+**IMPORTANT**: Never commit secrets to version control.
+
+- **`.secrets/` directory**: Use this directory (already in .gitignore) for local credential files
+  - Service account keys (`.json`)
+  - Environment files with API keys (`.env`)
+  - OAuth tokens
+- **Environment variables**: Set via `.envrc` (direnv), `.env` files, or shell exports
+- **Service account keys**: Store in `.secrets/` and reference via `GOOGLE_APPLICATION_CREDENTIALS`
+
+Example:
+```bash
+# Store service account key
+mkdir -p .secrets/
+mv ~/Downloads/service-account-key.json .secrets/
+
+# Reference in environment
+export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/.secrets/service-account-key.json"
+```
+
 ## Lean TDD Workflow Integration
 
 This project includes a complete Lean TDD workflow system (see `.claude/LEAN-TDD-WORKFLOW.md`):
@@ -183,10 +269,19 @@ This project includes a complete Lean TDD workflow system (see `.claude/LEAN-TDD
 - `/tdd [issue-number]` - Resolve GitHub issue using TDD workflow
 - `/feature [issue-number]` - Implement feature with TDD
 - `/bug [issue-number]` - Debug and resolve bugs systematically
-- `/commit` - Create git commit with validation
+- `/refactor [issue-number]` - Refactor code to improve structure without changing behavior
+- `/optimize [issue-number]` - Optimize performance based on measured bottlenecks
+- `/deprecate [issue-number]` - Deprecate old code and provide migration path
+- `/commit` - Create git commit with validation (uses genesis commit)
 - `/pr [issue-number]` - Create pull request with lean validation
+- `/close [issue-number]` - Clean up after PR merge
 - `/metrics` - Show lean development metrics
+- `/audit [issue-number]` - Audit changes against lean principles
 - `/issue [action] [instructions]` - Create GitHub issue from context
+- `/research [query]` - Research best practices and solutions
+- `/cleanup [issue-number]` - Clean up code and remove dead code with Genesis
+- `/update-docs [issue-number]` - Update project documentation
+- `/test-fix [test-path-or-pattern]` - Fix failing tests by treating tests as source of truth
 
 ### Core Principles
 - Write minimal code to pass tests
@@ -200,16 +295,27 @@ This project includes a complete Lean TDD workflow system (see `.claude/LEAN-TDD
 # New to the project? Start here:
 make list-modules        # See all available modules
 
-# Work on a specific module:
+# Work on a specific module (RECOMMENDED):
 cd gcs-manager/          # Enter module directory
 make setup               # Install dependencies
-make test                # Run tests
-make quality             # Check code quality
+make test                # Run fast tests (excludes slow/integration)
+make test-quick          # Even faster subset (if available)
+make test-all            # Run ALL tests including slow/integration
+make test-cov            # Run all tests with coverage report
+make quality             # Check code quality (format + lint + typecheck)
 
-# Work across all modules:
+# Work across all modules (from root):
 make setup-all           # Setup everything
-make test-all            # Test everything
+make test                # Fast tests across all modules (no slow/integration)
+make test-all            # All tests including slow/integration (no coverage)
+make test-cov            # All tests with coverage reports (includes slow/integration)
 make quality-all         # Quality check everything
+make format              # Format all code with black and ruff
+make clean               # Clean all build artifacts
+
+# Run production APIs locally:
+cd search-api/ && poetry run uvicorn search_api.api:app --reload
+cd demo-website/ && poetry run uvicorn demo_website.main:app --reload
 ```
 
 ## Module Selection Guide
@@ -246,8 +352,27 @@ make quality-all         # Quality check everything
 - **Need fast vector search API?** → `search-api/`
 - **Need streaming summarization?** → `search-api/`
 - **Need production health checks?** → `search-api/`
+- **Need in-memory caching for queries?** → `search-api/`
+
+**search-api** provides:
+- **GET /search**: Vector similarity search with <120ms p95 latency
+- **POST /summarize**: Streaming Gemini Flash summaries via SSE
+- **GET /health**: Production health check endpoint
+- **In-memory caching**: Sub-10ms cache hits with TTLCache (300s TTL, 1000 entries)
+- **FastAPI/Uvicorn**: Production-ready ASGI server
+- **Cloud Run ready**: Dockerfile and deployment configuration included
 
 ### Demo & UI
 - **Need web interface for search?** → `demo-website/`
 - **Need to test search-api visually?** → `demo-website/`
 - **Need streaming SSE demo?** → `demo-website/`
+- **Need to demo vector search to stakeholders?** → `demo-website/`
+
+**demo-website** provides:
+- Tab-based UI for search and summarization
+- Real-time latency metrics display
+- Cache hit/miss indicators
+- Server-Sent Events (SSE) streaming for summaries
+- Responsive mobile-friendly design
+- Configurable API endpoint
+- Cloud Run deployment ready
