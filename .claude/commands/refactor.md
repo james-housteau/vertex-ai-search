@@ -363,7 +363,7 @@ fi
 # Commit and PR
 echo "📝 Creating commit..."
 git add .
-genesis commit -m "refactor: improve code structure for issue #$1
+genesis commit --no-approve -m "refactor: improve code structure for issue #$1
 
 Closes #$1
 

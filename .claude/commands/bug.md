@@ -495,7 +495,7 @@ echo "📝 Creating Genesis commit..."
 
 # Stage changes and commit with Genesis
 git add .
-genesis commit -m "fix: resolve issue #$1
+genesis commit --no-approve -m "fix: resolve issue #$1
 
 Fixes #$1
 

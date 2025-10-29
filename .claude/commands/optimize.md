@@ -441,7 +441,7 @@ else
 fi
 
 git add .
-genesis commit -m "perf: optimize performance for issue #$1
+genesis commit --no-approve -m "perf: optimize performance for issue #$1
 
 Closes #$1
 

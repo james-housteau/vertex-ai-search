@@ -8,7 +8,7 @@ package-mode = false  # Integration layer, not a package
 
 [tool.poetry.dependencies]
 python = "^3.13"
-genesis-cli = { path = "/Users/jameshousteau/Downloads/genesis_cli-2.0.19-py3-none-any.whl" }
+genesis-cli = { path = "/Users/source-code/genesis", develop = true }
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"

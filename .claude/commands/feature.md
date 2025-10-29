@@ -528,7 +528,7 @@ echo "📝 Creating Genesis commit..."
 
 # Stage changes and commit with Genesis
 git add .
-genesis commit -m "feat: implement feature from issue #$1
+genesis commit --no-approve -m "feat: implement feature from issue #$1
 
 Closes #$1
 
