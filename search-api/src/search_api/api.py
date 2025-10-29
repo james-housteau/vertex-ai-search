@@ -130,7 +130,10 @@ async def search(
 
         raise HTTPException(
             status_code=503,
-            detail="Vector search not configured. Please set INDEX_ENDPOINT_ID and DEPLOYED_INDEX_ID environment variables.",
+            detail=(
+                "Vector search not configured. Please set "
+                "INDEX_ENDPOINT_ID and DEPLOYED_INDEX_ID environment variables."
+            ),
         )
 
     # Normalize query for cache consistency (lowercase + strip + collapse whitespace)
@@ -230,27 +233,52 @@ async def summarize(request: SummarizeRequest) -> StreamingResponse:
 
         start_time = time.time()
 
-        # Step 1: Search the corpus
-        client = get_vector_client()
-        search_results = client.query(request.query, top_k=request.top_k)
+        # Normalize query for cache consistency
+        # (lowercase + strip + collapse whitespace)
+        normalized_q = re.sub(r"\s+", " ", request.query.lower().strip())
 
-        # Populate content from lookup
-        for result in search_results:
-            if result.chunk_id in content_lookup:
-                result.content = content_lookup[result.chunk_id]
+        # Generate cache key from normalized query
+        cache_key = hashlib.md5(f"{normalized_q}:{request.top_k}".encode()).hexdigest()
+
+        # Check cache
+        cache_hit = False
+        if cache_key in search_cache:
+            search_results, _ = search_cache[cache_key]
+            cache_hit = True
+        else:
+            # Step 1: Search the corpus (cache miss)
+            client = get_vector_client()
+            search_results = client.query(normalized_q, top_k=request.top_k)
+
+            # Populate content from lookup
+            for result in search_results:
+                if result.chunk_id in content_lookup:
+                    result.content = content_lookup[result.chunk_id]
+
+            # Store in cache
+            search_cache[cache_key] = (search_results, time.time())
 
         search_time_ms = (time.time() - start_time) * 1000
 
         # Step 2: Build context from search results
         if not search_results:
             # No results found - use general knowledge
-            context = f"No specific documents found in the knowledge base for: {request.query}"
+            context = (
+                f"No specific documents found in the knowledge base for: "
+                f"{request.query}"
+            )
         else:
             # Combine retrieved chunks into context
             context_parts = []
             for i, result in enumerate(search_results, 1):
-                chunk_text = result.content if result.content else f"[Document: {result.chunk_id}]"
-                context_parts.append(f"Document {i} (relevance: {result.score:.2f}):\n{chunk_text}")
+                chunk_text = (
+                    result.content
+                    if result.content
+                    else f"[Document: {result.chunk_id}]"
+                )
+                context_parts.append(
+                    f"Document {i} (relevance: {result.score:.2f}):\n{chunk_text}"
+                )
             context = "\n\n".join(context_parts)
 
         # Step 3: Select model based on query complexity
@@ -269,14 +297,15 @@ async def summarize(request: SummarizeRequest) -> StreamingResponse:
         model = GenerativeModel(model_name)
 
         # Step 5: Build RAG prompt
-        prompt = f"""Based on the following documents from the knowledge base, provide a comprehensive answer to the user's question.
-
-Question: {request.query}
-
-Retrieved Documents:
-{context}
-
-Please synthesize the information above and provide a clear, accurate answer. If the documents don't contain enough information, acknowledge this."""
+        prompt = (
+            f"Based on the following documents from the knowledge base, "
+            f"provide a comprehensive answer to the user's question.\n\n"
+            f"Question: {request.query}\n\n"
+            f"Retrieved Documents:\n{context}\n\n"
+            f"Please synthesize the information above and provide a clear, "
+            f"accurate answer. If the documents don't contain enough "
+            f"information, acknowledge this."
+        )
 
         # Configure generation
         generation_config: dict[str, Any] | None = None
@@ -308,7 +337,10 @@ Please synthesize the information above and provide a clear, accurate answer. If
                                 "model": model_name,
                                 "search_time_ms": round(search_time_ms, 2),
                                 "results_found": len(search_results),
-                                "time_to_first_token_ms": round(time_to_first_token_ms, 2),
+                                "time_to_first_token_ms": round(
+                                    time_to_first_token_ms, 2
+                                ),
+                                "cache_hit": cache_hit,
                             }
                         }
                     )
