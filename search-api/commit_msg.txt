@@ -1,0 +1,6 @@
+fix: add cache_hit to /summarize endpoint (fixes #30)
+
+- Check search_cache before vector search
+- Include cache_hit boolean in metadata SSE
+- Add regression tests for cache scenarios
+- Enable cache indicators in demo UI

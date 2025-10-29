@@ -138,3 +138,147 @@ class TestSummarizeValidation:
             "/summarize", json={"content": "Test content", "max_tokens": -1}
         )
         assert response.status_code == 422
+
+
+class TestSummarizeCaching:
+    """Tests for /summarize endpoint caching behavior."""
+
+    def test_summarize_metadata_includes_cache_hit_on_miss(self, mocker):
+        """Test that summarize metadata includes cache_hit=false on cache miss."""
+        from shared_contracts import SearchMatch
+
+        from search_api.api import app, search_cache
+
+        # Clear cache
+        search_cache.clear()
+
+        # Mock vector client
+        mock_vector_client = mocker.Mock()
+        mock_result = [
+            SearchMatch(
+                chunk_id="chunk-1", score=0.95, content="test content", metadata={}
+            )
+        ]
+        mock_vector_client.query.return_value = mock_result
+        mocker.patch(
+            "search_api.api.get_vector_client", return_value=mock_vector_client
+        )
+
+        # Mock Vertex AI
+        mocker.patch("search_api.api.vertexai.init")
+        mock_model = mocker.Mock()
+        mock_response = mocker.Mock()
+        mock_response.__iter__ = mocker.Mock(
+            return_value=iter([mocker.Mock(text="Summary")])
+        )
+        mock_model.generate_content.return_value = mock_response
+        mocker.patch("search_api.api.GenerativeModel", return_value=mock_model)
+
+        test_client = TestClient(app)
+
+        # Make request - cache miss
+        response = test_client.post(
+            "/summarize", json={"query": "test query", "top_k": 5}
+        )
+
+        assert response.status_code == 200
+
+        # Parse SSE stream
+        import json
+
+        content = response.text
+        lines = content.strip().split("\n")
+
+        # Find the first metadata event
+        metadata_found = False
+        for line in lines:
+            if line.startswith("data: "):
+                data = json.loads(line[6:])  # Skip "data: " prefix
+                if "metadata" in data:
+                    metadata = data["metadata"]
+                    assert (
+                        "cache_hit" in metadata
+                    ), "cache_hit field missing from metadata"
+                    assert (
+                        metadata["cache_hit"] is False
+                    ), "cache_hit should be False on cache miss"
+                    metadata_found = True
+                    break
+
+        assert metadata_found, "No metadata event found in SSE stream"
+
+    def test_summarize_metadata_includes_cache_hit_on_hit(self, mocker):
+        """Test that summarize metadata includes cache_hit=true on cache hit."""
+        import hashlib
+        import re
+
+        from shared_contracts import SearchMatch
+
+        from search_api.api import app, search_cache
+
+        # Clear cache
+        search_cache.clear()
+
+        # Mock vector client
+        mock_vector_client = mocker.Mock()
+        mock_result = [
+            SearchMatch(
+                chunk_id="chunk-1", score=0.95, content="test content", metadata={}
+            )
+        ]
+        mock_vector_client.query.return_value = mock_result
+        mocker.patch(
+            "search_api.api.get_vector_client", return_value=mock_vector_client
+        )
+
+        # Pre-populate cache with normalized query
+        query = "test query"
+        top_k = 5
+        normalized_q = re.sub(r"\s+", " ", query.lower().strip())
+        cache_key = hashlib.md5(f"{normalized_q}:{top_k}".encode()).hexdigest()
+        import time
+
+        search_cache[cache_key] = (mock_result, time.time())
+
+        # Mock Vertex AI
+        mocker.patch("search_api.api.vertexai.init")
+        mock_model = mocker.Mock()
+        mock_response = mocker.Mock()
+        mock_response.__iter__ = mocker.Mock(
+            return_value=iter([mocker.Mock(text="Summary")])
+        )
+        mock_model.generate_content.return_value = mock_response
+        mocker.patch("search_api.api.GenerativeModel", return_value=mock_model)
+
+        test_client = TestClient(app)
+
+        # Make request - cache hit
+        response = test_client.post(
+            "/summarize", json={"query": "test query", "top_k": 5}
+        )
+
+        assert response.status_code == 200
+
+        # Parse SSE stream
+        import json
+
+        content = response.text
+        lines = content.strip().split("\n")
+
+        # Find the first metadata event
+        metadata_found = False
+        for line in lines:
+            if line.startswith("data: "):
+                data = json.loads(line[6:])  # Skip "data: " prefix
+                if "metadata" in data:
+                    metadata = data["metadata"]
+                    assert (
+                        "cache_hit" in metadata
+                    ), "cache_hit field missing from metadata"
+                    assert (
+                        metadata["cache_hit"] is True
+                    ), "cache_hit should be True on cache hit"
+                    metadata_found = True
+                    break
+
+        assert metadata_found, "No metadata event found in SSE stream"
