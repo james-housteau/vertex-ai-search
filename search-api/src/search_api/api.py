@@ -319,6 +319,7 @@ async def summarize(request: SummarizeRequest) -> StreamingResponse:
 
         # Track streaming metrics
         first_token_time = None
+        last_token_time = None
         token_count = 0
 
         # Stream tokens as SSE
@@ -346,16 +347,23 @@ async def summarize(request: SummarizeRequest) -> StreamingResponse:
                     )
                     yield f"data: {metadata}\n\n"
 
+                # Track last token time
+                last_token_time = time.time()
+
                 # Send text token
                 data = json.dumps({"text": chunk.text})
                 yield f"data: {data}\n\n"
 
         # Send final metadata
         total_time_ms = (time.time() - start_time) * 1000
+        time_to_last_token_ms = (
+            (last_token_time - start_time) * 1000 if last_token_time else 0
+        )
         final_metadata = json.dumps(
             {
                 "done": True,
                 "total_time_ms": round(total_time_ms, 2),
+                "time_to_last_token_ms": round(time_to_last_token_ms, 2),
                 "token_count": token_count,
             }
         )

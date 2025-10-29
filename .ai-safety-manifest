@@ -1,15 +1,15 @@
 # AI Safety Manifest - Genesis Sparse Worktree
 # This workspace has restricted visibility to prevent AI contamination
 
-Worktree: fix-30
+Worktree: fix-31
 Focus: search-api/
-Files:      137/30
-Branch: sparse-fix-30
-Created: 2025-10-29T12:40:58Z
+Files:      138/80
+Branch: sparse-fix-31
+Created: 2025-10-29T19:52:26Z
 
 AI Safety Rules:
 1. Only modify files within focus paths: search-api/
-2. File limit enforced: 30 maximum
+2. File limit enforced: 80 maximum
 3. No deep directory nesting (max 3 levels)
 4. No imports from outside this worktree
 5. Use Genesis smart-commit for quality gates

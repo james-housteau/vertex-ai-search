@@ -282,3 +282,92 @@ class TestSummarizeCaching:
                     break
 
         assert metadata_found, "No metadata event found in SSE stream"
+
+
+class TestSummarizeMetrics:
+    """Tests for /summarize endpoint streaming metrics."""
+
+    def test_summarize_includes_time_to_last_token_ms(self, mocker):
+        """Test that final metadata includes time_to_last_token_ms.
+
+        This metric tracks when the last content token was sent,
+        distinguishing actual streaming duration from total overhead.
+        """
+        from shared_contracts import SearchMatch
+
+        from search_api.api import app, search_cache
+
+        # Clear cache
+        search_cache.clear()
+
+        # Mock vector client
+        mock_vector_client = mocker.Mock()
+        mock_result = [
+            SearchMatch(
+                chunk_id="chunk-1", score=0.95, content="test content", metadata={}
+            )
+        ]
+        mock_vector_client.query.return_value = mock_result
+        mocker.patch(
+            "search_api.api.get_vector_client", return_value=mock_vector_client
+        )
+
+        # Mock Vertex AI with multiple tokens
+        mocker.patch("search_api.api.vertexai.init")
+        mock_model = mocker.Mock()
+        mock_response = mocker.Mock()
+        mock_response.__iter__ = mocker.Mock(
+            return_value=iter(
+                [
+                    mocker.Mock(text="Token1 "),
+                    mocker.Mock(text="Token2 "),
+                    mocker.Mock(text="Token3"),
+                ]
+            )
+        )
+        mock_model.generate_content.return_value = mock_response
+        mocker.patch("search_api.api.GenerativeModel", return_value=mock_model)
+
+        test_client = TestClient(app)
+
+        # Make request
+        response = test_client.post(
+            "/summarize", json={"query": "test query", "top_k": 5}
+        )
+
+        assert response.status_code == 200
+
+        # Parse SSE stream
+        import json
+
+        content = response.text
+        lines = content.strip().split("\n")
+
+        # Find the final metadata event (with "done": true)
+        final_metadata_found = False
+        for line in lines:
+            if line.startswith("data: "):
+                data = json.loads(line[6:])  # Skip "data: " prefix
+                if "done" in data and data["done"] is True:
+                    # This is the final metadata event
+                    assert (
+                        "time_to_last_token_ms" in data
+                    ), "time_to_last_token_ms field missing from final metadata"
+
+                    # Should be a positive number
+                    time_to_last_token = data["time_to_last_token_ms"]
+                    assert isinstance(
+                        time_to_last_token, (int, float)
+                    ), "time_to_last_token_ms should be a number"
+                    assert time_to_last_token > 0, "time_to_last_token_ms should be positive"
+
+                    # Should be less than total_time_ms (content finishes before final metadata)
+                    assert "total_time_ms" in data, "total_time_ms should also be present"
+                    assert (
+                        time_to_last_token <= data["total_time_ms"]
+                    ), "time_to_last_token_ms should be <= total_time_ms"
+
+                    final_metadata_found = True
+                    break
+
+        assert final_metadata_found, "No final metadata event (done=true) found in SSE stream"
