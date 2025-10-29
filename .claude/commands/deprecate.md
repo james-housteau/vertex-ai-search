@@ -354,7 +354,7 @@ else
 fi
 
 git add .
-genesis commit -m "deprecate: deprecate functionality for issue #$1
+genesis commit --no-approve -m "deprecate: deprecate functionality for issue #$1
 
 Closes #$1
 

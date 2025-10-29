@@ -372,7 +372,7 @@ fi
 echo "📝 Creating Genesis commit..."
 
 git add .
-genesis commit -m "feat: resolve issue #$1 using TDD
+genesis commit --no-approve -m "feat: resolve issue #$1 using TDD
 
 Closes #$1
 

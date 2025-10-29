@@ -1,7 +1,61 @@
 {
-  "project_name": "vertex-ai-search",
-  "ai_safety": true,
+  "apiKeyHelper": "",
+  "cleanupPeriodDays": 5,
+  "env": {},
+  "includeCoAuthoredBy": false,
   "permissions": {
+    "allow": [],
+    "ask": [],
+    "deny": [
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git commit:*)",
+      "Bash(git pull:*)",
+      "Bash(git reset:*)",
+      "Bash(git merge:*)",
+      "Bash(git worktree:*)",
+      "Bash(git rm:*)",
+      "Bash(SKIP_TESTS:*)",
+      "Bash(pip:*)",
+      "Bash(ruff:*)",
+      "Bash(black:*)",
+      "Bash(flake8:*)",
+      "Bash(pylint:*)",
+      "Bash(docker:*)",
+      "Bash(rm -rf:*)"
+    ],
+    "additionalDirectories": [],
     "defaultMode": "bypassPermissions"
-  }
+  },
+  "hooks": {
+     "PreToolUse": [
+        {
+            "matcher": "",
+            "hooks": [
+                {
+                    "type": "command",
+                    "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/validate-bash-command.sh"
+                }
+            ]
+        }
+    ],
+    "SessionEnd": [],
+    "UserPromptSubmit": [],
+    "Stop": [],
+    "PreCompact": []
+  },
+  "disableAllHooks": false,
+  "model": "",
+  "statusLine": {
+    "type": "command",
+    "command": ""
+  },
+  "outputStyle": "Default",
+  "forceLoginMethod": "claudeai",
+  "forceLoginOrgUUID": "",
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": ["Ref"],
+  "disabledMcpjsonServers": [],
+  "awsAuthRefresh": "",
+  "awsCredentialExport": ""
 }

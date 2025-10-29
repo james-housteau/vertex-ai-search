@@ -13,7 +13,7 @@ When the user asks you to commit changes, follow these steps:
 1. **Check git status** to see what files have been modified
 2. **Review the changes** using git diff to understand what was done
 3. **Check recent commits** to follow the repository's commit message style
-4. **Create a commit** using `genesis commit -m "<message>"`
+4. **Create a commit** using `genesis commit --no-approve -m "<message>"`
 
 The Genesis smart commit system will automatically:
 - Run code formatting (black)
@@ -49,7 +49,7 @@ The Genesis smart commit system will automatically:
 
 5. Create the commit using Genesis:
    ```bash
-   genesis commit -m "<descriptive message>"
+   genesis commit --no-approve -m "<descriptive message>"
    ```
 
    The message should:
@@ -62,27 +62,27 @@ The Genesis smart commit system will automatically:
 <examples>
 **Example 1: Feature addition**
 ```bash
-genesis commit -m "Add SOLVE interaction monitoring system for pipeline analysis"
+genesis commit --no-approve -m "Add SOLVE interaction monitoring system for pipeline analysis"
 ```
 
 **Example 2: Bug fix**
 ```bash
-genesis commit -m "Fix validation error in scaffold phase orchestrator"
+genesis commit --no-approve -m "Fix validation error in scaffold phase orchestrator"
 ```
 
 **Example 3: Refactoring**
 ```bash
-genesis commit -m "Refactor monitoring module to use pre/post hooks pattern"
+genesis commit --no-approve -m "Refactor monitoring module to use pre/post hooks pattern"
 ```
 
 **Example 4: Documentation**
 ```bash
-genesis commit -m "Update SOLVE monitoring documentation with usage examples"
+genesis commit --no-approve -m "Update SOLVE monitoring documentation with usage examples"
 ```
 
 **Example 5: Configuration change**
 ```bash
-genesis commit -m "Configure monitoring to use native Genesis logging"
+genesis commit --no-approve -m "Configure monitoring to use native Genesis logging"
 ```
 </examples>
 

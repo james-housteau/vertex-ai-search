@@ -271,6 +271,16 @@ if [[ ! -L "docs" ]] && [[ ! -d "docs" ]]; then
     fi
 fi
 
+# Protect symlinks from being committed to git (bug #512 fix)
+# These symlinks should never be tracked or committed as they can cause circular references
+echo "Protecting symlinks from git tracking..."
+for symlink in shared-python .genesis .venv docs; do
+    if [[ -L "$symlink" ]]; then
+        git update-index --skip-worktree "$symlink" 2>/dev/null || true
+        echo -e "${BLUE}  ✓ Protected:${NC} $symlink (skip-worktree)"
+    fi
+done
+
 echo -e "${GREEN}✓ Pure Module Isolation: <30 files visible, shared deps accessible via symlinks${NC}"
 
 # Auto-allow direnv if .envrc exists (prevents blocking when entering worktree)

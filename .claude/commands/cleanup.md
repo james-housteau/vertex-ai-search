@@ -142,7 +142,7 @@ genesis autofix || echo "⚠️ WARNING: Autofix issues"
 make test || pytest || echo "⚠️ WARNING: Tests failed"
 
 git add .
-genesis commit -m "cleanup: remove dead code for issue #$1
+genesis commit --no-approve -m "cleanup: remove dead code for issue #$1
 
 Closes #$1
 

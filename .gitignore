@@ -55,6 +55,9 @@ dmypy.json
 # Development tools
 .ruff_cache/
 
+# Browser automation
+.playwright/
+
 # IDEs
 .vscode/
 .idea/
@@ -83,9 +86,10 @@ scratch/
 .env.local
 .env.*.local
 .coverage
-# .envrc files are committed, but .envrc.local is ignored (see line 288)
+.envrc
 *.bak
 /worktrees
+.mcp.json
 
 # ============================================
 # PROJECT-SPECIFIC IGNORES
@@ -174,6 +178,7 @@ cache/
 redis-data/
 
 # Cloud credentials (NEVER commit these)
+.secrets/
 service-account*.json
 credentials.json
 key.json

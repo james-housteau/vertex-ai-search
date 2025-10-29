@@ -1,8 +1,16 @@
 {
   "mcpServers": {
-    "Ref": {
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "context7": {
       "type": "http",
-      "url": "https://api.ref.tools/mcp?apiKey=ref-facf213249cbf0c6227d"
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "ctx7sk-cb7423ba-5f5c-440a-9eb4-9d9dab72cd5e"
+      }
     }
   }
 }
