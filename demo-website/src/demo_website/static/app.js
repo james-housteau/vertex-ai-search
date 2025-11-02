@@ -128,6 +128,7 @@ async function performQuery(query) {
                                 ${cacheIndicator}
                                 <span class="meta-item">Results: ${metadata?.results_found || 0}</span>
                                 <span class="meta-item">First token: ${metadata?.time_to_first_token_ms || 0}ms</span>
+                                <span class="meta-item">Last token: ${json.time_to_last_token_ms || 0}ms</span>
                                 <span class="meta-item">Total: ${json.total_time_ms}ms</span>
                                 <span class="meta-item">Tokens: ${json.token_count}</span>
                             `;

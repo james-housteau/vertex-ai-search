@@ -32,18 +32,49 @@ gh issue close $ISSUE_NUM --comment "Resolved in PR #$PR_NUMBER"
 
 Use Genesis to clean up worktree and branches:
 ```bash
-# Navigate back to main project (if in worktree)
-cd $(git rev-parse --show-toplevel)
+# Detect worktree context and navigate to main repo
+REPO_ROOT=$(git rev-parse --git-common-dir | sed 's/\.git$//')
 
-# Remove Genesis worktree (handles branch cleanup automatically)
-genesis worktree remove fix-$ISSUE_NUM 2>/dev/null || {
-    echo "Manual cleanup required"
-    # Fallback manual cleanup
-    git checkout main || git checkout master
-    git pull
-    git branch -d fix-$ISSUE_NUM 2>/dev/null || echo "Branch already deleted"
-    git push origin --delete fix-$ISSUE_NUM 2>/dev/null || echo "Remote branch already deleted"
-}
+# Check if we're in a worktree context
+if [[ "$(pwd)" =~ worktrees ]] || [[ "$(git branch --show-current)" =~ ^fix- ]]; then
+    echo "Detected worktree context, using main repo: $REPO_ROOT"
+
+    # Remove Genesis worktree from main repo context
+    # Note: genesis worktree remove must be called with repo root context
+    if ! (cd "$REPO_ROOT" && genesis worktree remove fix-$ISSUE_NUM); then
+        echo "⚠️ genesis worktree remove failed - attempting manual cleanup"
+        echo "Note: This is acceptable for post-merge cleanup operations"
+        # Manual cleanup from main repo (no quality gates to bypass)
+        (cd "$REPO_ROOT" && {
+            git checkout --quiet main || git checkout --quiet master
+            git pull --quiet
+            # Detect branch name (handles both sparse-fix- and fix- patterns)
+            BRANCH_NAME=$(git branch --list | grep -E "(sparse-)?fix-$ISSUE_NUM$" | tr -d ' ' || echo "")
+            if [ -n "$BRANCH_NAME" ]; then
+                git branch -d "$BRANCH_NAME" 2>/dev/null || echo "Branch already deleted"
+                git push origin --delete "$BRANCH_NAME" 2>/dev/null || echo "Remote branch already deleted"
+            else
+                echo "Branch already deleted"
+            fi
+        })
+    fi
+else
+    # Not in worktree, standard cleanup
+    if ! genesis worktree remove fix-$ISSUE_NUM; then
+        echo "⚠️ genesis worktree remove failed - attempting manual cleanup"
+        echo "Note: This is acceptable for post-merge cleanup operations"
+        git checkout --quiet main || git checkout --quiet master
+        git pull --quiet
+        # Detect branch name (handles both sparse-fix- and fix- patterns)
+        BRANCH_NAME=$(git branch --list | grep -E "(sparse-)?fix-$ISSUE_NUM$" | tr -d ' ' || echo "")
+        if [ -n "$BRANCH_NAME" ]; then
+            git branch -d "$BRANCH_NAME" 2>/dev/null || echo "Branch already deleted"
+            git push origin --delete "$BRANCH_NAME" 2>/dev/null || echo "Remote branch already deleted"
+        else
+            echo "Branch already deleted"
+        fi
+    fi
+fi
 ```
 
 ### Documentation Update
@@ -70,3 +101,20 @@ If tracking metrics, update:
 - Issues resolved count
 - Code reduction achieved
 - Complexity improvements
+
+---
+
+## 🚫 NO SHORTCUTS POLICY
+
+**Remember:** The work completed for this issue followed the NO SHORTCUTS POLICY.
+
+**Verification Checklist:**
+- ✅ No `# type: ignore` or `# noqa` in merged code
+- ✅ No `try/except: pass` patterns
+- ✅ No skipped or commented-out tests
+- ✅ All quality gates passed properly
+- ✅ Root causes were fixed, not symptoms silenced
+
+If you notice any shortcuts in the merged code, create a follow-up issue to fix them properly.
+
+See CLAUDE.md section "NO SHORTCUTS POLICY" for full details.

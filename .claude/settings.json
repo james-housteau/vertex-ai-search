@@ -6,24 +6,7 @@
   "permissions": {
     "allow": [],
     "ask": [],
-    "deny": [
-      "Bash(git branch:*)",
-      "Bash(git checkout:*)",
-      "Bash(git commit:*)",
-      "Bash(git pull:*)",
-      "Bash(git reset:*)",
-      "Bash(git merge:*)",
-      "Bash(git worktree:*)",
-      "Bash(git rm:*)",
-      "Bash(SKIP_TESTS:*)",
-      "Bash(pip:*)",
-      "Bash(ruff:*)",
-      "Bash(black:*)",
-      "Bash(flake8:*)",
-      "Bash(pylint:*)",
-      "Bash(docker:*)",
-      "Bash(rm -rf:*)"
-    ],
+    "deny": [],
     "additionalDirectories": [],
     "defaultMode": "bypassPermissions"
   },
@@ -45,16 +28,16 @@
     "PreCompact": []
   },
   "disableAllHooks": false,
-  "model": "",
+  "model": "claude-sonnet-4-5",
   "statusLine": {
     "type": "command",
     "command": ""
   },
   "outputStyle": "Default",
-  "forceLoginMethod": "claudeai",
+  "forceLoginMethod": "console",
   "forceLoginOrgUUID": "",
-  "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": ["Ref"],
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["context7", "playwright"],
   "disabledMcpjsonServers": [],
   "awsAuthRefresh": "",
   "awsCredentialExport": ""

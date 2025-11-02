@@ -165,7 +165,7 @@ class DocumentUploader:
                     else:
                         failed += 1
                         failed_files.append(str(file_path))
-                except Exception:
+                except (GoogleCloudError, OSError, ValueError) as e:
                     failed += 1
                     failed_files.append(str(file_path))
 
@@ -199,7 +199,7 @@ class DocumentUploader:
             blob = self.bucket.blob(blob_name)
 
             return bool(blob.exists()) and blob.size == local_path.stat().st_size
-        except Exception:
+        except (GoogleCloudError, OSError, ValueError):
             return False
 
     def get_upload_progress(self) -> dict[str, Any]:

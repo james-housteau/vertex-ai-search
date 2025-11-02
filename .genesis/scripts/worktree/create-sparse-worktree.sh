@@ -145,6 +145,26 @@ else
     echo -e "${YELLOW}No shared resources manifest found at $SHARED_MANIFEST${NC}"
 fi
 
+# Validate essential files exist in parent repo (Bug #515 fix)
+echo "Validating essential configuration files..."
+ESSENTIAL_FILES=(".pre-commit-config.yaml" "pyproject.toml" ".envrc")
+MISSING_FILES=()
+for essential_file in "${ESSENTIAL_FILES[@]}"; do
+    if [[ ! -f "$PARENT_REPO/$essential_file" ]]; then
+        MISSING_FILES+=("$essential_file")
+    fi
+done
+
+if [[ ${#MISSING_FILES[@]} -gt 0 ]]; then
+    echo -e "${RED}Error: Essential file(s) missing from parent repository:${NC}" >&2
+    for missing_file in "${MISSING_FILES[@]}"; do
+        echo -e "${RED}  - $missing_file${NC}" >&2
+    done
+    cd "$PARENT_REPO"
+    git worktree remove "$WORKTREE_DIR" --force 2>/dev/null || true
+    exit 1
+fi
+
 # Set sparse-checkout to exact list (prevents .venv, etc.)
 echo "Configuring precise sparse-checkout..."
 printf '%s\n' "${SPARSE_CHECKOUT_LIST[@]}" | git sparse-checkout set --stdin
@@ -186,10 +206,10 @@ fi
 README_TEMPLATE="$PARENT_REPO/templates/shared/worktree/docs-readme.md.template"
 if [[ -f "$README_TEMPLATE" ]]; then
     # Use sed to substitute template variables
-    sed -e "s//$NAME/g" \
-        -e "s//$BRANCH/g" \
-        -e "s//$(date -u +"%Y-%m-%d")/g" \
-        -e "s||${FOCUS_ARRAY[*]}|g" \
+    sed -e "s/{{NAME}}/$NAME/g" \
+        -e "s/{{BRANCH}}/$BRANCH/g" \
+        -e "s/{{DATE}}/$(date -u +"%Y-%m-%d")/g" \
+        -e "s|{{FOCUS_PATH}}|${FOCUS_ARRAY[*]}|g" \
         "$README_TEMPLATE" > docs/README.md
 else
     echo -e "${YELLOW}Warning: Template not found at $README_TEMPLATE, creating basic version${NC}"
@@ -233,25 +253,10 @@ fi
 # Ensure isolated local directories still exist after any sparse-checkout changes
 mkdir -p docs tests scratch
 
-# Auto-create symlinks to shared dependencies (Pure Module Isolation)
-# This provides access to shared code without including it in sparse checkout
-echo "Creating read-only symlinks to shared dependencies..."
-
-# Symlink shared-python if not in focus paths and doesn't exist
-if [[ ! -d "shared-python" ]] && [[ ! -L "shared-python" ]]; then
-    if [[ -d "$PARENT_REPO/shared-python" ]]; then
-        ln -sf "$PARENT_REPO/shared-python" shared-python
-        echo -e "${BLUE}  ✓ Symlinked:${NC} shared-python/ (read-only access)"
-    fi
-fi
-
-# Symlink .genesis if not in focus paths and doesn't exist
-if [[ ! -d ".genesis" ]] && [[ ! -L ".genesis" ]]; then
-    if [[ -d "$PARENT_REPO/.genesis" ]]; then
-        ln -sf "$PARENT_REPO/.genesis" .genesis
-        echo -e "${BLUE}  ✓ Symlinked:${NC} .genesis/ (read-only access)"
-    fi
-fi
+# Auto-create symlink to .venv only (Pure Module Isolation)
+# Note: .venv is large (~200MB+) and gitignored, so we symlink instead of copying
+# All other dependencies (.genesis/, shared-python/, etc.) are included via sparse checkout
+echo "Creating symlink to virtual environment..."
 
 # Symlink .venv if doesn't exist (needed for Python imports)
 if [[ ! -L ".venv" ]] && [[ ! -d ".venv" ]]; then
@@ -263,25 +268,15 @@ if [[ ! -L ".venv" ]] && [[ ! -d ".venv" ]]; then
     fi
 fi
 
-# Symlink docs if doesn't exist (needed for Genesis design principles and reference)
-if [[ ! -L "docs" ]] && [[ ! -d "docs" ]]; then
-    if [[ -d "$PARENT_REPO/docs" ]]; then
-        ln -sf "$PARENT_REPO/docs" docs
-        echo -e "${BLUE}  ✓ Symlinked:${NC} docs/ (Genesis documentation)"
-    fi
+# Protect .venv symlink from being committed to git (bug #512 fix)
+# This symlink should never be tracked or committed
+echo "Protecting .venv symlink from git tracking..."
+if [[ -L ".venv" ]]; then
+    git update-index --skip-worktree .venv 2>/dev/null || true
+    echo -e "${BLUE}  ✓ Protected:${NC} .venv (skip-worktree)"
 fi
 
-# Protect symlinks from being committed to git (bug #512 fix)
-# These symlinks should never be tracked or committed as they can cause circular references
-echo "Protecting symlinks from git tracking..."
-for symlink in shared-python .genesis .venv docs; do
-    if [[ -L "$symlink" ]]; then
-        git update-index --skip-worktree "$symlink" 2>/dev/null || true
-        echo -e "${BLUE}  ✓ Protected:${NC} $symlink (skip-worktree)"
-    fi
-done
-
-echo -e "${GREEN}✓ Pure Module Isolation: <30 files visible, shared deps accessible via symlinks${NC}"
+echo -e "${GREEN}✓ Worktree isolated with minimal file count, dependencies via sparse checkout${NC}"
 
 # Auto-allow direnv if .envrc exists (prevents blocking when entering worktree)
 if [[ -f .envrc ]] && command -v direnv >/dev/null 2>&1; then
@@ -318,10 +313,10 @@ if [[ ! -f docs/README.md ]]; then
     README_TEMPLATE="$PARENT_REPO/templates/shared/worktree/docs-readme.md.template"
     if [[ -f "$README_TEMPLATE" ]]; then
         # Use sed to substitute template variables
-        sed -e "s//$NAME/g" \
-            -e "s//$BRANCH/g" \
-            -e "s//$(date -u +"%Y-%m-%d")/g" \
-            -e "s||${FOCUS_ARRAY[*]}|g" \
+        sed -e "s/{{NAME}}/$NAME/g" \
+            -e "s/{{BRANCH}}/$BRANCH/g" \
+            -e "s/{{DATE}}/$(date -u +"%Y-%m-%d")/g" \
+            -e "s|{{FOCUS_PATH}}|${FOCUS_ARRAY[*]}|g" \
             "$README_TEMPLATE" > docs/README.md
     else
         cat > docs/README.md << EOF
@@ -371,6 +366,25 @@ AI Safety Rules:
 
 For other work areas, create separate sparse worktrees.
 EOF
+
+# Auto-commit metadata files to prevent uncommitted state (Issue #551)
+echo "Committing worktree metadata files..."
+git add docs/CLAUDE.md docs/README.md .ai-safety-manifest 2>/dev/null || true
+if ! git diff --cached --quiet 2>/dev/null; then
+    if git commit -m "chore: initialize worktree $NAME metadata
+
+Auto-generated metadata files for worktree lifecycle management.
+These files are local to this worktree and safe to commit.
+
+Focus: ${FOCUS_ARRAY[*]}
+Files: $FILE_COUNT/$MAX_FILES" 2>/dev/null; then
+        echo -e "${GREEN}✓ Metadata files committed${NC}"
+    else
+        echo -e "${YELLOW}⚠ Could not commit metadata (may already be clean)${NC}"
+    fi
+else
+    echo -e "${BLUE}  Metadata already clean${NC}"
+fi
 
 # Calculate directory depth for safety check (BSD find compatible)
 MAX_DEPTH=$(find . -type d -not -path "./.git/*" 2>/dev/null | awk -F/ '{print NF-1}' | sort -nr | head -1 || echo 0)

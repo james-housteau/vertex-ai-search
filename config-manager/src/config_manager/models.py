@@ -66,13 +66,9 @@ class ConfigManager:
         # Import here to avoid circular imports
         from .loader import load_config as loader_load_config
 
-        try:
-            config = loader_load_config(environment, self.config_dir)
-            self._cache[environment] = config
-            return config
-        except Exception:
-            # If loading fails, we'll let the exception bubble up
-            raise
+        config = loader_load_config(environment, self.config_dir)
+        self._cache[environment] = config
+        return config
 
     def get_available_environments(self) -> list[str]:
         """Get list of available environment configurations.

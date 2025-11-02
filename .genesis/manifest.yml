@@ -1,203 +1,35 @@
+claude_commands:
+- dest: .claude/settings.json
+  source: .claude/settings.json
+  sync: if_unchanged
+claude_hooks:
+- dest: .claude/hooks/validate-bash-command.sh
+  executable: true
+  source: .claude/hooks/validate-bash-command.sh
+  sync: always
 shared_files:
-- source: shared/.claude/settings.json
-  dest: .claude/settings.json
-  sync: always
-  description: 'Genesis source file: settings.json'
-- source: shared/.claude/settings.local.json
-  dest: .claude/settings.local.json
-  sync: always
-  description: 'Genesis source file: settings.local.json'
-- source: shared/.claude/LEAN-TDD-WORKFLOW.md
-  dest: .claude/LEAN-TDD-WORKFLOW.md
-  sync: always
-  description: 'Genesis source file: LEAN-TDD-WORKFLOW.md'
-- source: shared/.claude/agents/bloat-detector.md
-  dest: .claude/agents/bloat-detector.md
-  sync: always
-  description: Bloat Detector agent configuration
-- source: shared/.claude/agents/scope-guardian.md
-  dest: .claude/agents/scope-guardian.md
-  sync: always
-  description: Scope Guardian agent configuration
-- source: shared/.claude/agents/build-validator.md
-  dest: .claude/agents/build-validator.md
-  sync: always
-  description: Build Validator agent configuration
-- source: shared/.claude/agents/refactoring-specialist.md
-  dest: .claude/agents/refactoring-specialist.md
-  sync: always
-  description: Refactoring Specialist agent configuration
-- source: shared/.claude/agents/test-designer.md
-  dest: .claude/agents/test-designer.md
-  sync: always
-  description: Test Designer agent configuration
-- source: shared/.claude/agents/complexity-auditor.md
-  dest: .claude/agents/complexity-auditor.md
-  sync: always
-  description: Complexity Auditor agent configuration
-- source: shared/.claude/agents/lean-implementer.md
-  dest: .claude/agents/lean-implementer.md
-  sync: always
-  description: Lean Implementer agent configuration
-- source: shared/.claude/agents/documentation-minimalist.md
-  dest: .claude/agents/documentation-minimalist.md
-  sync: always
-  description: Documentation Minimalist agent configuration
-- source: shared/.claude/agents/dependency-tracker.md
-  dest: .claude/agents/dependency-tracker.md
-  sync: always
-  description: Dependency Tracker agent configuration
-- source: shared/.claude/agents/issue-analyst.md
-  dest: .claude/agents/issue-analyst.md
-  sync: always
-  description: Issue Analyst agent configuration
-- source: shared/.claude/agents/performance-monitor.md
-  dest: .claude/agents/performance-monitor.md
-  sync: always
-  description: Performance Monitor agent configuration
-- source: shared/.claude/hooks/validate-bash-command.sh
-  dest: .claude/hooks/validate-bash-command.sh
-  sync: always
-  description: 'Genesis source file: validate-bash-command.sh'
-  executable: true
-- source: shared/.claude/commands/pr.md
-  dest: .claude/commands/pr.md
-  sync: always
-  description: Pr command configuration
-- source: shared/.claude/commands/update-docs.md
-  dest: .claude/commands/update-docs.md
-  sync: always
-  description: Update Docs command configuration
-- source: shared/.claude/commands/issue.md
-  dest: .claude/commands/issue.md
-  sync: always
-  description: Issue command configuration
-- source: shared/.claude/commands/close.md
-  dest: .claude/commands/close.md
-  sync: always
-  description: Close command configuration
-- source: shared/.claude/commands/audit.md
-  dest: .claude/commands/audit.md
-  sync: always
-  description: Audit command configuration
-- source: shared/.claude/commands/STANDARDIZATION_TEMPLATE.md
-  dest: .claude/commands/STANDARDIZATION_TEMPLATE.md
-  sync: always
-  description: Standardization_Template command configuration
-- source: shared/.claude/commands/tdd.md
-  dest: .claude/commands/tdd.md
-  sync: always
-  description: Tdd command configuration
-- source: shared/.claude/commands/research.md
-  dest: .claude/commands/research.md
-  sync: always
-  description: Research command configuration
-- source: shared/.claude/commands/refactor.md
-  dest: .claude/commands/refactor.md
-  sync: always
-  description: Refactor command configuration
-- source: shared/.claude/commands/deprecate.md
-  dest: .claude/commands/deprecate.md
-  sync: always
-  description: Deprecate command configuration
-- source: shared/.claude/commands/optimize.md
-  dest: .claude/commands/optimize.md
-  sync: always
-  description: Optimize command configuration
-- source: shared/.claude/commands/bug.md
-  dest: .claude/commands/bug.md
-  sync: always
-  description: Bug command configuration
-- source: shared/.claude/commands/fix-all-errors.md
-  dest: .claude/commands/fix-all-errors.md
-  sync: always
-  description: Fix All Errors command configuration
-- source: shared/.claude/commands/metrics.md
-  dest: .claude/commands/metrics.md
-  sync: always
-  description: Metrics command configuration
-- source: shared/.claude/commands/commit.md
-  dest: .claude/commands/commit.md
-  sync: always
-  description: Commit command configuration
-- source: shared/.claude/commands/cleanup.md
-  dest: .claude/commands/cleanup.md
-  sync: always
-  description: Cleanup command configuration
-- source: shared/.claude/commands/feature.md
-  dest: .claude/commands/feature.md
-  sync: always
-  description: Feature command configuration
-- source: shared/.claude/commands/test-fix.md
-  dest: .claude/commands/test-fix.md
-  sync: always
-  description: Test Fix command configuration
-- source: shared/Dockerfile
+- description: Development container configuration
   dest: Dockerfile
-  sync: always
-  description: Development container configuration
-- source: shared/.claude/hooks/validate-bash-command.sh
-  dest: .claude/hooks/validate-bash-command.sh
-  sync: always
-  description: Claude Code hook
+  source: Dockerfile.template
+  sync: never
+- description: AI assistant instructions
+  dest: CLAUDE.md
+  source: CLAUDE.md.template
+  sync: never
+- description: Project setup script
+  dest: .genesis/scripts/setup/setup.sh
   executable: true
-- source: shared/.envrc
-  dest: .envrc
+  source: .genesis/scripts/setup/setup.sh
   sync: if_unchanged
-  description: Environment configuration
-- source: shared/.gitignore
+- description: Git ignore patterns
   dest: .gitignore
-  sync: if_unchanged
-  description: Git ignore patterns
-- source: shared/.pre-commit-config.yaml
-  dest: .pre-commit-config.yaml
-  sync: if_unchanged
-  description: Pre-commit hooks configuration
-- source: shared/.claude/settings.json
-  dest: .claude/settings.json
-  sync: if_unchanged
-  description: Claude Code configuration
-- source: .pre-commit-config.yaml
-  dest: .pre-commit-config.yaml
-  sync: if_unchanged
-  description: Pre-commit hooks configuration
-- source: .gitignore
-  dest: .gitignore
-  sync: if_unchanged
-  description: Git ignore patterns
-- source: Makefile
+  source: .gitignore.template
+  sync: never
+- description: Build automation
   dest: Makefile
+  source: Makefile
   sync: if_unchanged
-  description: Build and development tasks
-- source: shared/CLAUDE.md
-  dest: CLAUDE.md
-  sync: never
-  description: AI assistant instructions
-- source: shared/README.md
-  dest: README.md
-  sync: never
-  description: Project documentation (user customizable)
-- source: shared/pyproject.toml
-  dest: pyproject.toml
-  sync: never
-  description: Python project configuration (user customizable)
-- source: pyproject.toml
-  dest: pyproject.toml
-  sync: never
-  description: 'File: pyproject.toml'
-- source: .envrc
-  dest: .envrc
-  sync: never
-  description: 'File: .envrc'
-- source: README.md
-  dest: README.md
-  sync: never
-  description: 'File: README.md'
-- source: CLAUDE.md
-  dest: CLAUDE.md
-  sync: never
-  description: 'File: CLAUDE.md'
-- source: docker-compose.yml
-  dest: docker-compose.yml
-  sync: local_override
-  description: Docker Compose configuration
+- description: Pre-commit hooks configuration
+  dest: .pre-commit-config.yaml
+  source: .pre-commit-config.yaml.template
+  sync: if_unchanged

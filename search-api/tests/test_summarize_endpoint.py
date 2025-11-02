@@ -357,12 +357,16 @@ class TestSummarizeMetrics:
                     # Should be a positive number
                     time_to_last_token = data["time_to_last_token_ms"]
                     assert isinstance(
-                        time_to_last_token, (int, float)
+                        time_to_last_token, int | float
                     ), "time_to_last_token_ms should be a number"
-                    assert time_to_last_token > 0, "time_to_last_token_ms should be positive"
+                    assert (
+                        time_to_last_token > 0
+                    ), "time_to_last_token_ms should be positive"
 
                     # Should be less than total_time_ms (content finishes before final metadata)
-                    assert "total_time_ms" in data, "total_time_ms should also be present"
+                    assert (
+                        "total_time_ms" in data
+                    ), "total_time_ms should also be present"
                     assert (
                         time_to_last_token <= data["total_time_ms"]
                     ), "time_to_last_token_ms should be <= total_time_ms"
@@ -370,4 +374,6 @@ class TestSummarizeMetrics:
                     final_metadata_found = True
                     break
 
-        assert final_metadata_found, "No final metadata event (done=true) found in SSE stream"
+        assert (
+            final_metadata_found
+        ), "No final metadata event (done=true) found in SSE stream"

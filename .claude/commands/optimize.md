@@ -87,6 +87,59 @@ genesis status || echo "⚠️ WARNING: Status issues detected"
 
 ---
 
+## BLOCKER PROTOCOL
+
+When you encounter issues that prevent successful completion:
+
+### 1. STOP Immediately
+- Do NOT proceed past the blocker
+- Do NOT create GitHub issues to "track later"
+- Do NOT make assumptions about acceptability
+
+### 2. ANALYZE the Issue
+- Root cause: What's broken?
+- Scope: Related to current task or separate?
+- Impact: What fails if we proceed?
+- Severity: Can we work around it?
+
+### 3. NOTIFY USER with Options
+
+```
+⚠️ BLOCKER DETECTED
+
+Issue: [One-line description]
+Analysis: [Root cause and scope]
+Impact: [What breaks if we proceed]
+Location: [File:line references]
+
+Options:
+1. Fix now - [Explain what I'll do]
+2. Create issue - [Document for later, explain tradeoffs]
+3. Accept/Ignore - [Proceed anyway, explain risks]
+4. Abort - [Stop workflow, manual investigation]
+
+What should I do?
+```
+
+### 4. WAIT for User Response
+- Do NOT proceed until user responds
+- Do NOT default to any option
+
+### 5. EXECUTE User's Choice
+- Follow chosen option exactly
+- Document decision in commit/PR if accepting risks
+
+### Common Blockers for Optimization
+- Performance improvements break functionality
+- Test failures after optimization
+- Optimization increases code complexity unacceptably
+- Cannot reliably measure performance improvements
+- Optimization causes correctness issues
+- Breaking changes to existing APIs
+- Code quality failures (complexity metrics worse)
+
+---
+
 ## 🛑 CHECKPOINT: Verify Before Delegation
 
 **Before STEP 8:**
@@ -468,6 +521,63 @@ echo "✅ SUCCESS: Optimization completed for issue #$1"
 
 **❌ WRONG:** Delegating setup to agents
 **✅ CORRECT:** Execute STEPS 1-7 with Bash tool, THEN use Task tool in STEP 8
+
+---
+
+## 🚫 NO SHORTCUTS POLICY
+
+**CRITICAL: This workflow enforces the NO SHORTCUTS POLICY from CLAUDE.md.**
+
+### Absolutely Forbidden
+
+You MUST NEVER suggest or use these shortcuts:
+
+**❌ BANNED PATTERNS:**
+- `# type: ignore` - Fix the type error properly
+- `# noqa` - Fix the lint issue properly
+- `# pylint: disable` - Fix the pylint issue properly
+- `try/except: pass` - Handle errors properly
+- `--skip-tests` - Fix the failing tests properly
+- `--no-verify` - Fix the pre-commit issues properly
+- Creating "fix later" issues - Fix it NOW
+- Commenting out failing tests - Fix the test or the code
+
+### What To Do Instead
+
+**When you encounter an error:**
+1. **Understand the root cause** - Read the error message carefully
+2. **Fix the actual problem** - Don't silence the symptom
+3. **Ask for clarification** - Better to ask than to shortcut
+4. **Refactor if needed** - Sometimes the design needs improvement
+
+**Examples:**
+
+**Type Errors:**
+- ❌ `result: Any = function()  # type: ignore`
+- ✅ `result: ExpectedType = function()` (fix the type properly)
+
+**Lint Issues:**
+- ❌ `unused_var = value  # noqa`
+- ✅ Remove the unused variable or use it properly
+
+**Failing Tests:**
+- ❌ `pytest --skip-tests` or `# @pytest.mark.skip`
+- ✅ Fix the code to make the test pass
+
+**Error Handling:**
+- ❌ `try: operation() except: pass`
+- ✅ `try: operation() except SpecificError as e: logger.error(f"Failed: {e}")`
+
+### Pre-commit Protection
+
+The pre-commit hook will **REJECT** commits containing shortcut patterns.
+See `.pre-commit-config.yaml` for the `no-shortcuts` hook configuration.
+
+### Summary
+
+**FIX THE ROOT CAUSE. NEVER TAKE SHORTCUTS.**
+
+This is non-negotiable. Quality code requires quality discipline.
 
 ---
 

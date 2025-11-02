@@ -33,9 +33,5 @@ clean:
 	find . -type f -name "*.pyc" -delete
 
 deploy:
-	@echo "Deploying search-api to Cloud Run..."
-	gcloud run deploy search-api \
-		--source . \
-		--platform managed \
-		--region us-central1 \
-		--allow-unauthenticated
+	@echo "Running deployment script..."
+	@./deploy.sh

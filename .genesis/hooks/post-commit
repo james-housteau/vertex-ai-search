@@ -1,27 +1,45 @@
 #!/usr/bin/env bash
-# Git post-commit hook: Run file organization check after commits
+# Git post-commit hook: Auto-organize files and clean trash after commits
 
 set -euo pipefail
 
-echo "🔄 Running file organization check after commit..."
+echo "🔄 Running automatic file organization after commit..."
 
-# Run organization check in report mode
 # Use CLAUDE_PROJECT_DIR if available, otherwise find the repository root
 if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
     repo_root="$CLAUDE_PROJECT_DIR"
 elif repo_root=$(git rev-parse --show-toplevel 2>/dev/null); then
     : # repo_root already set
 else
-    echo "⚠️  Not in a git repository - skipping organization check"
+    echo "⚠️  Not in a git repository - skipping organization"
     exit 0
 fi
 
-script_path="$repo_root/.genesis/scripts/validation/check-file-organization.sh"
+# Path to comprehensive organization script
+organize_script="$repo_root/.genesis/scripts/utils/organize-all-files.sh"
 
-if [ -f "$script_path" ]; then
-    cd "$repo_root" && "$script_path"
+if [ -f "$organize_script" ]; then
+    # Run in auto mode (no prompts, removes trash automatically)
+    cd "$repo_root" && "$organize_script" --auto
+
+    # If files were organized, create auto-commit
+    if git status --porcelain | grep -q '^'; then
+        echo ""
+        echo "📦 Files were auto-organized. Creating automatic commit..."
+        git add .
+        git commit -m "chore: auto-organize files and clean trash
+
+Auto-organized by post-commit hook using organize-all-files.sh
+- Moved misplaced files to proper directories
+- Cleaned up trash files (backups, logs, duplicates)
+- Maintained Genesis project structure standards" --no-verify
+        echo "✅ Auto-organization commit created"
+    else
+        echo "✅ All files already properly organized"
+    fi
 else
-    echo "⚠️  File organization script not found - skipping check"
+    echo "⚠️  Organization script not found at: $organize_script"
+    echo "⚠️  Skipping automatic organization"
 fi
 
 exit 0

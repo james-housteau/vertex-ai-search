@@ -14,7 +14,7 @@ def skip_if_no_gcs_credentials() -> bool:
 
         default()
         return False
-    except Exception:
+    except (ImportError, OSError):
         return True
 
 

@@ -1,2 +1,2 @@
 #!/bin/bash
-echo 'Validating bash commands for vertex-ai-search'
+echo 'Validating bash commands for {{project_name}}'

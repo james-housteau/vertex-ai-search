@@ -63,7 +63,7 @@ class EmbeddingGenerator:
                     for chunk, emb in zip(batch, embeddings, strict=False)
                 ]
 
-            except Exception:
+            except (OSError, RuntimeError, ValueError) as e:
                 if attempt == self.max_retries - 1:
                     raise
                 # Exponential backoff
