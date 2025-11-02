@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings."""
 
-    api_url: str = "https://search-api-546806894637.us-central1.run.app"
+    api_url: str = "https://search-api-645846618640.us-central1.run.app"
     host: str = "0.0.0.0"
     port: int = 8080
 

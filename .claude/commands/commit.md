@@ -101,3 +101,16 @@ genesis commit --no-approve -m "Configure monitoring to use native Genesis loggi
 - The smart commit system ensures AI-safe file counts
 - Commits are automatically signed if configured
 </notes>
+
+<critical-no-shortcuts>
+**NO SHORTCUTS POLICY:** Never use `--no-verify` or bypass pre-commit hooks.
+
+If quality checks fail:
+- ✅ Fix the actual issues (types, lints, tests)
+- ❌ Don't use `git commit --no-verify`
+- ❌ Don't use `--skip-tests` or similar flags
+- ❌ Don't add `# type: ignore` or `# noqa` to silence errors
+
+Fix the root cause. Never take shortcuts.
+See CLAUDE.md section "NO SHORTCUTS POLICY" for details.
+</critical-no-shortcuts>

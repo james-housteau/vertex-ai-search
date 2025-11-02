@@ -348,3 +348,61 @@ After completion, report:
 - Brief explanation
 
 Remember: **Tests define truth. If test fails, assume code is wrong until proven otherwise with concrete evidence.**
+
+---
+
+## 🚫 NO SHORTCUTS POLICY
+
+**CRITICAL: This workflow enforces the NO SHORTCUTS POLICY from CLAUDE.md.**
+
+### Absolutely Forbidden
+
+You MUST NEVER suggest or use these shortcuts:
+
+**❌ BANNED PATTERNS:**
+- `# type: ignore` - Fix the type error properly
+- `# noqa` - Fix the lint issue properly
+- `# pylint: disable` - Fix the pylint issue properly
+- `try/except: pass` - Handle errors properly
+- `--skip-tests` - Fix the failing tests properly
+- `--no-verify` - Fix the pre-commit issues properly
+- Creating "fix later" issues - Fix it NOW
+- Commenting out failing tests - Fix the test or the code
+- `@pytest.mark.skip` without evidence - Provide concrete evidence or fix the test
+
+### What To Do Instead
+
+**When you encounter an error:**
+1. **Understand the root cause** - Read the error message carefully
+2. **Fix the actual problem** - Don't silence the symptom
+3. **Ask for clarification** - Better to ask than to shortcut
+4. **Refactor if needed** - Sometimes the design needs improvement
+
+**Examples:**
+
+**Type Errors:**
+- ❌ `result: Any = function()  # type: ignore`
+- ✅ `result: ExpectedType = function()` (fix the type properly)
+
+**Lint Issues:**
+- ❌ `unused_var = value  # noqa`
+- ✅ Remove the unused variable or use it properly
+
+**Failing Tests:**
+- ❌ `pytest --skip-tests` or commenting out tests
+- ✅ Fix the code to make the test pass OR provide concrete evidence (Issue/PR/Commit) for removal
+
+**Error Handling:**
+- ❌ `try: operation() except: pass`
+- ✅ `try: operation() except SpecificError as e: logger.error(f"Failed: {e}")`
+
+### Pre-commit Protection
+
+The pre-commit hook will **REJECT** commits containing shortcut patterns.
+See `.pre-commit-config.yaml` for the `no-shortcuts` hook configuration.
+
+### Summary
+
+**FIX THE ROOT CAUSE. NEVER TAKE SHORTCUTS.**
+
+This is non-negotiable. Quality code requires quality discipline.

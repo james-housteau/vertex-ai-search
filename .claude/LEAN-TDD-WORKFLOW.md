@@ -10,26 +10,31 @@ A complete Test-Driven Development workflow emphasizing lean principles: minimal
 - **No Premature Optimization**: Focus on algorithmic efficiency
 - **YAGNI Always**: You Aren't Gonna Need It
 
-## Agents (11 Total)
+## Agents (12 Total)
 
 All agents are generic and reusable across projects. Place in `~/.claude/agents/`:
 
+### Validation Agent
+1. **pm-agent** - Product Manager with validation authority (prevents premature completion)
+
 ### Core TDD Agents
-1. **issue-analyst** - Decomposes requirements into atomic units
-2. **test-designer** - Writes minimal test cases for critical paths
-3. **lean-implementer** - Writes simplest code that passes tests
-4. **refactoring-specialist** - Reduces complexity without changing behavior
-5. **build-validator** - Runs tests and quality checks
+2. **issue-analyst** - Decomposes requirements into atomic units
+3. **test-designer** - Writes minimal test cases for critical paths
+4. **lean-implementer** - Writes simplest code that passes tests
+5. **refactoring-specialist** - Reduces complexity without changing behavior
+6. **build-validator** - Runs tests and quality checks
 
 ### Audit Agents
-6. **bloat-detector** - Identifies dead code and over-engineering
-7. **scope-guardian** - Prevents scope creep and feature additions
-8. **complexity-auditor** - Measures and flags complex code
-9. **dependency-tracker** - Monitors and suggests dependency removal
-10. **performance-monitor** - Tracks efficiency, not premature optimization
+7. **bloat-detector** - Identifies dead code and over-engineering
+8. **scope-guardian** - Prevents scope creep and feature additions
+9. **complexity-auditor** - Measures and flags complex code
+10. **dependency-tracker** - Monitors and suggests dependency removal
+11. **performance-monitor** - Tracks efficiency, not premature optimization
 
 ### Support Agent
-11. **documentation-minimalist** - Maintains only essential documentation
+12. **documentation-minimalist** - Maintains only essential documentation
+
+**All agents require TodoWrite** for task tracking and PM validation.
 
 ## Slash Commands (7 Total)
 

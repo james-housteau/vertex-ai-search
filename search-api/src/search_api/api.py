@@ -325,7 +325,10 @@ async def summarize(request: SummarizeRequest) -> StreamingResponse:
         # Stream tokens as SSE
         for chunk in response:
             if chunk.text:
-                token_count += 1
+                # Approximate token count using word count * 1.3
+                # (rough heuristic: ~1.3 tokens per word for English text)
+                words_in_chunk = len(chunk.text.split())
+                token_count += max(1, int(words_in_chunk * 1.3))
 
                 # Send metadata on first token
                 if first_token_time is None:

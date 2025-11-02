@@ -65,12 +65,19 @@ for hook in "${hooks[@]}"; do
     # Check if hook already exists
     if [ -f "$dest_hook" ]; then
         # Check if it's already our hook
-        if grep -q "Genesis file organization" "$dest_hook" 2>/dev/null; then
-            log_info "Hook already installed: $hook"
-            skipped_count=$((skipped_count + 1))
-            continue
+        if grep -q "Genesis file organization" "$dest_hook" 2>/dev/null || \
+           grep -q "Auto-organize files" "$dest_hook" 2>/dev/null; then
+            # Check if files are identical (already up to date)
+            if cmp -s "$source_hook" "$dest_hook"; then
+                log_info "Hook already up-to-date: $hook"
+                skipped_count=$((skipped_count + 1))
+                continue
+            else
+                # Genesis hook exists but is outdated - update it
+                log_info "Updating existing hook: $hook"
+            fi
         else
-            # Backup existing hook
+            # Non-Genesis hook exists - backup before replacing
             backup_file="${dest_hook}.backup.$(date +%s)"
             cp "$dest_hook" "$backup_file"
             log_warning "Backed up existing hook: $hook → $(basename "$backup_file")"

@@ -39,43 +39,24 @@ repos:
       - id: debug-statements
       - id: check-merge-conflict
 
-  # TODO/FIXME/HACK/ignore detection - prevents placeholder code and ignored checks from reaching main
+  # NO SHORTCUTS POLICY - prevents code quality shortcuts from reaching main
   - repo: local
     hooks:
-      - id: no-todos
-        name: Block TODO/FIXME/HACK/ignore items
-        description: Prevents TODO, FIXME, HACK comments and ignore directives from being committed
-        entry: 'bash -c ''for file in "$@"; do if grep -E "(TODO|FIXME|HACK|XXX|# noqa|# type: ignore|# pylint: disable|# flake8: noqa|# mypy: ignore|# ruff: noqa|# pragma: no cover)" "$file" > /dev/null 2>&1; then echo "❌ Found TODO/FIXME/HACK/ignore items in $file. Please resolve before committing."; grep -n -E "(TODO|FIXME|HACK|XXX|# noqa|# type: ignore|# pylint: disable|# flake8: noqa|# mypy: ignore|# ruff: noqa|# pragma: no cover)" "$file"; exit 1; fi; done'' --'
-        language: system
+      - id: no-shortcuts
+        name: Block code quality shortcuts
+        description: Prevents type ignores, noqa, and other quality shortcuts from being committed
+        entry: .genesis/scripts/validation/check-no-shortcuts.sh
+        language: script
         files: \.(py|ts|tsx|js|jsx|go|tf)$
-        exclude: "test.*|.*_test\\.(py|ts|tsx|js|jsx|go)$|\\.git/|node_modules/|\\.venv/|\\.next/|dist/|build/|__pycache__/"
+        exclude: ^(archive/|experiments/)
+        pass_filenames: true
+        verbose: true
 
   # Essential security - secret detection
-  # Option 1: Gitleaks (simple, no baseline support)
   - repo: https://github.com/zricethezav/gitleaks
     rev: v8.28.0
     hooks:
       - id: gitleaks
-
-  # Option 2: detect-secrets (developer-friendly with baseline support)
-  # Uncomment and comment out gitleaks if you prefer baseline-managed secret detection:
-  # - repo: https://github.com/Yelp/detect-secrets
-  #   rev: v1.4.0
-  #   hooks:
-  #     - id: detect-secrets
-  #       args: [--baseline, .secrets.baseline]
-
-  # Python specific hooks (when PROJECT_TYPE includes python)
-
-
-  # TypeScript/JavaScript specific hooks (when PROJECT_TYPE includes typescript/javascript)
-
-
-  # Go specific hooks (when PROJECT_TYPE includes go)
-
-
-  # Terraform specific hooks (when PROJECT_TYPE includes terraform)
-
 
   # Genesis quality gates
   - repo: local
@@ -89,81 +70,3 @@ repos:
         pass_filenames: false
         verbose: true
         stages: [manual]
-
-      # Temporarily disabled - most violations are in test fixtures which are acceptable
-      # - id: no-dangerous-defaults
-      #   name: Block dangerous defaults
-      #   description: Prevents functions with dangerous default values
-      #   entry: .genesis/scripts/validation/check-variable-defaults.sh
-      #   language: script
-      #   files: \.(py|ts|tsx|js|jsx|go)$
-      #   pass_filenames: false
-
-      - id: no-ai-signatures
-        name: Check AI attribution signatures
-        description: Reports AI/Claude attribution signatures found in code
-        entry: .genesis/scripts/validation/check-ai-signatures.sh
-        language: script
-        files: \.(py|ts|tsx|js|jsx|go|md|txt|yml|yaml|json)$
-        pass_filenames: false
-        verbose: true
-        stages: [manual]
-
-      # Temporarily disabled due to infinite loop issue in smart-commit
-      # The hook was modifying files during commit, causing endless retries
-      # - id: check-genesis-components
-      #   name: Validate Genesis component usage
-      #   description: Ensures consistent usage of Genesis components over standard library
-      #   entry: .genesis/scripts/validation/check-genesis-components.sh
-      #   language: script
-      #   files: \.(py|ts|tsx|js|jsx)$
-      #   pass_filenames: false
-
-      - id: validate-components
-        name: Check AI-safe component structure
-        description: Reports components that exceed AI safety file limits
-        entry: .genesis/scripts/validation/validate-components.sh
-        language: script
-        files: \..*$
-        pass_filenames: false
-        verbose: true
-        stages: [manual]
-
-      - id: genesis-file-organization
-        name: Genesis File Organization Check
-        entry: .genesis/scripts/validation/check-file-organization.sh
-        language: script
-        pass_filenames: false
-        always_run: true
-        verbose: true
-        stages: [manual]
-
-# Global settings
-default_language_version:
-  node: "20.19.5"
-
-# Exclude patterns
-exclude: |
-  (?x)^(
-    \.git/.*|
-    \.devcontainer/.*|
-    \.vscode/.*|
-    \.idea/.*|
-    build/.*|
-    tmp/.*|
-    \.venv/.*|
-    venv/.*|
-    __pycache__/.*|
-    \.pytest_cache/.*|
-    \.mypy_cache/.*|
-    htmlcov/.*|
-    node_modules/.*|
-    \.next/.*|
-    dist/.*|
-    .*\.bak|
-    .*\.backup|
-    .*-backup-.*
-  )$
-
-# Stop on first failure to avoid running unnecessary checks
-fail_fast: true

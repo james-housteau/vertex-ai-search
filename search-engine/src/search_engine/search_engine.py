@@ -124,5 +124,5 @@ class SearchEngine:
                 return True
             else:
                 return False
-        except Exception:
+        except (OSError, ValueError, RuntimeError):
             return False

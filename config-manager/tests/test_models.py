@@ -67,13 +67,15 @@ class TestAppConfig:
         """Test that configuration is immutable."""
         config = AppConfig()
 
+        # Attempting to set immutable field raises ValidationError
         with pytest.raises(ValidationError):
-            config.debug = True  # type: ignore
+            config.debug = True
 
     def test_extra_fields_forbidden(self) -> None:
         """Test that extra fields are not allowed."""
+        # Creating AppConfig with invalid field should raise ValidationError
         with pytest.raises(ValidationError):
-            AppConfig(invalid_field="value")  # type: ignore
+            AppConfig(invalid_field="value")
 
 
 class TestEnvironmentConfig:
@@ -96,7 +98,8 @@ class TestEnvironmentConfig:
 
     def test_extra_fields_allowed(self) -> None:
         """Test that extra fields are allowed in EnvironmentConfig."""
-        config = EnvironmentConfig(custom_field="value")  # type: ignore
+        # EnvironmentConfig allows arbitrary extra fields
+        config = EnvironmentConfig(custom_field="value")
         assert hasattr(config, "custom_field")
 
 

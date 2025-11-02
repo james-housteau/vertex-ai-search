@@ -98,12 +98,8 @@ scratch/
 # Archive directory (old code)
 archive/
 
-# Temporary experiment results
-experiments/*/output/
-experiments/*/*.json
-experiments/*/*.csv
-experiments/*/tmp/
-experiments/baseline-snapshot/*.json.bak
+# Experiments directory (experimental code)
+experiments/
 
 # Large files and datasets
 *.jsonl

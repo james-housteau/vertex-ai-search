@@ -10,12 +10,8 @@ from unittest.mock import Mock, patch
 import pytest
 
 # Import the API contract types that we need to implement
-try:
-    from gcs_manager.gcs_manager import GCSManager
-    from gcs_manager.models import BucketConfig, BucketResult
-except ImportError:
-    # These will fail initially - that's the RED phase
-    pytest.skip("Module not implemented yet", allow_module_level=True)
+from gcs_manager.gcs_manager import GCSManager
+from gcs_manager.models import BucketConfig, BucketResult
 
 
 class TestGCSManagerAcceptance:

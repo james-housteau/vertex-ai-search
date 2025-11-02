@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent / "answer-service" / "src"))
 
 # Import the REAL service
-from answer_service.service_real import RealAnswerService  # type: ignore[import]
+from answer_service.service_real import RealAnswerService
 
 PROJECT_ID = "admin-workstation"
 DATASTORE_ID = "nq-html-docs-search"

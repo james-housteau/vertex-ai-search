@@ -10,12 +10,8 @@ from unittest.mock import patch
 import pytest
 
 # Import the API contract types that we need to implement
-try:
-    from answer_service.models import ConversationResult
-    from answer_service.service import AnswerService
-except ImportError:
-    # These will fail initially - that's the RED phase
-    pytest.skip("Module not implemented yet", allow_module_level=True)
+from answer_service.models import ConversationResult
+from answer_service.service import AnswerService
 
 
 class TestAnswerServiceAcceptance:

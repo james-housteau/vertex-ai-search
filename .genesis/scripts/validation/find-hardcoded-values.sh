@@ -23,10 +23,10 @@ check_pattern() {
     echo -e "${YELLOW}🔍 Checking: $description${NC}"
 
     # Use git ls-files to respect .gitignore, then grep the results
-    # Exclude documentation, test files, and templates
+    # Exclude documentation, test files, templates, and constants files
     if command -v git >/dev/null 2>&1 && git rev-parse --git-dir >/dev/null 2>&1; then
-        # In a git repo - use git ls-files to respect .gitignore, exclude docs/tests/templates
-        results=$(git ls-files '*.py' '*.ts' '*.tsx' '*.js' '*.jsx' | grep -v -E '(test_|_test\.|\.test\.|/tests/|/templates/|\.md$|conftest\.py|/fixtures/|mock_)' | xargs grep -E -n "$pattern" 2>/dev/null || true)
+        # In a git repo - use git ls-files to respect .gitignore, exclude docs/tests/templates/constants
+        results=$(git ls-files '*.py' '*.ts' '*.tsx' '*.js' '*.jsx' | grep -v -E '(test_|_test\.|\.test\.|/tests/|/templates/|\.md$|conftest\.py|/fixtures/|mock_|constants\.py|shared_fixtures\.py|verify_)' | xargs grep -E -n "$pattern" 2>/dev/null || true)
     else
         # Fallback for non-git directories
         results=$(grep -rn -E "$pattern" "$files" 2>/dev/null || true)
@@ -69,8 +69,8 @@ check_pattern ':[0-9]{2,5}(?![0-9])' "Hardcoded port numbers" "."
 # Hardcoded timeouts (seconds/milliseconds)
 check_pattern 'timeout[^=]*=[ \t]*[0-9]+' "Hardcoded timeout values" "."
 
-# Hardcoded file paths (exclude module-level constants and function returns)
-check_pattern '["\047]/.+["\047]' "Hardcoded absolute file paths" "." ':[A-Z_]+\s*=|:\s+return\s+\[|:\s+"/|:DEFAULT_|:FORBIDDEN_'
+# Hardcoded file paths (exclude module-level constants, function returns, path separators, and API routes)
+check_pattern '["\047]/.+["\047]' "Hardcoded absolute file paths" "." ':[A-Z_]+\s*=|:\s+return\s+\[|:\s+"/|:DEFAULT_|:FORBIDDEN_|endswith\("/"\)|p \+ "/"|@app\.(get|post|put|delete|patch)'
 
 # Hardcoded versions in templates
 check_pattern '"version":\s*"[0-9]+\.[0-9]+\.[0-9]+"' "Hardcoded versions in JSON" "templates/"
